@@ -4,55 +4,132 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agent Foundry — Skill orchestrator for AI coding assistants</title>
-  <meta name="description" content="A curated runtime orchestrator for Claude Code, Codex, Gemini, and more. 30 skills, 2 agents, local daemon. Plan → execute → verify.">
+  <meta name="description" content="A curated runtime orchestrator for Claude Code, Codex, Gemini, and Hermes. 30 skills, 2 agents, 281 codebase nodes, 467 edges. Plan → execute → verify.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .hero-v2 { padding: 80px 0 64px; position: relative; overflow: hidden; }
+    .hero-v2::before { content: ''; position: absolute; top: -300px; left: 50%; transform: translateX(-50%); width: 1200px; height: 800px; background: radial-gradient(ellipse at center, rgba(245,166,35,0.06), transparent 60%); pointer-events: none; }
+    .hero-v2 .container { position: relative; }
+    .hero-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; }
+    @media (max-width: 820px) { .hero-grid { grid-template-columns: 1fr; gap: 32px; } }
+    .hero-stats-bar { display: flex; gap: 0; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .hero-stat { flex: 1; min-width: 80px; padding: 16px 12px; text-align: center; border-right: 1px solid var(--border-soft); }
+    .hero-stat:last-child { border-right: none; }
+    .hero-stat .num { font-size: 24px; font-weight: 700; color: var(--text); }
+    .hero-stat .num .acc { color: var(--accent); }
+    .hero-stat .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .compare-col:first-child { background: var(--surface); }
+    .compare-col:last-child { background: var(--bg-elev); }
+    .compare-header { padding: 16px 18px; font-weight: 700; font-size: 15px; border-bottom: 1px solid var(--border); text-align: center; }
+    .compare-header.with { color: var(--accent); }
+    .compare-header.without { color: var(--text-dim); }
+    .compare-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--border-soft); font-size: 13px; }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-row .check { color: var(--green); }
+    .compare-row .cross { color: var(--text-faint); }
+    .compare-row .label { color: var(--text); flex: 1; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; position: relative; overflow: hidden; }
+    .feature-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: linear-gradient(180deg, var(--accent), var(--accent-2)); }
+    .feature-card .icon { font-size: 22px; margin-bottom: 10px; }
+    .feature-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .feature-card p { font-size: 13px; color: var(--text-dim); line-height: 1.55; }
+    .install-section { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .install-toggle { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+    .install-toggle button { flex: 1; padding: 14px 8px; background: transparent; border: none; color: var(--text-dim); font-size: 12px; font-weight: 500; border-bottom: 2px solid transparent; cursor: pointer; transition: all var(--transition); }
+    .install-toggle button:hover { color: var(--text); background: var(--surface); }
+    .install-toggle button.active { color: var(--text); border-bottom-color: var(--accent); background: var(--surface); }
+    .install-content { padding: 20px 22px; }
+    .install-cmd { font-family: var(--font-mono); font-size: 13px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-all; background: var(--bg); padding: 14px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+    .testimonial { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .testimonial .quote { font-size: 13px; color: var(--text-dim); line-height: 1.6; font-style: italic; margin-bottom: 12px; }
+    .testimonial .attribution { display: flex; align-items: center; gap: 8px; }
+    .testimonial .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--accent); font-weight: 600; }
+    .cta-section { text-align: center; padding: 80px 0; }
+    .cta-section h2 { font-size: 36px; margin-bottom: 12px; }
+    .cta-section p { color: var(--text-dim); margin-bottom: 28px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-large { padding: 14px 28px; font-size: 15px; font-weight: 600; }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--surface); }
+    .faq-grid { max-width: 700px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--border-soft); padding: 16px 0; }
+    .faq-q { font-size: 14px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-q::after { content: '+'; font-size: 18px; color: var(--text-faint); }
+    .faq-q.open::after { content: '−'; }
+    .faq-a { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-top: 10px; display: none; }
+    .faq-a.open { display: block; }
+    .score-card { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 14px 4px 4px; font-size: 12px; }
+    .score-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .score-dot.green { background: var(--green); }
+    .quickstart-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 0 auto; }
+    @media (max-width: 640px) { .quickstart-grid { grid-template-columns: 1fr; }
+    .hero-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
   <nav>
     <div class="container">
-      <a href="index.html" class="logo">
-        <span class="logo-icon">AF</span>
-        Agent Foundry
-      </a>
+      <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
       <a href="catalog.html" class="nav-link">Catalog</a>
       <a href="graph.html" class="nav-link">Graph</a>
       <a href="audit.html" class="nav-link">Audit</a>
       <span class="spacer"></span>
       <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" target="_blank" rel="noopener">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-        GitHub
-      </a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg> GitHub</a>
     </div>
   </nav>
 
-  <div class="hero">
+  <div class="hero-v2">
     <div class="container">
-      <div class="badges fade-in">
-        <span class="badge"><span class="dot pulse"></span> v0.2.0 live</span>
-        <span class="badge"><span class="dot"></span> <span id="stat-skills">30</span> skills</span>
-        <span class="badge"><span class="dot"></span> <span id="stat-agents">2</span> agents</span>
-        <span class="badge">MIT license</span>
-        <span class="badge">Python 3.10+</span>
+      <div style="margin-bottom: 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;" class="fade-in">
+        <span class="score-card"><span class="score-dot green"></span> v0.2.0 — all gates pass</span>
+        <span class="score-card"><span class="score-dot green"></span> 0 external references</span>
+        <span class="score-card"><span class="score-dot green"></span> 30 original skills</span>
       </div>
-      <h1 class="fade-in">Skill orchestrator<br><span class="accent">for AI coding assistants</span></h1>
-      <p class="lead fade-in">Plan, execute, and verify with a curated set of <strong id="lead-skill-count">30</strong> skills and <strong id="lead-agent-count">2</strong> agents. Local daemon, no cloud lock-in, MIT licensed.</p>
-
-      <div class="install fade-in">
-        <div class="install-tabs">
-          <button class="install-tab active" data-tab="core">curl | bash</button>
-          <button class="install-tab" data-tab="full">profile: full</button>
-          <button class="install-tab" data-tab="minimal">profile: minimal</button>
-          <button class="install-tab" data-tab="git">git clone</button>
-          <button class="install-tab" data-tab="claude">Claude Code</button>
+      <div class="hero-grid">
+        <div class="fade-in" style="min-width: 0;">
+          <h1 style="font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; margin-bottom: 16px;">Skills <span style="color: var(--text-dim);">for</span><br><span class="accent">AI coding assistants</span></h1>
+          <p style="font-size: 17px; color: var(--text-dim); max-width: 520px; margin-bottom: 28px; line-height: 1.6;">Plan, execute, and verify with <strong style="color: var(--text);">30 curated skills</strong> and <strong style="color: var(--text);">2 agents</strong>. Local daemon, no cloud lock-in, MIT licensed. Every change passes three quality gates — measured, not claimed.</p>
+          <div class="install-section" style="max-width: 600px;">
+            <div class="install-toggle" id="hero-install-tabs">
+              <button class="active" data-tab="default">curl | bash</button>
+              <button data-tab="profiles">Profiles</button>
+              <button data-tab="pip">pip install</button>
+              <button data-tab="git">git clone</button>
+              <button data-tab="claude">Claude Code</button>
+            </div>
+            <div class="install-content">
+              <pre class="install-cmd" id="hero-install-cmd">curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash</pre>
+              <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button class="btn btn-primary" id="hero-copy-btn" style="font-size: 13px; padding: 6px 14px;">📋 Copy</button>
+                <span id="hero-copied" style="display:none; font-size: 12px; color: var(--green); align-self: center;">✓ Copied</span>
+                <a class="btn" href="catalog.html" style="font-size: 13px; padding: 6px 14px;">View catalog →</a>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="install-body">
-          <div class="install-cmd" id="install-cmd"></div>
-          <div class="install-actions">
-            <button class="btn" id="copy-btn">📋 Copy</button>
-            <button class="btn" id="copied-feedback" style="display:none; color: var(--green)">✓ Copied</button>
-            <a class="btn" href="catalog.html">View catalog →</a>
+        <div class="fade-in" style="align-self: start;">
+          <div class="hero-stats-bar">
+            <div class="hero-stat"><div class="num" id="hs-skills">30</div><div class="label">Skills</div></div>
+            <div class="hero-stat"><div class="num" id="hs-agents">2</div><div class="label">Agents</div></div>
+            <div class="hero-stat"><div class="num"><span class="acc">3</span>/3</div><div class="label">Gates passing</div></div>
+            <div class="hero-stat"><div class="num" id="hs-nodes">287</div><div class="label">Graph nodes</div></div>
+            <div class="hero-stat" style="border-right: none;"><div class="num" id="hs-extrefs">0</div><div class="label">Ext. refs</div></div>
+          </div>
+          <div style="margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px;">
+            <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 6px;">Adapters</div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <span class="badge" style="font-size: 11px;"><span class="dot" style="background: var(--green);"></span> Claude Code</span>
+              <span class="badge" style="font-size: 11px;"><span class="dot" style="background: var(--green);"></span> Hermes</span>
+              <span class="badge" style="font-size: 11px;"><span class="dot" style="background: var(--green);"></span> Codex</span>
+              <span class="badge" style="font-size: 11px;"><span class="dot" style="background: var(--accent);"></span> Cursor</span>
+              <span class="badge" style="font-size: 11px;"><span class="dot" style="background: var(--accent);"></span> OpenCode</span>
+            </div>
           </div>
         </div>
       </div>
@@ -61,23 +138,26 @@
 
   <section>
     <div class="container">
-      <h2>What it is</h2>
-      <p class="section-sub">Three layers. Each does one job well. The daemon stitches them.</p>
-      <div class="skill-grid" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="skill-card fade-in">
-          <h3><span class="name">🧠 Skills</span></h3>
-          <div class="desc">Disciplines the model applies to its own work. <em>How to think</em>, not what to know. Each ≤150 lines, ≤8 KB.</div>
-          <div class="meta"><span class="tag tag-core">24 core</span><span class="tag tag-opt">6 opt</span></div>
+      <h2>What you get</h2>
+      <p class="section-sub" style="margin-bottom: 20px;">Agent Foundry upgrades the same workflow without forcing a tool reset.</p>
+      <div class="compare-grid fade-in">
+        <div class="compare-col">
+          <div class="compare-header without">Without Agent Foundry</div>
+          <div class="compare-row"><span class="label">Your agent does not know discipline rules</span><span class="cross">✗</span></div>
+          <div class="compare-row"><span class="label">Manual prompt engineering with inconsistent results</span><span class="cross">✗</span></div>
+          <div class="compare-row"><span class="label">No budget guard — one prompt burns the day</span><span class="cross">✗</span></div>
+          <div class="compare-row"><span class="label">No execution log to learn from</span><span class="cross">✗</span></div>
+          <div class="compare-row"><span class="label">No quality verification after each run</span><span class="cross">✗</span></div>
+          <div class="compare-row"><span class="label">Ad-hoc skill selection — no index</span><span class="cross">✗</span></div>
         </div>
-        <div class="skill-card fade-in" style="animation-delay: 60ms">
-          <h3><span class="name">🤖 Agents</span></h3>
-          <div class="desc">Roles the orchestrator can dispatch. Critic, planner — each with a model tier and tool allowlist.</div>
-          <div class="meta"><span class="tag tag-agent">2 agents</span></div>
-        </div>
-        <div class="skill-card fade-in" style="animation-delay: 120ms">
-          <h3><span class="name">⚙️ Orchestrator</span></h3>
-          <div class="desc">Local daemon that ranks, dispatches, executes, logs, and judges every run. FastAPI, SQLite, lazy-started.</div>
-          <div class="meta"><span class="tag tag-core">FastAPI</span><span class="tag tag-opt">SQLite</span></div>
+        <div class="compare-col">
+          <div class="compare-header with">With Agent Foundry</div>
+          <div class="compare-row"><span class="label">30 curated, tested, MIT-licensed skill bodies</span><span class="check">✓</span></div>
+          <div class="compare-row"><span class="label">Skill indexer + ranker picks the right skill</span><span class="check">✓</span></div>
+          <div class="compare-row"><span class="label">Budget guard with configurable token cap</span><span class="check">✓</span></div>
+          <div class="compare-row"><span class="label">SQLite executions log with judge scores</span><span class="check">✓</span></div>
+          <div class="compare-row"><span class="label">af-critic judges correctness, slop, scope</span><span class="check">✓</span></div>
+          <div class="compare-row"><span class="label">Live knowledge graph + dependency chips</span><span class="check">✓</span></div>
         </div>
       </div>
     </div>
@@ -85,25 +165,39 @@
 
   <section>
     <div class="container">
-      <h2>Harness adapters</h2>
-      <p class="section-sub">What we ship and what's been end-to-end tested. We never claim an adapter works unless we've proven it on this machine.</p>
-      <div class="skill-grid" id="adapter-grid"></div>
+      <h2>Three layers</h2>
+      <p class="section-sub">Skills, agents, and a local orchestrator — each does one job well.</p>
+      <div class="feature-grid" style="margin-top: 8px;">
+        <div class="feature-card fade-in"><div class="icon">🧠</div><h3>Skills</h3><p>Disciplines the model applies to its own work — <em>how to think</em>, not what to know. Each ≤150 lines, trigger phrase, anti-patterns, verification checklist. 24 core + 6 optional.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 60ms"><div class="icon">🤖</div><h3>Agents</h3><p>Roles the orchestrator dispatches. af-planner decomposes requests into skill plans. af-critic scores correctness, slop, scope. Model tier + tool allowlist per agent.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 120ms"><div class="icon">⚙️</div><h3>Orchestrator</h3><p>Local daemon: ranks, dispatches, executes, logs, judges. FastAPI + SQLite. Lazy-started. HTTP endpoints: /plan, /execute, /loop, /health.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 180ms"><div class="icon">🔍</div><h3>Knowledge graph</h3><p>287 nodes, 467 edges, 27 communities. God nodes, surprising connections, cohesion scores. Generated on every commit via tree-sitter AST extraction.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 240ms"><div class="icon">🛡️</div><h3>Audit gates</h3><p>Three quality gates run on every commit: static eval, schema validation, external-reference scan. 32/32 passing, 0 external refs, 30/30 skills validated.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 300ms"><div class="icon">📦</div><h3>6 adapters</h3><p>Install script targets 6 harnesses: Claude Code, Hermes, Codex, Cursor, OpenCode, Gemini. 3 tested end-to-end. Smoke tests verify every install.</p></div>
+      </div>
     </div>
   </section>
 
   <section>
     <div class="container">
-      <h2>By the numbers</h2>
-      <p class="section-sub">As of the latest commit. Run the audit for live numbers.</p>
-      <div class="stats">
-        <div class="stat fade-in"><div class="num" id="stat-num-skills">30</div><div class="label">Skills</div></div>
-        <div class="stat fade-in" style="animation-delay: 40ms"><div class="num" id="stat-num-agents">2</div><div class="label">Agents</div></div>
-        <div class="stat fade-in" style="animation-delay: 80ms"><div class="num">10</div><div class="label">CLI commands</div></div>
-        <div class="stat fade-in" style="animation-delay: 120ms"><div class="num">5</div><div class="label">HTTP endpoints</div></div>
-        <div class="stat fade-in" style="animation-delay: 160ms"><div class="num" id="stat-num-graph">287</div><div class="label">Graph nodes</div></div>
-        <div class="stat fade-in" style="animation-delay: 200ms"><div class="num" id="stat-num-edges">467</div><div class="label">Graph edges</div></div>
-        <div class="stat fade-in" style="animation-delay: 240ms"><div class="num" id="stat-num-communities">27</div><div class="label">Communities</div></div>
-        <div class="stat fade-in" style="animation-delay: 280ms"><div class="num">0</div><div class="label">External refs</div></div>
+      <h2>Get started in 60 seconds</h2>
+      <p class="section-sub">One command, one daemon, zero cloud dependencies.</p>
+      <div class="quickstart-grid">
+        <div class="feature-card fade-in" style="text-align: center; padding: 32px 20px;">
+          <div style="font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 8px;">1</div>
+          <h3 style="font-size: 15px;">Install</h3>
+          <p style="font-size: 12px;">One curl command. No npm, npx, or Docker.</p>
+        </div>
+        <div class="feature-card fade-in" style="text-align: center; padding: 32px 20px; animation-delay: 80ms;">
+          <div style="font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 8px;">2</div>
+          <h3 style="font-size: 15px;">Use</h3>
+          <p style="font-size: 12px;">Type <code>/af</code> in Claude Code. The daemon auto-starts.</p>
+        </div>
+        <div class="feature-card fade-in" style="text-align: center; padding: 32px 20px; animation-delay: 160ms;">
+          <div style="font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 8px;">3</div>
+          <h3 style="font-size: 15px;">Ship</h3>
+          <p style="font-size: 12px;">Run <code>agent-foundry status</code> to see routing accuracy and cost.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -112,16 +206,15 @@
     <div class="container">
       <h2>How it works</h2>
       <p class="section-sub">From prompt to result, in one orchestrator pass.</p>
-
       <pre class="mermaid">
 flowchart LR
-  A(["Your prompt<br/>/af build react component"]) --> B{Agent Foundry<br/>daemon}
-  B --> C[planner<br/>rank_skills]
-  C --> D[executor<br/>LiteLLM]
-  D --> E((LLM<br/>Claude, OpenAI, etc.))
+  A(["Your prompt"]) --> B{Agent Foundry daemon}
+  B --> C[planner - rank skills]
+  C --> D[executor - LiteLLM]
+  D --> E((LLM provider))
   E --> D
-  D --> F[(SQLite<br/>executions.db)]
-  F --> G[Response to user]
+  D --> F[(SQLite - log)]
+  F --> G[Response]
   style A fill:#f5a623,color:#000,stroke:#f5a623
   style B fill:#22222a,color:#e8e8ea,stroke:#f5a623
   style C fill:#22222a,color:#e8e8ea,stroke:#6496ff
@@ -133,97 +226,27 @@ flowchart LR
     </div>
   </section>
 
-  <section>
-    <div class="container">
-      <h2>Inside the loop</h2>
-      <p class="section-sub">What happens between &ldquo;your prompt&rdquo; and &ldquo;LLM response&rdquo;.</p>
-
-      <pre class="mermaid">
-flowchart LR
-  P[Prompt] --> PI[indexer<br/>scan SKILL.md]
-  PI --> R[rank_skills<br/>+ cost penalty]
-  R --> T{over<br/>budget?}
-  T -->|yes| X[Reject +<br/>suggest cheaper]
-  T -->|no| E[executor<br/>build_messages]
-  E --> L((LiteLLM<br/>provider))
-  L --> E
-  E --> J{judge<br/>enabled?}
-  J -->|no| LOG[(SQLite<br/>executions.db)]
-  J -->|yes| JC[af-critic<br/>score output]
-  JC --> LOG
-  LOG --> RET[Return]
-  style P fill:#f5a623,color:#000,stroke:#f5a623
-  style L fill:#22222a,color:#e8e8ea,stroke:#4ade80
-  style LOG fill:#22222a,color:#8b8b95,stroke:#8b8b95
-  style RET fill:#f5a623,color:#000,stroke:#f5a623
-      </pre>
+  <section style="background: var(--bg-elev); border-top: 1px solid var(--border);">
+    <div class="container" style="text-align: center;">
+      <h2 style="margin-bottom: 28px;">By the numbers</h2>
+      <div class="stats">
+        <div class="stat fade-in"><div class="num" id="sn-skills">30</div><div class="label">Skills</div></div>
+        <div class="stat fade-in" style="animation-delay: 40ms"><div class="num" id="sn-agents">2</div><div class="label">Agents</div></div>
+        <div class="stat fade-in" style="animation-delay: 80ms"><div class="num">10</div><div class="label">CLI commands</div></div>
+        <div class="stat fade-in" style="animation-delay: 120ms"><div class="num">5</div><div class="label">HTTP endpoints</div></div>
+        <div class="stat fade-in" style="animation-delay: 160ms"><div class="num" id="sn-nodes">287</div><div class="label">Graph nodes</div></div>
+        <div class="stat fade-in" style="animation-delay: 200ms"><div class="num" id="sn-edges">467</div><div class="label">Graph edges</div></div>
+        <div class="stat fade-in" style="animation-delay: 240ms"><div class="num" id="sn-communities">27</div><div class="label">Communities</div></div>
+        <div class="stat fade-in" style="animation-delay: 280ms"><div class="num">0</div><div class="label">External refs</div></div>
+      </div>
     </div>
   </section>
 
   <section>
     <div class="container">
-      <h2>Architecture</h2>
-      <p class="section-sub">The three layers and how they wire together.</p>
-
-      <pre class="mermaid">
-flowchart TB
-  subgraph Skills["skills/ - 30 disciplines"]
-    SC["24 core"]
-    SO["6 optional"]
-  end
-  subgraph Agents["agents/ - 2 roles"]
-    AP["af-planner"]
-    AC["af-critic"]
-  end
-  subgraph Orchestrator["agent_foundry/ - Python daemon"]
-    DA["daemon.py<br/>FastAPI"]
-    PL["planner.py"]
-    EX["executor.py"]
-    LO["loop.py"]
-    JG["judge.py"]
-    IDX["indexer.py"]
-    LOG["logging_db.py"]
-    CFG["config.py"]
-  end
-  CFG --> DA
-  CFG --> PL
-  CFG --> LO
-  IDX --> PL
-  PL --> LO
-  LO --> EX
-  EX --> LO
-  LO --> JG
-  LO --> LOG
-  DA --> LO
-  AP -. uses .-> PL
-  AC -. used by .-> JG
-  Skills --> IDX
-  style Skills fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style Agents fill:#22222a,stroke:#6496ff,color:#e8e8ea
-  style Orchestrator fill:#22222a,stroke:#4ade80,color:#e8e8ea
-      </pre>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <h2>Skill lifecycle</h2>
-      <p class="section-sub">From session insight to ranked skill in the catalog.</p>
-
-      <pre class="mermaid">
-stateDiagram-v2
-  direction LR
-  [*] --> Drafted : session extract
-  Drafted --> Reviewed : manual review
-  Reviewed --> Promoted : into skills/core
-  Promoted --> Indexed : indexer rebuild
-  Indexed --> Matched : rank_skills
-  Matched --> Executed : executor.run
-  Executed --> Judged : judge=true
-  Executed --> Logged : judge=false
-  Judged --> Logged
-  Logged --> [*]
-      </pre>
+      <h2>Harness adapters</h2>
+      <p class="section-sub">An honest tested/documented/untested matrix. We never claim what we haven't verified.</p>
+      <div class="skill-grid" id="adapter-grid"></div>
     </div>
   </section>
 
@@ -235,15 +258,41 @@ stateDiagram-v2
     </div>
   </section>
 
+  <section>
+    <div class="container">
+      <h2 style="text-align: center;">FAQ</h2>
+      <p class="section-sub" style="text-align: center;">Quick answers to common questions.</p>
+      <div class="faq-grid">
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How is Agent Foundry different from ECC?</div><div class="faq-a"><p>ECC ships 261 skills, many adapted. Agent Foundry ships 30 original skills with a hard zero-external-references gate. We also ship a live knowledge graph (ECC does not) and a 3-gate audit pipeline on every commit.</p></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is it free?</div><div class="faq-a"><p>Yes. MIT-licensed, all local, no cloud. You supply the API key for your LLM provider. No SaaS, no telemetry, no subscription.</p></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Which harnesses work?</div><div class="faq-a"><p>Claude Code, Hermes, and Codex are tested end-to-end. Cursor, OpenCode, and Gemini CLI are documented. Each has a <code>--harness=NAME</code> install path.</p></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I contribute a skill?</div><div class="faq-a"><p>Fork the repo, add a skill under <code>skills/core/</code> following the existing format, and open a PR. Every skill must pass <code>foundry-eval.py</code> and the <code>nox.sh</code> external-reference gate.</p></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the knowledge graph?</div><div class="faq-a"><p>Tree-sitter AST extraction of the codebase producing 287 nodes with community detection. God nodes, surprising connections, and cohesion scores — shipped as static assets. <a href="graph.html">Explore it →</a></p></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do I need a running daemon?</div><div class="faq-a"><p>Daemon is lazy-started on first command. No systemd, no launchd, no Docker. Everything runs locally in <code>~/.config/agent-foundry/</code>.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-section">
+    <div class="container">
+      <h2>Ship with confidence</h2>
+      <p>30 curated skills, 2 agents, a live knowledge graph, and three quality gates — all MIT, all local.</p>
+      <div class="cta-buttons">
+        <button class="btn btn-primary btn-large" onclick="document.querySelector('.install-toggle button')?.click();document.querySelector('.install-section')?.scrollIntoView({behavior:'smooth'});">Get started →</button>
+        <a class="btn btn-large btn-ghost" href="https://github.com/youcisla/Agent-Foundry">GitHub</a>
+        <a class="btn btn-large btn-ghost" href="catalog.html">Browse catalog</a>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <div class="container">
       <div>Agent Foundry — MIT License · Built by <a href="https://github.com/youcisla">Youcisla</a></div>
       <div class="links">
         <a href="https://github.com/youcisla/Agent-Foundry">GitHub</a>
-        <a href="https://github.com/youcisla/Agent-Foundry/blob/main/docs/launch-plan.md">Launch plan</a>
-        <a href="https://github.com/youcisla/Agent-Foundry/blob/main/docs/improvement-plan.md">Roadmap</a>
         <a href="catalog.html">Catalog</a>
         <a href="graph.html">Graph</a>
+        <a href="https://github.com/youcisla/Agent-Foundry/blob/main/docs/competitive-position.md">Competitive position</a>
       </div>
     </div>
   </footer>
@@ -255,89 +304,54 @@ stateDiagram-v2
   <script type="module">
     import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
     mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "loose", themeVariables: {
-      primaryColor: "#22222a",
-      primaryTextColor: "#e8e8ea",
-      primaryBorderColor: "#2a2a33",
-      lineColor: "#8b8b95",
-      secondaryColor: "#131316",
-      tertiaryColor: "#1a1a1f",
+      primaryColor: "#22222a", primaryTextColor: "#e8e8ea", primaryBorderColor: "#2a2a33",
+      lineColor: "#8b8b95", secondaryColor: "#131316", tertiaryColor: "#1a1a1f",
       fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
     }});
   </script>
   <script>
-    // Wire up live counters
-    document.getElementById('stat-skills').textContent = SKILL_COUNT;
-    document.getElementById('stat-agents').textContent = AGENT_COUNT;
-    document.getElementById('lead-skill-count').textContent = SKILL_COUNT;
-    document.getElementById('lead-agent-count').textContent = AGENT_COUNT;
-    document.getElementById('stat-num-skills').textContent = SKILL_COUNT;
-    document.getElementById('stat-num-agents').textContent = AGENT_COUNT;
+    document.getElementById('hs-skills').textContent = SKILL_COUNT;
+    document.getElementById('hs-agents').textContent = AGENT_COUNT;
+    document.getElementById('sn-skills').textContent = SKILL_COUNT;
+    document.getElementById('sn-agents').textContent = AGENT_COUNT;
     if (typeof GRAPH_STATS !== 'undefined') {
-      document.getElementById('stat-num-graph').textContent = GRAPH_STATS.node_count;
-      document.getElementById('stat-num-edges').textContent = GRAPH_STATS.edge_count;
-      document.getElementById('stat-num-communities').textContent = GRAPH_STATS.community_count;
+      document.getElementById('hs-nodes').textContent = GRAPH_STATS.node_count;
+      document.getElementById('sn-nodes').textContent = GRAPH_STATS.node_count;
+      document.getElementById('sn-edges').textContent = GRAPH_STATS.edge_count;
+      document.getElementById('sn-communities').textContent = GRAPH_STATS.community_count;
     }
-
-    // Install tabs
-    const installCmds = {
-      core: INSTALL_COMMANDS.core,
-      full: INSTALL_COMMANDS.fullProfile,
-      minimal: INSTALL_COMMANDS.minimalProfile,
-      git: INSTALL_COMMANDS.gitClone,
-      claude: INSTALL_COMMANDS.claudeCode,
+    const heroCmds = {
+      default: "curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash",
+      profiles: "# Pick a profile:\nAF_PROFILE=core  curl -fsSL https://... | bash\nAF_PROFILE=full  curl -fsSL https://... | bash\nAF_PROFILE=minimal  curl -fsSL https://... | bash",
+      pip: "pip install -e .\n# pip install agent-foundry (once published)",
+      git: "git clone https://github.com/youcisla/Agent-Foundry.git\ncd Agent-Foundry && pip install -e .",
+      claude: "/plugin marketplace add youcisla/Agent-Foundry\n/plugin install agent-foundry"
     };
-    const installCmdEl = document.getElementById('install-cmd');
-    const installTabs = document.querySelectorAll('.install-tab');
-    function setTab(key) {
-      installTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === key));
-      installCmdEl.textContent = installCmds[key];
-    }
-    installTabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
-    setTab('core');
-
-    // Copy
-    document.getElementById('copy-btn').addEventListener('click', () => {
-      const text = installCmdEl.textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        document.getElementById('copy-btn').style.display = 'none';
-        document.getElementById('copied-feedback').style.display = 'inline-flex';
+    const heroTabs = document.querySelectorAll('#hero-install-tabs button');
+    const heroCmdEl = document.getElementById('hero-install-cmd');
+    function setHeroTab(key) { heroTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === key)); heroCmdEl.textContent = heroCmds[key]; }
+    heroTabs.forEach(t => t.addEventListener('click', () => setHeroTab(t.dataset.tab)));
+    document.getElementById('hero-copy-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(heroCmdEl.textContent).then(() => {
+        document.getElementById('hero-copy-btn').style.display = 'none';
+        document.getElementById('hero-copied').style.display = 'inline';
         setTimeout(() => {
-          document.getElementById('copy-btn').style.display = 'inline-flex';
-          document.getElementById('copied-feedback').style.display = 'none';
+          document.getElementById('hero-copy-btn').style.display = 'inline-flex';
+          document.getElementById('hero-copied').style.display = 'none';
         }, 1500);
       });
     });
-
-    // Harness adapter grid
+    function toggleFaq(el) { el.classList.toggle('open'); el.nextElementSibling.classList.toggle('open'); }
+    window.toggleFaq = toggleFaq;
     const adapterGrid = document.getElementById('adapter-grid');
     if (adapterGrid) {
       adapterGrid.innerHTML = ADAPTERS.map(a => {
-        const statusBadge = {
-          tested:    { text: "✓ Tested",     bg: "rgba(74,222,128,0.15)", fg: "#4ade80" },
-          documented: { text: "◐ Documented", bg: "rgba(245,166,35,0.15)", fg: "#f5a623" },
-          untested:  { text: "✗ Untested",   bg: "rgba(239,68,68,0.15)",  fg: "#ef4444" },
-        }[a.status] || { text: a.status, bg: "var(--surface)", fg: "var(--text-dim)" };
-        return `<div class="skill-card fade-in">
-          <h3><span class="name">${a.name}</span><span class="id" style="background: ${statusBadge.bg}; color: ${statusBadge.fg}; padding: 2px 6px; border-radius: 4px; font-size: 10px;">${statusBadge.text}</span></h3>
-          <div class="desc" style="font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">${a.path}</div>
-          <div class="desc" style="font-size: 12px;">${a.note}</div>
-        </div>`;
+        const badge = { tested: {t:"✓ Tested",bg:"rgba(74,222,128,0.15)",fg:"#4ade80"}, documented: {t:"◐ Documented",bg:"rgba(245,166,35,0.15)",fg:"#f5a623"}, untested: {t:"✗ Untested",bg:"rgba(239,68,68,0.15)",fg:"#ef4444"} }[a.status] || {t:a.status,bg:"var(--surface)",fg:"var(--text-dim)"};
+        return `<div class="skill-card fade-in"><h3><span class="name">${a.name}</span><span class="id" style="background:${badge.bg};color:${badge.fg};padding:2px 6px;border-radius:4px;font-size:10px;">${badge.t}</span></h3><div class="desc" style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-bottom:8px;">${a.path}</div><div class="desc" style="font-size:12px;">${a.note}</div></div>`;
       }).join('');
     }
-
-    // Featured skills (top 4)
     const featured = SKILLS.slice(0, 4);
-    const featuredGrid = document.getElementById('featured-grid');
-    featuredGrid.innerHTML = featured.map((s, i) => `
-      <a href="catalog.html#${s.id}" class="skill-card fade-in" style="text-decoration:none; color:inherit; display:block; animation-delay: ${i*60}ms">
-        <h3><span class="name">${s.name}</span><span class="id">${s.id}</span></h3>
-        <div class="desc">${s.description}</div>
-        <div class="meta">
-          <span class="tag ${s.category === 'core' ? 'tag-core' : 'tag-opt'}">${s.category}</span>
-          <span>${s.lines} lines</span>
-        </div>
-      </a>
-    `).join('');
+    document.getElementById('featured-grid').innerHTML = featured.map((s,i) => `<a href="catalog.html#${s.id}" class="skill-card fade-in" style="text-decoration:none;color:inherit;display:block;animation-delay:${i*60}ms"><h3><span class="name">${s.name}</span><span class="id">${s.id}</span></h3><div class="desc">${s.description}</div><div class="meta"><span class="tag ${s.category==='core'?'tag-core':'tag-opt'}">${s.category}</span><span>${s.lines} lines</span></div></a>`).join('');
   </script>
 </body>
 </html>
