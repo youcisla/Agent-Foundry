@@ -20,7 +20,7 @@ Reconcile each before declaring done. Tag with status: `verified` / `pending` / 
 | **Code** | What did we actually change? | `git diff` + tests passing |
 | **Runtime** | Does it actually work? | Live URL, deployed artifact, manual test |
 | **Docs** | Can a new person understand what we built? | README, changelog, inline comments |
-| **Rules** | Are the constraints the next session will see still correct? | AGENTS.md / CLAUDE.md / hooks |
+| **Rules** | Are the constraints the next session will see still correct? | CLAUDE.md / hooks |
 | **Memory** | Is there anything the next session should know that isn't in code or docs? | Note to self, vault entry |
 | **Workspace** | Any untracked files, stale branches, temp dirs? | `git status` clean, no `.tmp` |
 
