@@ -144,6 +144,22 @@ footer .links { display: flex; justify-content: center; gap: 24px; margin-top: 1
   .audit-grid { grid-template-columns: 1fr; }
 }
 
+/* Mermaid diagrams */
+.mermaid {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 16px;
+  margin: 16px 0;
+  text-align: center;
+  overflow-x: auto;
+}
+.mermaid svg { max-width: 100%; height: auto; }
+.mermaid .nodeLabel, .mermaid .edgeLabel { color: var(--text) !important; }
+.mermaid .edgePath .path, .mermaid .flowchart-link { stroke: var(--text-dim) !important; }
+.mermaid .edgeLabel rect { fill: var(--surface) !important; }
+.mermaid text { font-family: var(--font) !important; }
+
 /* Highlight animations */
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 .pulse { animation: pulse 2s ease-in-out infinite; }

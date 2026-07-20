@@ -103,22 +103,119 @@
   <section>
     <div class="container">
       <h2>How it works</h2>
-      <p class="section-sub">From prompt to result, in three layers.</p>
-      <pre><code>You:  /af "build a react component"
-      │
-      ▼
-┌─────────────────────────────────────┐
-│  Agent Foundry daemon                │
-│  ┌──────────┐   ┌──────────────┐    │
-│  │ planner  │ → │   executor   │ →  │  LLM call
-│  └──────────┘   └──────────────┘    │  (Claude, OpenAI, etc.)
-│        ↓               ↓             │
-│   SkillIndex      SQLite log         │
-└─────────────────────────────────────┘
-      │
-      ▼
-Skill body (plan-before-code) → your prompt
-→ LLM response, persisted in executions.db</code></pre>
+      <p class="section-sub">From prompt to result, in one orchestrator pass.</p>
+
+      <pre class="mermaid">
+flowchart LR
+  A(["Your prompt<br/>/af build react component"]) --> B{Agent Foundry<br/>daemon}
+  B --> C[planner<br/>rank_skills]
+  C --> D[executor<br/>LiteLLM]
+  D --> E((LLM<br/>Claude, OpenAI, etc.))
+  E --> D
+  D --> F[(SQLite<br/>executions.db)]
+  F --> G[Response to user]
+  style A fill:#f5a623,color:#000,stroke:#f5a623
+  style B fill:#22222a,color:#e8e8ea,stroke:#f5a623
+  style C fill:#22222a,color:#e8e8ea,stroke:#6496ff
+  style D fill:#22222a,color:#e8e8ea,stroke:#6496ff
+  style E fill:#22222a,color:#e8e8ea,stroke:#4ade80
+  style F fill:#22222a,color:#8b8b95,stroke:#8b8b95
+  style G fill:#f5a623,color:#000,stroke:#f5a623
+      </pre>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Inside the loop</h2>
+      <p class="section-sub">What happens between &ldquo;your prompt&rdquo; and &ldquo;LLM response&rdquo;.</p>
+
+      <pre class="mermaid">
+flowchart LR
+  P[Prompt] --> PI[indexer<br/>scan SKILL.md]
+  PI --> R[rank_skills<br/>+ cost penalty]
+  R --> T{over<br/>budget?}
+  T -->|yes| X[Reject +<br/>suggest cheaper]
+  T -->|no| E[executor<br/>build_messages]
+  E --> L((LiteLLM<br/>provider))
+  L --> E
+  E --> J{judge<br/>enabled?}
+  J -->|no| LOG[(SQLite<br/>executions.db)]
+  J -->|yes| JC[af-critic<br/>score output]
+  JC --> LOG
+  LOG --> RET[Return]
+  style P fill:#f5a623,color:#000,stroke:#f5a623
+  style L fill:#22222a,color:#e8e8ea,stroke:#4ade80
+  style LOG fill:#22222a,color:#8b8b95,stroke:#8b8b95
+  style RET fill:#f5a623,color:#000,stroke:#f5a623
+      </pre>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Architecture</h2>
+      <p class="section-sub">The three layers and how they wire together.</p>
+
+      <pre class="mermaid">
+flowchart TB
+  subgraph Skills["skills/ - 30 disciplines"]
+    SC["24 core"]
+    SO["6 optional"]
+  end
+  subgraph Agents["agents/ - 2 roles"]
+    AP["af-planner"]
+    AC["af-critic"]
+  end
+  subgraph Orchestrator["agent_foundry/ - Python daemon"]
+    DA["daemon.py<br/>FastAPI"]
+    PL["planner.py"]
+    EX["executor.py"]
+    LO["loop.py"]
+    JG["judge.py"]
+    IDX["indexer.py"]
+    LOG["logging_db.py"]
+    CFG["config.py"]
+  end
+  CFG --> DA
+  CFG --> PL
+  CFG --> LO
+  IDX --> PL
+  PL --> LO
+  LO --> EX
+  EX --> LO
+  LO --> JG
+  LO --> LOG
+  DA --> LO
+  AP -. uses .-> PL
+  AC -. used by .-> JG
+  Skills --> IDX
+  style Skills fill:#22222a,stroke:#f5a623,color:#e8e8ea
+  style Agents fill:#22222a,stroke:#6496ff,color:#e8e8ea
+  style Orchestrator fill:#22222a,stroke:#4ade80,color:#e8e8ea
+      </pre>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Skill lifecycle</h2>
+      <p class="section-sub">From session insight to ranked skill in the catalog.</p>
+
+      <pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --> Drafted : session extract
+  Drafted --> Reviewed : manual review
+  Reviewed --> Promoted : into skills/core
+  Promoted --> Indexed : indexer rebuild
+  Indexed --> Matched : rank_skills
+  Matched --> Executed : executor.run
+  Executed --> Judged : judge=true
+  Executed --> Logged : judge=false
+  Judged --> Logged
+  Logged --> [*]
+      </pre>
     </div>
   </section>
 
@@ -146,6 +243,18 @@ Skill body (plan-before-code) → your prompt
   <script src="site-data.js"></script>
   <script src="install-data.js"></script>
   <script src="graph-stats.js"></script>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "loose", themeVariables: {
+      primaryColor: "#22222a",
+      primaryTextColor: "#e8e8ea",
+      primaryBorderColor: "#2a2a33",
+      lineColor: "#8b8b95",
+      secondaryColor: "#131316",
+      tertiaryColor: "#1a1a1f",
+      fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+    }});
+  </script>
   <script>
     // Wire up live counters
     document.getElementById('stat-skills').textContent = SKILL_COUNT;
@@ -190,7 +299,7 @@ Skill body (plan-before-code) → your prompt
       });
     });
 
-    // Featured skills (4 random or top 4)
+    // Featured skills (top 4)
     const featured = SKILLS.slice(0, 4);
     const featuredGrid = document.getElementById('featured-grid');
     featuredGrid.innerHTML = featured.map((s, i) => `

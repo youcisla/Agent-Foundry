@@ -62,8 +62,60 @@
 
   <section>
     <div class="container">
+      <h2>Community structure</h2>
+      <p class="section-sub">The 27 communities grouped by cohesion band — what stays tight, what gets the cross-cutting treatment.</p>
+      <pre class="mermaid">
+flowchart TB
+  classDef tight fill:#22222a,stroke:#4ade80,color:#e8e8ea
+  classDef med fill:#22222a,stroke:#f5a623,color:#e8e8ea
+  classDef low fill:#22222a,stroke:#8b8b95,color:#e8e8ea
+  subgraph Tight["Tight (cohesion &gt; 0.5)"]
+    direction LR
+    F["foundry-eval"]
+    P["provenance-audit"]
+  end
+  subgraph Medium["Medium (0.1 - 0.5)"]
+    direction LR
+    LOG["logging_db"]
+    IDX["indexer"]
+    EX["executor + judge"]
+    PL["planner"]
+  end
+  subgraph Low["Low (&lt; 0.1)"]
+    direction LR
+    CFG["Config"]
+    CLI["CLI + daemon"]
+    SCH["JSON schema"]
+    OTHER["12 thin communities"]
+  end
+  class F,P tight
+  class LOG,IDX,EX,PL med
+  class CFG,CLI,SCH,OTHER low
+      </pre>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
       <h2>God Nodes</h2>
       <p class="section-sub">The most-connected symbols — the load-bearing abstractions. A change to any of these ripples everywhere.</p>
+      <pre class="mermaid">
+flowchart TB
+  rl["run_loop<br/>14 edges"] --> bi["build_index<br/>12 edges"]
+  rl --> gc["get_index_cached<br/>12 edges"]
+  rl --> rs["rank_skills<br/>12 edges"]
+  rl --> ex["execute<br/>10 edges"]
+  rl --> pl["plan<br/>10 edges"]
+  cap["create_app<br/>15 edges"] --> rl
+  cfg["Config<br/>14 edges"] --> cap
+  cfg --> rl
+  bi --> si["SkillIndex<br/>11 edges"]
+  rs --> si
+  ex --> te["TokenEstimate<br/>12 edges"]
+  style cfg fill:#22222a,stroke:#f5a623,color:#e8e8ea
+  style cap fill:#22222a,stroke:#f5a623,color:#e8e8ea
+  style rl fill:#22222a,stroke:#f5a623,color:#e8e8ea
+      </pre>
       <div class="audit-grid" id="god-grid"></div>
     </div>
   </section>
@@ -77,6 +129,18 @@
   <script src="site-data.js"></script>
   <script src="graph-data.js"></script>
   <script src="graph-stats.js"></script>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "loose", themeVariables: {
+      primaryColor: "#22222a",
+      primaryTextColor: "#e8e8ea",
+      primaryBorderColor: "#2a2a33",
+      lineColor: "#8b8b95",
+      secondaryColor: "#131316",
+      tertiaryColor: "#1a1a1f",
+      fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+    }});
+  </script>
   <script>
     document.getElementById('stat-nodes').textContent = GRAPH_NODES.length;
     document.getElementById('stat-edges').textContent = GRAPH_EDGES.length;
