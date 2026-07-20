@@ -33,6 +33,17 @@ Original (authored from operational experience):
 
 **Total: 17 skills shipped.**
 
+**Optional skills — adapted from Apache-2.0/MIT (3 in `skills/optional/`):**
+- `chrome-devtools-mcp-bridge` — adapted from ChromeDevTools/chrome-devtools-mcp (Apache-2.0)
+- `claude-mem-persistent-memory` — adapted from thedotmack/claude-mem (Apache-2.0)
+- `headroom-token-compression` — adapted from headroomlabs-ai/headroom (MIT)
+
+**Optional skills — original (2 in `skills/optional/`):**
+- `funnel-pr-guard` — generalized from operational PR review discipline
+- `sql-migration-trio` — generalized from operational migration management
+
+**Total: 22 skills shipped.**
+
 **Hook:**
 - `session-closeout.sh` — Bash hook that prompts the closeout skill at session end
 

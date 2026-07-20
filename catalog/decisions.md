@@ -34,6 +34,17 @@ These eight skills were synthesized from repeated use across multiple projects. 
 - **Glint-Research/Fable-5-traces** (CC-BY-4.0) → `plan-then-act` — extracted the structural pattern that high-quality agents state the plan before any tool call, give every Bash call a `description` field, write-then-verify, and batch independent calls. Rewrote in our own voice as a 5-pattern skill.
 - **SupraLabs/reasoning-corpus-4K-5M-v1** (CC-BY-4.0) → `constraint-then-solve` + `quality-protocol` — extracted the universal pattern across 3.67M thought traces: restate the problem → acknowledge unknowns → catalog constraints → solve → self-verify. Rewrote as two related skills.
 
+### Optional skills — adapted from MIT/Apache-2.0
+
+- **ChromeDevTools/chrome-devtools-mcp** (Apache-2.0) → `chrome-devtools-mcp-bridge` — 26+ browser automation tools via DevTools Protocol. Adapted the tool list and use cases.
+- **thedotmack/claude-mem** (Apache-2.0) → `claude-mem-persistent-memory` — cross-session persistent memory. Adapted the concepts and platform support.
+- **headroomlabs-ai/headroom** (MIT) → `headroom-token-compression` — token-compression proxy + MCP server. Adapted the benchmarks and deploy modes.
+
+### Optional skills — original (authored from operational experience)
+
+- `funnel-pr-guard` — generalized from a specific project's funnel change review discipline. Generic enough for any web app with conversion tracking.
+- `sql-migration-trio` — generalized from a specific project's migration workflow. Generic enough for any Supabase/Postgres project.
+
 ## What we explicitly did NOT port
 
 - **anthropics/claude-code** (proprietary) — the harness itself, not a skill source. Tracked for reference only.

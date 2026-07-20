@@ -36,8 +36,8 @@ cp skills/core/prompt-discipline/SKILL.md .cursor/rules/agent-foundry-prompt-dis
 
 - `~/.claude/skills/agent-foundry/` (or harness equivalent) — symlink to this repo's `skills/` dir
 - 16 core skills (in `skills/core/`): `prompt-discipline`, `context-optimization`, `anti-slop`, `plan-before-code`, `plan-then-act`, `constraint-then-solve`, `quality-protocol`, `verify-first`, `re-verify-findings`, `measure-first`, `bottleneck-gating`, `pushback-when-wrong`, `read-before-build`, `show-your-work`, `landscape-first`, `session-closeout`
-- 1 optional skill (in `skills/optional/`): `design-language`
-- **Total: 17 skills installed.**
+- 6 optional skills (in `skills/optional/`): `design-language`, `chrome-devtools-mcp-bridge`, `claude-mem-persistent-memory`, `headroom-token-compression`, `funnel-pr-guard`, `sql-migration-trio`
+- **Total: 22 skills installed.**
 
 The harness picks them up via the standard `description` field trigger mechanism. No force-loading.
 

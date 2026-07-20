@@ -43,6 +43,21 @@ These skills were synthesized from operational use across multiple projects, not
 | `show-your-work` | Thinking-trace format for complex outputs |
 | `landscape-first` | Competitive research protocol before building |
 
+## v0.1.0 — optional skills — adapted sources
+
+| Source | License | Used for |
+|---|---|---|
+| ChromeDevTools/chrome-devtools-mcp | Apache-2.0 | `chrome-devtools-mcp-bridge` |
+| thedotmack/claude-mem | Apache-2.0 | `claude-mem-persistent-memory` |
+| headroomlabs-ai/headroom | MIT | `headroom-token-compression` |
+
+## v0.1.0 — optional skills — original (authored by Youcisla)
+
+| Skill | Provenance |
+|---|---|
+| `funnel-pr-guard` | Generalized from Sentio project's front-door PR review discipline |
+| `sql-migration-trio` | Generalized from Sentio project's migration-trio pattern |
+
 ## v0.1.0 — inspired-by dataset patterns (ideas only, content rewritten)
 
 | Source | License | Idea used for |
