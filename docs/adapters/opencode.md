@@ -1,0 +1,1 @@
+C:\Users\Y.CHEHBOUB\PERSONAL__DO_NOT_TOUCH\Agent-Foundry\docs\adapters\opencode.md

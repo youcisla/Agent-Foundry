@@ -115,4 +115,24 @@ install_for_harness "$HARNESS"
 
 echo ""
 echo "Done. Restart your harness so it picks up the new skills."
+# Auto-run smoke test on the harness we just installed
+if command -v python3 >/dev/null 2>&1; then
+  PYTHON=python3
+elif command -v python >/dev/null 2>&1; then
+  PYTHON=python
+else
+  PYTHON=""
+fi
+
+if [[ -n "$PYTHON" && -n "$HARNESS" && "$HARNESS" != "" ]]; then
+  echo ""
+  echo "Smoke test:"
+  if $PYTHON scripts/smoke-test.py "$HARNESS" 2>&1; then
+    echo "Adapter ready."
+  else
+    echo "Adapter installed but smoke test failed. See scripts/smoke-test.py."
+  fi
+fi
+
+echo ""
 echo "Validate anytime: ./scripts/validate.sh"

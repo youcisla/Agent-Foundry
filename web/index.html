@@ -85,6 +85,14 @@
 
   <section>
     <div class="container">
+      <h2>Harness adapters</h2>
+      <p class="section-sub">What we ship and what's been end-to-end tested. We never claim an adapter works unless we've proven it on this machine.</p>
+      <div class="skill-grid" id="adapter-grid"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
       <h2>By the numbers</h2>
       <p class="section-sub">As of the latest commit. Run the audit for live numbers.</p>
       <div class="stats">
@@ -242,6 +250,7 @@ stateDiagram-v2
 
   <script src="site-data.js"></script>
   <script src="install-data.js"></script>
+  <script src="adapters-data.js"></script>
   <script src="graph-stats.js"></script>
   <script type="module">
     import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
@@ -298,6 +307,23 @@ stateDiagram-v2
         }, 1500);
       });
     });
+
+    // Harness adapter grid
+    const adapterGrid = document.getElementById('adapter-grid');
+    if (adapterGrid) {
+      adapterGrid.innerHTML = ADAPTERS.map(a => {
+        const statusBadge = {
+          tested:    { text: "✓ Tested",     bg: "rgba(74,222,128,0.15)", fg: "#4ade80" },
+          documented: { text: "◐ Documented", bg: "rgba(245,166,35,0.15)", fg: "#f5a623" },
+          untested:  { text: "✗ Untested",   bg: "rgba(239,68,68,0.15)",  fg: "#ef4444" },
+        }[a.status] || { text: a.status, bg: "var(--surface)", fg: "var(--text-dim)" };
+        return `<div class="skill-card fade-in">
+          <h3><span class="name">${a.name}</span><span class="id" style="background: ${statusBadge.bg}; color: ${statusBadge.fg}; padding: 2px 6px; border-radius: 4px; font-size: 10px;">${statusBadge.text}</span></h3>
+          <div class="desc" style="font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">${a.path}</div>
+          <div class="desc" style="font-size: 12px;">${a.note}</div>
+        </div>`;
+      }).join('');
+    }
 
     // Featured skills (top 4)
     const featured = SKILLS.slice(0, 4);

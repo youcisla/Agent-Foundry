@@ -1,0 +1,18 @@
+# Codex CLI plugin manifest for Agent Foundry.
+# Codex CLI loads this from .agents/skills/<skill>/agents/openai.yaml.
+# Format: https://github.com/openai/codex/tree/main/.agents
+interface:
+  display_name: Agent Foundry
+  description: |
+    A curated runtime orchestrator for AI coding assistants. 30 skills, 2 agents.
+    Plan -> execute -> verify. Local daemon. MIT-licensed.
+  short_description: Skill orchestrator with local daemon
+  prompt_description: |
+    Use Agent Foundry when the user invokes /af or /plan, or when a request
+    needs multi-skill orchestration. The skills/ directory lists disciplines
+    that the model applies to its own work. The agents/ directory lists roles
+    (af-planner, af-critic) the orchestrator can dispatch.
+  dependencies:
+    required_tools:
+      - shell
+      - file_read

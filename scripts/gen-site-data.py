@@ -194,4 +194,14 @@ for sm in sorted((REPO / "skills").rglob("SKILL.md")):
 )
 total_with_deps = sum(1 for v in deps_map.values() if v)
 print(f"skill-deps.js: {total_with_deps}/{len(all_skill_ids)} skills have cross-references")
+
+# 5. adapters-data.js — keep the hand-curated list; just confirm it exists
+adapter_path = WEB / "adapters-data.js"
+if not adapter_path.exists():
+    adapter_path.write_text(
+        "// Auto-regenerated if missing. Edit by hand to update statuses.\n"
+        "const ADAPTERS = [];\n",
+        encoding="utf-8",
+    )
+print("adapters-data.js: preserved (hand-curated; regenerate manually)")
 print("done.")

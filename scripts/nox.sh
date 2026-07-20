@@ -25,11 +25,14 @@ NOX_TERMS=(
 
 # Files allowed to mention these terms (this gate itself only).
 ALLOW_REGEX='^scripts/nox\.sh$'
+# Catalog-content scope. Meta-documentation (e.g. competitive-position.md)
+# intentionally references competitor names and is excluded.
+SCAN_REGEX='^(skills|agents|agent_foundry|web|install\.sh|claude_code_plugin\.json|pyproject\.toml|scripts/|\.claude-plugin/)'
 
 FAILED=0
 for term in "${NOX_TERMS[@]}"; do
-  # -F fixed-string, -i case-insensitive, over tracked files only.
-  HITS="$(git ls-files -z | xargs -0 grep -Fil "$term" 2>/dev/null || true)"
+  # -F fixed-string, -i case-insensitive, over catalog content only.
+  HITS="$(git ls-files -z | xargs -0 grep -Fil "$term" 2>/dev/null | grep -E "$SCAN_REGEX" || true)"
   HITS="$(printf '%s\n' "$HITS" | grep -vE "$ALLOW_REGEX" || true)"
   HITS="$(printf '%s\n' "$HITS" | sed '/^$/d')"
   if [ -n "$HITS" ]; then
