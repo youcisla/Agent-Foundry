@@ -1,0 +1,62 @@
+# Install
+
+Youcisla-Skills v0.1.0 installs as a single skills namespace into any supported harness.
+
+## Quick install (auto-detect)
+
+```bash
+git clone https://github.com/youcisla/Youcisla-Skills.git
+cd Youcisla-Skills
+./scripts/install.sh
+```
+
+The script auto-detects your harness (Claude Code → Codex → Cursor → Hermes → Gemini CLI → OpenCode in that order) and creates the right symlink.
+
+## Explicit harness
+
+```bash
+./scripts/install.sh --harness=claude-code
+./scripts/install.sh --harness=codex
+./scripts/install.sh --harness=hermes
+./scripts/install.sh --harness=gemini-cli
+./scripts/install.sh --harness=opencode
+```
+
+## Manual install (Cursor)
+
+Cursor reads `.cursor/rules/` directly. Copy what you want:
+
+```bash
+cp skills/core/prompt-discipline/SKILL.md .cursor/rules/youcisla-prompt-discipline.mdc
+```
+
+(`.mdc` extension tells Cursor it's a rule file.)
+
+## What gets installed
+
+- `~/.claude/skills/youcisla/` (or harness equivalent) — symlink to this repo's `skills/` dir
+- 5 core skills: `prompt-discipline`, `context-optimization`, `anti-slop`, `plan-before-code`, `session-closeout`
+- 1 optional skill (under `skills/optional/`): `design-language`
+
+The harness picks them up via the standard `description` field trigger mechanism. No force-loading.
+
+## Verify
+
+```bash
+# In your harness
+# Trigger any core skill by name or trigger phrase
+
+# Or run our validator
+./scripts/validate.sh
+```
+
+## Uninstall
+
+```bash
+rm ~/.claude/skills/youcisla     # Claude Code
+rm ~/.codex/skills/youcisla      # Codex
+rm ~/.hermes/skills/youcisla      # Hermes
+# (etc.)
+```
+
+The symlink is removed; the repo stays on disk.

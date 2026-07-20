@@ -1,0 +1,13 @@
+{
+  "name": "youcisla-skills",
+  "owner": {
+    "name": "Youcisla Contributors"
+  },
+  "plugins": [
+    {
+      "name": "youcisla-skills",
+      "source": "./",
+      "description": "Curated agent skills — prompt discipline, context optimization, anti-slop, plan-before-code, session closeout, optional design language."
+    }
+  ]
+}

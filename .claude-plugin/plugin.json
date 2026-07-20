@@ -1,0 +1,16 @@
+{
+  "name": "youcisla-skills",
+  "description": "A curated, maintained set of agent skills distilled from the best of the ecosystem — harness-agnostic, token-efficient, attributed. v0.1.0: 5 core skills (prompt-discipline, context-optimization, anti-slop, plan-before-code, session-closeout) plus optional design-language bundle.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Youcisla Contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "agent",
+    "productivity",
+    "token-efficiency",
+    "discipline"
+  ]
+}
