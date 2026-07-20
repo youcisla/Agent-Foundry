@@ -75,16 +75,17 @@
       const depsHtml = deps.length
         ? `<div class="meta" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-soft);"><span style="color: var(--text-faint); font-size: 11px; margin-right: 6px;">references</span>${deps.map(d => `<a href="catalog.html#${d}" class="dep-chip" onclick="event.stopPropagation()">${d}</a>`).join('')}</div>`
         : '';
-      return `<a href="${repoUrl}/blob/main/${path}" target="_blank" rel="noopener" class="skill-card" style="text-decoration:none; color:inherit; display:block">
+      return `<div class="skill-card" style="text-decoration:none; color:inherit; display:block;cursor:pointer" onclick="showSkillPreview('${item.id}')">
         <h3><span class="name">${item.name}</span><span class="id">${item.id}</span></h3>
         <div class="desc">${item.description}</div>
         <div class="meta">
           <span class="tag ${isAgent ? 'tag-agent' : (item.category === 'core' ? 'tag-core' : 'tag-opt')}">${isAgent ? 'agent' : item.category}</span>
           ${isAgent ? `<span>${item.model}</span>` : `<span>${item.lines} lines</span>`}
           <span>${item.version}</span>
+          <span style="margin-left:auto;color:var(--accent);font-size:11px;font-weight:500">Preview →</span>
         </div>
         ${depsHtml}
-      </a>`;
+      </div>`;
     }
 
     const coreGrid = document.getElementById('core-grid');
@@ -124,6 +125,33 @@
     }));
     searchInput.addEventListener('input', applyFilter);
     applyFilter();
+
+    // Skill preview modal
+    function showSkillPreview(id) {
+      const item = SKILLS.find(s => s.id === id) || AGENTS.find(a => a.id === id);
+      if (!item || !item.body_md) return;
+      const panel = document.createElement('div');
+      panel.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center';
+      panel.onclick = e => { if (e.target === panel) panel.remove(); };
+      const inner = document.createElement('div');
+      inner.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);max-width:680px;max-height:80vh;overflow-y:auto;padding:28px 32px;margin:20px';
+      const close = document.createElement('button');
+      close.textContent = '✕'; close.style.cssText = 'float:right;background:none;border:none;color:var(--text-faint);font-size:20px;cursor:pointer';
+      close.onclick = () => panel.remove();
+      inner.appendChild(close);
+      const h = document.createElement('h2'); h.textContent = item.name; h.style.marginBottom = '8px';
+      inner.appendChild(h);
+      const desc = document.createElement('p'); desc.textContent = item.description; desc.style.color = 'var(--text-dim)'; desc.style.fontSize = '14px'; desc.style.marginBottom = '16px';
+      inner.appendChild(desc);
+      const body = document.createElement('div');
+      body.innerHTML = marked.parse(atob(item.body_md));
+      body.style.cssText = 'font-size:13px;line-height:1.6;color:var(--text-dim)';
+      body.querySelectorAll('pre').forEach(el => { el.style.cssText = 'background:var(--bg-elev);border:1px solid var(--border);border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:11px'; });
+      inner.appendChild(body);
+      panel.appendChild(inner);
+      document.body.appendChild(panel);
+    }
+    window.showSkillPreview = showSkillPreview;
   </script>
 </body>
 </html>
