@@ -30,7 +30,6 @@ description: "Use when [trigger phrase]. [Second sentence clarifying scope]."
 version: 0.1.0
 license: MIT
 author: Agent Foundry Contributors
-provenance: []
 ---
 
 # Skill Name

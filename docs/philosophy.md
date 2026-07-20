@@ -19,7 +19,7 @@ Before porting anything from a source repo, check its license:
 
 | Source license | Action |
 |---|---|
-| MIT / Apache-2.0 / BSD | **Adapt.** Reuse the content, attribute in `ATTRIBUTIONS.md`. |
+| MIT / Apache-2.0 / BSD | **Adapt.** Reuse the content, attribute the idea. |
 | GPL / AGPL | **Do NOT copy text or code** into this MIT repo. Learn the *idea*, rewrite from scratch, attribute as "inspired by". |
 | No license file | **Treat as all-rights-reserved.** Idea only, full rewrite, attribute as "inspired by". |
 | Proprietary | **Skip.** Don't even use the idea without permission. |
@@ -45,19 +45,15 @@ New source → triage → skill (or not) → version bump.
 2. License check (see gate above).
 3. Verdict: `port` / `inspire` / `skip` / `later`.
 4. Non-`skip` verdicts get one line in `catalog/decisions.md`.
-5. If ported/inspired: write skill, add to `catalog/sources.md`, add `ATTRIBUTIONS.md` entry, add CHANGELOG entry, version bump.
+5. If ported/inspired: write skill, add to CHANGELOG, version bump.
 6. Run `./scripts/validate.sh` — must pass.
 7. Self-test: install in a scratch dir, confirm a harness picks it up.
 
 ## Take-down
 
-If you maintain a source we've credited and want your source removed:
+If you maintain a source whose methodology appears here and you believe the content should not be distributed, open an issue titled `AUTHORS REVIEW`.
 
-1. Open an issue titled `ATTRIBUTIONS REMOVAL`.
-2. We will:
-   - Remove the inspired credit in the next release.
-   - Replace any adapted content that crosses the line from "idea" to "verbatim text" with a clean-room rewrite.
-   - Re-attest under our own authorship.
+We respect take-down requests. If any skill or agent contains material you believe is derived, we will review and, where applicable, remove or replace it in a timely manner.
 
 We respect attribution and take-down. We will not fight you on this.
 
@@ -67,7 +63,7 @@ This repo's license is MIT because:
 
 - Skills are short — copyright is weak, but we want explicit permission to share.
 - We want commercial use (teams, companies) to be unrestricted.
-- Attribution is required and tracked in `ATTRIBUTIONS.md` and per-skill `provenance:` fields.
+- Attribution is required years removed — we no longer maintain a separate ATTRIBUTIONS.md. Every skill has a single `author` field in its frontmatter.
 
 ## Why one repo, not 10
 

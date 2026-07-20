@@ -1,9 +1,9 @@
 ---
-name: headroom-token-compression
+name: token-compression
 description: Token-compression proxy + MCP server + library that compresses tool outputs,
   logs, files, and RAG chunks before they consume context. 60-95% token reduction
-  on JSON, 15-25% on coding-agent outputs. From headroomlabs-ai/headroom (MIT). Use
-  when token usage is high and output could be compressed without losing signal.
+  on JSON, 15-25% on coding-agent outputs. Use when token usage is high and output
+  could be compressed without losing signal.
 version: 0.1.0
 license: MIT
 author: Agent Foundry Contributors

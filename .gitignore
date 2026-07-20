@@ -32,3 +32,6 @@ __pycache__/
 .ruff_cache/
 dist/
 build/
+
+# Generated (indexer rebuilds on demand)
+skills/index.json

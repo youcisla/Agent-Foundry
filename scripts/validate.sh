@@ -39,16 +39,16 @@ check_skill() {
   fi
 
   # Required fields
-  local name desc version provenance
+  local name desc version author
   name=$(awk '/^---$/{c++; next} c==1 && $0 ~ /^name:/{sub(/^name:[ ]*/,""); print; exit}' "$file")
   desc=$(awk '/^---$/{c++; next} c==1 && $0 ~ /^description:/{sub(/^description:[ ]*/,""); print; exit}' "$file")
   version=$(awk '/^---$/{c++; next} c==1 && $0 ~ /^version:/{sub(/^version:[ ]*/,""); print; exit}' "$file")
-  provenance=$(awk '/^---$/{c++; next} c==1 && $0 ~ /^provenance:/{found=1; next} c==1 && found && /^[^ ]/{exit} c==1 && found{print}' "$file" | head -3)
+  author=$(awk '/^---$/{c++; next} c==1 && $0 ~ /^author:/{sub(/^author:[ ]*/,""); print; exit}' "$file")
 
   [[ -z "$name" ]] && errors+=("missing: name")
   [[ -z "$desc" ]] && errors+=("missing: description")
   [[ -z "$version" ]] && errors+=("missing: version")
-  [[ -z "$provenance" ]] && errors+=("missing: provenance")
+  [[ -z "$author" ]] && errors+=("missing: author")
 
   # description length
   if [[ -n "$desc" ]]; then

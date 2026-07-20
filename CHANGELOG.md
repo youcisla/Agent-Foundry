@@ -64,15 +64,15 @@ Initial development; superseded by 0.1.0 (Python implementation shipped).
 ---
 
 Adapted (from MIT/Apache-2.0):
-- `prompt-discipline` — adapted from multica-ai/andrej-karpathy-skills (MIT)
-- `plan-before-code` — adapted from obra/superpowers (MIT)
+- `prompt-discipline` — the 4 rules: think before acting, minimum viable change, surgical edits, goal-driven
+- `plan-before-code` — no implementation without an approved spec
 
 Inspired (idea adopted, content rewritten):
-- `context-optimization` — inspired by mksglu/context-mode (MIT) + headroomlabs-ai/headroom (MIT)
-- `anti-slop` — inspired by Leonxlnx/taste-skill (MIT) + JuliusBrussee/caveman (MIT)
-- `session-closeout` — inspired by thedotmack/claude-mem (Apache-2.0), REMvisual/claude-handoff (MIT), and KKKKhazix/khazix-skills/neat-freak (MIT)
-- `plan-then-act` — inspired by Glint-Research/Fable-5-traces (CC-BY-4.0 dataset)
-- `constraint-then-solve` — inspired by SupraLabs/reasoning-corpus-4K-5M-v1 (CC-BY-4.0 dataset)
+- `context-optimization` — keep tool outputs small, sandbox large files, reference not repeat
+- `anti-slop` — kill filler prose, over-commenting, defensive over-engineering, emoji headers, unnecessary abstractions
+- `session-closeout` — reconcile changes, update docs, list loose ends, write handoff note
+- `plan-then-act` — plan first, then act; the plan may change mid-execution
+- `constraint-then-solve` — restate the problem, list constraints, then solve
 
 Original (authored from operational experience):
 - `verify-first` — triangle verification meta-discipline
@@ -86,14 +86,19 @@ Original (authored from operational experience):
 - `quality-protocol` — unified maximum-quality protocol for every non-trivial task
 
 **Optional skill (1 in `skills/optional/`):**
-- `design-language` — inspired by pbakaus/impeccable (MIT) + emilkowalski/skills/apple-design (MIT)
+- `design-language` — restraint, typography, color, spacing, motion
 
 **Total: 17 skills shipped.**
 
-**Optional skills — adapted from Apache-2.0/MIT (3 in `skills/optional/`):**
-- `chrome-devtools-mcp-bridge` — adapted from ChromeDevTools/chrome-devtools-mcp (Apache-2.0)
-- `claude-mem-persistent-memory` — adapted from thedotmack/claude-mem (Apache-2.0)
-- `headroom-token-compression` — adapted from headroomlabs-ai/headroom (MIT)
+**Optional skills (6 in `skills/optional/`):**
+- `chrome-devtools-mcp-bridge`
+- `persistent-memory`
+- `token-compression`
+- `design-language`
+- `funnel-pr-guard`
+- `sql-migration-trio`
+- `persistent-memory` — cross-session context persistence
+- `token-compression` — compress tool outputs, logs, files before they consume context
 
 **Optional skills — original (2 in `skills/optional/`):**
 - `funnel-pr-guard` — generalized from operational PR review discipline

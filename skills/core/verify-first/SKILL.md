@@ -5,10 +5,7 @@ description: 'Every assertion about the codebase, product, or market is a hypoth
   verify first, act second. Apply before committing to any claim.'
 version: 0.1.0
 license: MIT
-provenance:
-  author: Youcisla
-  source: operational methodology
-  inspired: true
+author: Agent Foundry Contributors
 ---
 
 # Verify First

@@ -36,7 +36,7 @@ cp skills/core/prompt-discipline/SKILL.md .cursor/rules/agent-foundry-prompt-dis
 
 - `~/.claude/skills/agent-foundry/` (or harness equivalent) — symlink to this repo's `skills/` dir
 - 24 core skills (in `skills/core/`): `prompt-discipline`, `context-optimization`, `anti-slop`, `plan-before-code`, `plan-then-act`, `constraint-then-solve`, `quality-protocol`, `verify-first`, `re-verify-findings`, `measure-first`, `bottleneck-gating`, `pushback-when-wrong`, `read-before-build`, `show-your-work`, `landscape-first`, `session-closeout`, `api-design`, `cron-troubleshoot`, `e2e-test-strategy`, `feedback-loop`, `workflow-decompose`, `automation-pick`, `session-distill`, `knowledge-extract`
-- 6 optional skills (in `skills/optional/`): `design-language`, `chrome-devtools-mcp-bridge`, `claude-mem-persistent-memory`, `headroom-token-compression`, `funnel-pr-guard`, `sql-migration-trio`
+- 6 optional skills (in `skills/optional/`): `design-language`, `chrome-devtools-mcp-bridge`, `persistent-memory`, `token-compression`, `funnel-pr-guard`, `sql-migration-trio`
 - 5 workflow runbooks (in `workflows/`): `ci-cd-vercel`, `e2e-on-pr`, `release-train`, `skill-update`, `session-to-skill`
 - **Total: 30 skills + 5 workflow runbooks.**
 

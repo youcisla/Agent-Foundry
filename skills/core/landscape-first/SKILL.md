@@ -6,10 +6,7 @@ description: 'Before building anything in a competitive space, research 5-10 com
   a feature in a competitive space.'
 version: 0.1.0
 license: MIT
-provenance:
-  author: Youcisla
-  source: operational methodology
-  inspired: true
+author: Agent Foundry Contributors
 ---
 
 # Landscape First

@@ -77,3 +77,31 @@ def count_executions(db_path: Path) -> int:
     with sqlite3.connect(str(db_path)) as conn:
         cur = conn.execute("SELECT COUNT(*) FROM executions")
         return int(cur.fetchone()[0])
+
+def get_stats(db_path: Path) -> dict:
+    """Return summary stats from the executions table."""
+    init_db(db_path)
+    stats = {
+        "total_executions": 0,
+        "successful": 0,
+        "failed": 0,
+        "fallback_count": 0,
+        "avg_tokens": 0,
+        "avg_duration": 0,
+    }
+    try:
+        with sqlite3.connect(str(db_path)) as conn:
+            row = conn.execute("SELECT COUNT(*) FROM executions").fetchone()
+            stats["total_executions"] = row[0] if row else 0
+            row = conn.execute("SELECT COUNT(*) FROM executions WHERE success = 1").fetchone()
+            stats["successful"] = row[0] if row else 0
+            stats["failed"] = stats["total_executions"] - stats["successful"]
+            row = conn.execute("SELECT COUNT(*) FROM executions WHERE was_fallback = 1").fetchone()
+            stats["fallback_count"] = row[0] if row else 0
+            row = conn.execute("SELECT AVG(tokens_used) FROM executions WHERE success = 1").fetchone()
+            stats["avg_tokens"] = round(row[0]) if row and row[0] else 0
+            row = conn.execute("SELECT AVG(duration_seconds) FROM executions WHERE success = 1").fetchone()
+            stats["avg_duration"] = round(row[0], 2) if row and row[0] else 0
+    except Exception:
+        pass
+    return stats

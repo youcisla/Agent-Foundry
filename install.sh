@@ -16,6 +16,10 @@ echo "  install: $INSTALL_DIR"
 echo "  plugin:  $PLUGIN_DIR"
 echo
 
+# Profile selection: minimal, core (default), full
+AF_PROFILE="${AF_PROFILE:-core}"
+echo "  profile: $AF_PROFILE"
+
 OS="$(uname -s)"
 case "$OS" in
   Linux)  PLATFORM=linux ;;
@@ -63,6 +67,23 @@ fi
 if agent-foundry init --force 2>&1 | tail -1; then :; else
   echo "WARN: agent-foundry init failed; you can retry later." >&2
 fi
+
+# 6) Profile-specific component selection
+case "$AF_PROFILE" in
+  full)
+    # Make hooks executable
+    if [ -d "hooks" ]; then
+      chmod +x hooks/*.sh 2>/dev/null || true
+    fi
+    ;;
+  minimal)
+    # Remove daemon support (skills only)
+    echo "  (minimal: daemon not installed; use agent-foundry commands directly)"
+    ;;
+  core|*)
+    # Everything installed (default)
+    ;;
+esac
 
 echo
 echo "Installed."

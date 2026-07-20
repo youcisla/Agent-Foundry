@@ -310,7 +310,95 @@ def cmd_run(ctx, prompt, model, budget, force, judge):
                    err=True)
 
 
+@cli.command("doctor")
+@click.pass_context
+def cmd_doctor(ctx):
+    """Health-check: config, index, daemon, API key."""
+    cfg = ctx.obj.get("cfg") if ctx.obj else None
+    if cfg is None:
+        import agent_foundry.config as _cfg
+        cfg = _cfg.Config.load()
+    ok = True
+    click.echo("=== Agent Foundry Doctor ===")
+    if cfg.config_path.exists():
+        click.echo(f"[PASS] Config: {cfg.config_path}")
+    else:
+        click.echo(f"[FAIL] Config not found: {cfg.config_path}")
+        ok = False
+    idx_path = cfg.core.index_path
+    if os.path.exists(str(idx_path)):
+        click.echo(f"[PASS] Index: {idx_path}")
+    else:
+        click.echo(f"[WARN] Index not found: {idx_path} (run init)")
+    import httpx
+    try:
+        r = httpx.get(f"http://127.0.0.1:{cfg.core.daemon_port}/health", timeout=2)
+        click.echo(f"[PASS] Daemon reachable at port {cfg.core.daemon_port}")
+    except Exception:
+        click.echo(f"[WARN] Daemon not reachable (lazy-start on next command)")
+    import os as _os
+    ak = _os.environ.get("ANTHROPIC_API_KEY", _os.environ.get("OPENAI_API_KEY", ""))
+    if ak:
+        click.echo(f"[PASS] API key set ({ak[:8]}...)")
+    else:
+        click.echo(f"[FAIL] No API key set (ANTHROPIC_API_KEY or OPENAI_API_KEY)")
+        ok = False
+    if ok:
+        click.echo("\nResult: All checks passed.")
+    else:
+        click.echo("\nResult: Some checks failed — see above.")
+
+@cli.command("status")
+@click.option("--markdown", is_flag=True, help="Output in portable markdown")
+@click.pass_context
+def cmd_status(ctx, markdown):
+    """Show orchestrator status: routing accuracy, fallback rate."""
+    from .logging_db import get_stats
+    cfg = ctx.obj.get("cfg") if ctx.obj else None
+    if cfg is None:
+        import agent_foundry.config as _cfg
+        cfg = _cfg.Config.load()
+    db_path = cfg.log_path
+    stats = get_stats(db_path)
+    if markdown:
+        click.echo("## Agent Foundry Status\n")
+        click.echo(f"| Metric | Value |\n|--------|-------|")
+        for k, v in stats.items():
+            click.echo(f"| {k} | {v} |")
+    else:
+        click.echo("=== Agent Foundry Status ===")
+        for k, v in stats.items():
+            click.echo(f"  {k}: {v}")
+
+@cli.command("consult")
+@click.argument("need")
+@click.pass_context
+def cmd_consult(ctx, need):
+    """Recommend components to install or enable for a need."""
+    from agent_foundry.planner import plan
+    from agent_foundry.config import Config
+    from agent_foundry.indexer import read_index
+    from agent_foundry.models import PlanRequest
+    from pathlib import Path
+
+    cfg = ctx.obj.get("cfg") if ctx.obj else None
+    if cfg is None:
+        cfg = Config.load()
+    idx = read_index(Path(cfg.core.index_path).expanduser())
+    if not idx:
+        click.echo("No index found. Run 'init' first.", err=True)
+        return
+    req = PlanRequest(prompt=need)
+    resp = plan(req, idx, cfg.planner)
+    click.echo(f"Components recommended for: {need}\n")
+    for r in resp.results[:5]:
+        click.echo(f"  {r.skill_id}  (score {r.score})")
+        click.echo(f"    {r.description[:100]}")
+    click.echo(f"\nTo install: agent-foundry install {r.skill_id} (TODO)")
+
+
 @cli.command("serve")
+
 @click.option("--port", type=int, default=None, help="Override daemon port")
 @click.option("--host", default="127.0.0.1", help="Bind host")
 @click.option("--detach", is_flag=True, help="Detach mode (used by lazy-start)")
