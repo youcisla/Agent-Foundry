@@ -4,7 +4,7 @@
 
 Initial release.
 
-**Core skills (16):**
+**Core skills (16 in `skills/core/`):**
 
 Adapted (from MIT/Apache-2.0):
 - `prompt-discipline` — adapted from multica-ai/andrej-karpathy-skills (MIT)
@@ -28,8 +28,10 @@ Original (authored from operational experience):
 - `landscape-first` — research 5-10 competitors before building
 - `quality-protocol` — unified maximum-quality protocol for every non-trivial task
 
-**Optional skill:**
+**Optional skill (1 in `skills/optional/`):**
 - `design-language` — inspired by pbakaus/impeccable (MIT) + emilkowalski/skills/apple-design (MIT)
+
+**Total: 17 skills shipped.**
 
 **Hook:**
 - `session-closeout.sh` — Bash hook that prompts the closeout skill at session end

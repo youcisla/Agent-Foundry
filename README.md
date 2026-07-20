@@ -12,7 +12,7 @@ The community has 2,000+ skills and 50+ MCPs across dozens of repos. Installing 
 
 ## What's in v0.1.0
 
-Sixteen **core** skills (always-on for every project):
+16 **core** skills (always-on for every project, in `skills/core/`):
 - `prompt-discipline` — think before acting, minimum viable change, surgical edits
 - `context-optimization` — small outputs, sandbox large files, reference not repeat
 - `anti-slop` — kill generic AI patterns before they ship
@@ -30,8 +30,10 @@ Sixteen **core** skills (always-on for every project):
 - `landscape-first` — research 5-10 competitors before building
 - `session-closeout` — reconcile, document, hand off cleanly
 
-One **optional** skill bundle:
-- `design-language` (under `skills/optional/`) — Apple-grade UI polish
+1 **optional** skill bundle (in `skills/optional/`):
+- `design-language` — Apple-grade UI polish
+
+**Total: 17 skills.**
 
 One hook (`session-closeout.sh`) that prompts the closeout at end of session.
 
