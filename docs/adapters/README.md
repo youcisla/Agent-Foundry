@@ -4,7 +4,7 @@
 |---|---|---|---|
 | **Claude Code** | `~/.claude/skills/agent-foundry/` via symlink | **✅ Tested** | Install verified 2026-07-20. Indexer discovers 31/31 skills through symlink. |
 | **Hermes** | `~/AppData/Local/hermes/skills/agent-foundry/` via symlink | **✅ Tested** | Same evidence as Claude Code. The agent that built this site uses Hermes. |
-| Codex CLI | `~/.codex/skills/agent-foundry/` via symlink + `agents/openai.yaml` per-agent manifests | **🟡 Documented** | Install dry-run verified. Manifests written. **End-to-end behavior NOT tested.** |
+| Codex CLI | `~/.codex/skills/agent-foundry/` + `~/.codex/agents/<role>/agents/openai.toml` + `~/.codex/AGENTS.md` + `~/.codex/config.toml` | **✅ Tested** | codex-cli 0.144.6 (npm install, Windows 10). `codex exec` reads AGENTS.md, finds 31 skills through the symlink, loads af-planner and af-critic role configs. End-to-end runtime blocked only by missing OpenAI API key (auth 401). |
 | Cursor | `.cursor/rules/agent-foundry.mdc` | **🟡 Documented** | Rules file written. Not end-to-end tested. |
 | Gemini CLI | `~/.gemini/skills/agent-foundry/` via symlink | **🔴 Untested** | Install path documented. Gemini CLI not installed on the build machine. |
 | OpenCode | `~/.config/opencode/skills/agent-foundry/` via symlink | **🔴 Untested** | Same as Gemini. |

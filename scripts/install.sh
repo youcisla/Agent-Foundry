@@ -48,13 +48,32 @@ install_for_harness() {
       fi
       ;;
     codex)
-      local dst="$HOME/.codex/skills/agent-foundry"
-      if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
-      else mkdir -p "$(dirname "$dst")"
-           ln -sfn "$REPO_ROOT/skills" "$dst"
-           echo "Installed: $dst -> $REPO_ROOT/skills"
-      fi
-      ;;
+          local skills_dst="$HOME/.codex/skills/agent-foundry"
+          local codex_dst="$HOME/.codex"
+          if $DRY_RUN; then
+            echo "Would symlink: $REPO_ROOT/skills -> $skills_dst"
+            echo "Would symlink: $REPO_ROOT/.codex -> $codex_dst/agent-foundry-config"
+          else
+            mkdir -p "$(dirname "$skills_dst")"
+            ln -sfn "$REPO_ROOT/skills" "$skills_dst"
+            echo "Installed: $skills_dst -> $REPO_ROOT/skills"
+
+            # Codex auto-loads AGENTS.md from the project root and config.toml
+            # from ~/.codex/. Symlink the whole .codex/ directory so Codex picks
+            # up AGENTS.md, config.toml, and per-agent configs at once.
+            mkdir -p "$codex_dst"
+            # Don't overwrite an existing ~/.codex — place Agent Foundry at a
+            # sibling location and instruct the user to merge.
+            if [ ! -e "$codex_dst/agent-foundry-config" ]; then
+              ln -sfn "$REPO_ROOT/.codex" "$codex_dst/agent-foundry-config"
+              echo "Installed: $codex_dst/agent-foundry-config -> $REPO_ROOT/.codex"
+              echo ""
+              echo "To activate, copy or merge into ~/.codex/:"
+              echo "  cp -n $codex_dst/agent-foundry-config/AGENTS.md $codex_dst/AGENTS.md"
+              echo "  cp -n $codex_dst/agent-foundry-config/config.toml $codex_dst/config.toml"
+            fi
+          fi
+          ;;
     cursor)
       echo "Cursor: copy skills/core/ and skills/optional/ contents into .cursor/rules/ as you see fit."
       echo "  Source: $REPO_ROOT/skills/core"

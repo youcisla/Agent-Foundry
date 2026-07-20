@@ -181,4 +181,4 @@ That's the position. Hold it.
 - ECC: https://github.com/affaan-m/ECC — 232k stars, 35.3k forks, 2,265 commits
 - Ruflo: https://github.com/ruvnet/ruflo — 65.3k stars, 7.8k forks, 7,218 commits, 1,583 releases
 - Agent Foundry: https://github.com/youcisla/Agent-Foundry — 30 skills, 2 agents, 287-node graph
-- Web: https://agent-foundry.vercel.app
+- Web: https://youcisla-agents.vercel.app

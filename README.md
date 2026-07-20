@@ -16,11 +16,11 @@ all MIT, all your data stays local.
 [![Agents](https://img.shields.io/badge/agents-2-4ade80.svg)](#catalog)
 [![Gates](https://img.shields.io/badge/quality%20gates-3%20green-4ade80.svg)](#quality-gates)
 [![External refs](https://img.shields.io/badge/external%20refs-0-4ade80.svg)](https://github.com/youcisla/Agent-Foundry/blob/main/scripts/nox.sh)
-[![Web](https://img.shields.io/badge/web-agent--foundry.vercel.app-f5a623.svg)](https://agent-foundry.vercel.app)
+[![Web](https://img.shields.io/badge/web-youcisla-agents.vercel.app-f5a623.svg)](https://youcisla-agents.vercel.app)
 
 <br>
 
-[**Quick start**](#quick-start) · [**Catalog**](#catalog) · [**Architecture**](#architecture) · [**Commands**](#commands) · [**Web app**](https://agent-foundry.vercel.app)
+[**Quick start**](#quick-start) · [**Catalog**](#catalog) · [**Architecture**](#architecture) · [**Commands**](#commands) · [**Web app**](https://youcisla-agents.vercel.app)
 
 </div>
 
@@ -74,7 +74,7 @@ agent-foundry doctor
 
 ### 3. Or browse first
 
-→ **[agent-foundry.vercel.app](https://agent-foundry.vercel.app)** has the
+→ **[youcisla-agents.vercel.app](https://youcisla-agents.vercel.app)** has the
 full catalog, an interactive knowledge graph, and one-click install.
 
 ---
@@ -311,13 +311,13 @@ vendor names (Claude, GitHub Copilot, etc.) so that the catalog stays original w
 ## Web app
 
 Browse the catalog, the knowledge graph, and the audit at
-**[agent-foundry.vercel.app](https://agent-foundry.vercel.app)**:
+**[youcisla-agents.vercel.app](https://youcisla-agents.vercel.app)**:
 
 | Page | What |
 |---|---|
-| [Catalog](https://agent-foundry.vercel.app/catalog) | All 30 skills + 2 agents with live search |
-| [Graph](https://agent-foundry.vercel.app/graph) | Interactive knowledge graph (287 nodes, 467 edges) |
-| [Audit](https://agent-foundry.vercel.app/audit) | God nodes, surprising connections, Mermaid diagrams |
+| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 30 skills + 2 agents with live search |
+| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive knowledge graph (287 nodes, 467 edges) |
+| [Audit](https://youcisla-agents.vercel.app/audit) | God nodes, surprising connections, Mermaid diagrams |
 
 The site regenerates from live repo state on every commit via
 `scripts/gen-site-data.py` → Vercel build → deploy.

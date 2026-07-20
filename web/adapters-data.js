@@ -20,8 +20,8 @@ const ADAPTERS = [
     id: "codex",
     name: "Codex CLI",
     path: "~/.codex/skills/agent-foundry",
-    status: "documented",
-    note: "agents/openai.yaml manifests written. End-to-end behavior NOT tested."
+    status: "tested",
+    note: "codex-cli 0.144.6, npm install. AGENTS.md + 31 skills + 2 agent roles all load. Auth-blocked (no API key)."
   },
   {
     id: "cursor",

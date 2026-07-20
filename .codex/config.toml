@@ -1,0 +1,57 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Agent Foundry — Codex Reference Configuration
+#
+# Copy this file to ~/.codex/config.toml for global defaults, or keep it in
+# the project root as .codex/config.toml for project-local settings.
+#
+# After running `bash scripts/install.sh --harness=codex`, this file is
+# symlinked to ~/.codex/skills/agent-foundry/.codex/config.toml and Codex
+# auto-reads it.
+#
+# Official docs:
+# - https://developers.openai.com/codex/config-reference
+# - https://developers.openai.com/codex/multi-agent
+
+# Top-level runtime settings
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+# Persistent instructions appended to every prompt (additive).
+persistent_instructions = "Follow the Agent Foundry AGENTS.md guidance. Use the orchestrator when available (curl http://127.0.0.1:8765/health to check) for plan-then-execute workflows."
+
+# MCP servers — Agent Foundry does not require MCP, but exposing the
+# daemon as MCP lets Codex route skill execution through it.
+[mcp_servers.agent-foundry]
+command = "agent-foundry"
+args = ["serve", "--port", "8765"]
+startup_timeout_sec = 10
+
+# Multi-agent roles — Agent Foundry ships two native agents
+[features]
+multi_agent = true
+
+# Profiles — switch with `codex -p <name>`
+[profiles.strict]
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+web_search = "cached"
+
+[profiles.yolo]
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+# Multi-agent role definitions
+[agents]
+max_threads = 4
+max_depth = 1
+
+[agents.af-planner]
+description = "Decomposes a request into an ordered plan naming skills and agents."
+config_file = "agents/af-planner/agents/openai.toml"
+
+[agents.af-critic]
+description = "Scores a completed output on correctness, slop, and scope."
+config_file = "agents/af-critic/agents/openai.toml"
