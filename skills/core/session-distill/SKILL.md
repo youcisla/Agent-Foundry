@@ -5,9 +5,7 @@ description: At session end, auto-summarize what was learned into a structured a
   up a work session — by hand or triggered by a hook.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Session Distill

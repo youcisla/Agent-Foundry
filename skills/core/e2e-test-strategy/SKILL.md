@@ -5,9 +5,7 @@ description: 'Plan an end-to-end test pyramid: which flows to E2E, which to inte
   execution. Use when designing test coverage for a web app or API.'
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # E2E Test Strategy

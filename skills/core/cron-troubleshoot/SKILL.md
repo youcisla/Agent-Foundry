@@ -5,9 +5,7 @@ description: 'Debug a cron job that failed or didn''t run: timezone, drift, over
   producing wrong results.'
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Cron Troubleshoot

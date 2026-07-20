@@ -6,8 +6,6 @@ description: Before solving, restate the problem, list unknowns, and catalog eve
   to a solution.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
 author: Agent Foundry Contributors
 ---
 

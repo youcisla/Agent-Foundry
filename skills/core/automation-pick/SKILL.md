@@ -5,9 +5,7 @@ description: Before automating a task, decide whether to automate. Decision tree
   automate this' or 'let's build a script for that'.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Automation Pick

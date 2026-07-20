@@ -7,9 +7,7 @@ description: After any complex task (audit, plan, redesign, multi-agent executio
   a result.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Show Your Work

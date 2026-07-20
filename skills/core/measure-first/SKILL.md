@@ -6,9 +6,7 @@ description: Before planning any change, query live data (DB, API, analytics, lo
   about to optimize, refactor, or claim a system is slow.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Measure First

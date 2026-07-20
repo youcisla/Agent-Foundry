@@ -4,8 +4,6 @@ description: 'Before ending a session: reconcile changed files, update docs and 
   list loose ends, write a handoff note. Apply at the end of any multi-step project.'
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
 author: Agent Foundry Contributors
 ---
 

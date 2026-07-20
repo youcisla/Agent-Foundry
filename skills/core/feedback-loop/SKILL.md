@@ -5,9 +5,7 @@ description: 'After shipping, set up the loop: instrument → measure → review
   on data.'
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Feedback Loop

@@ -6,9 +6,7 @@ description: 'Every SQL migration = three files: up (forward DDL), down (reverse
   migration.'
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # SQL Migration Trio

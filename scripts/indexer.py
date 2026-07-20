@@ -231,7 +231,7 @@ def build_manifest(skill_md_path):
         "estimated_token_cost": estimate_cost(name, description),
         "estimated_time_seconds": estimate_time(name),
         "dependencies": [],
-        "provenance": fm.get("provenance", {}),
+        "author": fm.get("author", "Agent Foundry Contributors"),
     }
     return manifest
 

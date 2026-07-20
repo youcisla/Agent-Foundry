@@ -5,8 +5,6 @@ description: Plan first, then act. State the plan in one sentence BEFORE any too
   non-trivial task. Use when a task has multiple steps and the order matters.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
 author: Agent Foundry Contributors
 ---
 

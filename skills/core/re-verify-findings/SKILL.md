@@ -6,9 +6,7 @@ description: Before executing any audit finding, claimed bug, or reported issue,
   you see them. Use after any prior verification claimed a finding.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Re-Verify Findings

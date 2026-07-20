@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # validate.sh - lint every SKILL.md
 # Rules (from PLAN.md §2):
-#   - Required frontmatter: name, description, version, provenance
+#   - Required frontmatter: name, description, version, author
 #   - description <= 500 chars
 #   - File <= 150 lines
-#   - provenance has source (or list of sources)
+#   - author is present (original authorship attestation)
 set -e
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"

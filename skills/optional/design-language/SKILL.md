@@ -5,8 +5,6 @@ description: Apply Apple-grade UI polish principles — restraint, coherence, in
   UI, design systems, components, or marketing surfaces.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
 author: Agent Foundry Contributors
 ---
 

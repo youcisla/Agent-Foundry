@@ -6,9 +6,7 @@ description: Phase plans by measured bottleneck, not by requested order. Each ph
   haven't been ordered by measurement.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Bottleneck Gating

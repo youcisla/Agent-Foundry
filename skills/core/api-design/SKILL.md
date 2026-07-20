@@ -5,8 +5,6 @@ description: 'Design REST or GraphQL APIs: resource modeling, URL conventions, e
   creating a new API endpoint or reviewing API consistency.'
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
 author: Agent Foundry Contributors
 ---
 

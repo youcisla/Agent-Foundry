@@ -6,9 +6,7 @@ description: Every PR that touches the front door must state which funnel step i
   a change that touches landing, auth, or pricing pages.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Funnel PR Guard

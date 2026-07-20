@@ -5,8 +5,6 @@ description: Keep tool outputs small, sandbox large files, reference not repeat.
   that touches files > 50 KB or runs longer than a few minutes.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
 author: Agent Foundry Contributors
 ---
 

@@ -6,8 +6,6 @@ description: The unified maximum-quality protocol — restate → catalog constr
   Reasoning Corpus, UltraX, OpenThoughts). Use before declaring a task complete.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
 author: Agent Foundry Contributors
 ---
 

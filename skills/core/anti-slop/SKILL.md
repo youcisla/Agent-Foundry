@@ -6,8 +6,6 @@ description: Kill generic AI patterns before they ship — filler prose, over-co
   text, code comments, READMEs, or any output a human will read.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
 author: Agent Foundry Contributors
 ---
 

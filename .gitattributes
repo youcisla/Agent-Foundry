@@ -1,0 +1,13 @@
+# Enforce LF for all text so shell scripts run on macOS/Linux (curl | bash).
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.csv text eol=lf
+# Binary assets untouched
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary

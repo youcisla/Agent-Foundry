@@ -5,9 +5,7 @@ description: Read a session, conversation, or document and identify reusable pat
   you want to formalize.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Knowledge Extract
@@ -65,12 +63,10 @@ create the full SKILL.md draft. Template:
 ```markdown
 ---
 name: <verb-or-short-name>
-description: "<trigger phrase>. Use when <specific situation>. Inspired by <source>."
+description: "<trigger phrase>. Use when <specific situation>."
 version: 0.1.0
 license: MIT
-provenance:
-  source: <where the pattern came from>
-  inspired: true
+author: Agent Foundry Contributors
 ---
 
 # <Name>

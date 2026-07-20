@@ -166,12 +166,6 @@ Current: **32 passed, 0 failed** | **30 skills, 0 failed** | **0 external refere
 
 MIT. All skills, agents, and authored artifacts are original work by the Agent Foundry Contributors.
 
-## Related
-
-- [ECC](https://github.com/affaan-m/ECC) — The agent harness optimization system that inspired this project's approach to skill curation and selective install
-- [AGENTS.md](https://agents.md/) — The open cross-harness context-file convention
-- [wshobson/agents](https://github.com/wshobson/agents) — Reference marketplace for multi-harness agent deployment
-
 ## Status
 
-Public v0.1 — active development. [docs/launch-plan.md](docs/launch-plan.md) for the original spec, [docs/improvement-plan.md](docs/improvement-plan.md) for the roadmap.
+Public v0.2 — active development. See [docs/launch-plan.md](docs/launch-plan.md) for the design spec.

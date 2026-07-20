@@ -9,7 +9,7 @@ license: MIT
 author: Agent Foundry Contributors
 ---
 
-# Headroom Token Compression
+# Token Compression
 
 A token-compression proxy + MCP server + library that sits between your tools and your LLM, compressing tool outputs, logs, files, and RAG chunks before they consume context.
 

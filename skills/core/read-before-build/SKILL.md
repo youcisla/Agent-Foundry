@@ -5,9 +5,7 @@ description: A plan or design document is an aspiration, not a specification. Be
   file, or component.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # examine Before Build

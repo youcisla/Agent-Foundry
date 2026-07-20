@@ -5,9 +5,7 @@ description: 'Decompose any workflow into a DAG: trigger → conditions → acti
   or hand-rolled scripts. Use when designing or debugging an automation.'
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Workflow Decompose

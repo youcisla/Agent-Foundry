@@ -90,10 +90,7 @@ name: $NAME
 description: "<!-- TODO: trigger phrase here -->. Use when <!-- specific situation -->."
 version: 0.1.0
 license: MIT
-provenance:
-  author: Youcisla
-  source: $SOURCE
-  inspired: true
+author: Agent Foundry Contributors
 ---
 
 # $NAME

@@ -6,9 +6,7 @@ description: When the brief contradicts verified reality, push back with evidenc
   Use when reviewing an assertion that smells off, or an action you suspect is wrong.
 version: 0.1.0
 license: MIT
-provenance:
-  inspired: true
-author: Youcisla
+author: Agent Foundry Contributors
 ---
 
 # Pushback When Wrong

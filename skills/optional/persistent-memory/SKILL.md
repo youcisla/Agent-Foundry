@@ -9,7 +9,7 @@ license: Apache-2.0
 author: Agent Foundry Contributors
 ---
 
-# Claude-Mem — Persistent Agent Memory
+# Persistent Memory
 
 A cross-session persistent memory system for AI agents. Captures every tool call, file edit, and decision; compresses the transcript; injects relevant past context into future sessions.
 

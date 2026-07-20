@@ -37,8 +37,8 @@ cp skills/core/prompt-discipline/SKILL.md .cursor/rules/agent-foundry-prompt-dis
 - `~/.claude/skills/agent-foundry/` (or harness equivalent) — symlink to this repo's `skills/` dir
 - 24 core skills (in `skills/core/`): `prompt-discipline`, `context-optimization`, `anti-slop`, `plan-before-code`, `plan-then-act`, `constraint-then-solve`, `quality-protocol`, `verify-first`, `re-verify-findings`, `measure-first`, `bottleneck-gating`, `pushback-when-wrong`, `read-before-build`, `show-your-work`, `landscape-first`, `session-closeout`, `api-design`, `cron-troubleshoot`, `e2e-test-strategy`, `feedback-loop`, `workflow-decompose`, `automation-pick`, `session-distill`, `knowledge-extract`
 - 6 optional skills (in `skills/optional/`): `design-language`, `chrome-devtools-mcp-bridge`, `persistent-memory`, `token-compression`, `funnel-pr-guard`, `sql-migration-trio`
-- 5 workflow runbooks (in `workflows/`): `ci-cd-vercel`, `e2e-on-pr`, `release-train`, `skill-update`, `session-to-skill`
-- **Total: 30 skills + 5 workflow runbooks.**
+- 4 workflow runbooks (in `workflows/`): `ci-cd-vercel`, `e2e-on-pr`, `release-train`, `session-to-skill`
+- **Total: 30 skills + 4 workflow runbooks.**
 
 The harness picks them up via the standard `description` field trigger mechanism. No force-loading.
 
@@ -48,8 +48,8 @@ The harness picks them up via the standard `description` field trigger mechanism
 # In your harness
 # Trigger any core skill by name or trigger phrase
 
-# Or run our validator
-./scripts/validate.sh
+# Or run our quality gate
+python3 scripts/foundry-eval.py
 ```
 
 ## Uninstall
