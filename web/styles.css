@@ -144,6 +144,25 @@ footer .links { display: flex; justify-content: center; gap: 24px; margin-top: 1
   .audit-grid { grid-template-columns: 1fr; }
 }
 
+/* Dependency chips in catalog cards */
+.dep-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  margin-right: 4px;
+  background: var(--bg-elev);
+  color: var(--accent);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: background var(--transition), border-color var(--transition);
+}
+.dep-chip:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
 /* Mermaid diagrams */
 .mermaid {
   background: var(--surface);

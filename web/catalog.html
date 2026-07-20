@@ -55,6 +55,7 @@
   </footer>
 
   <script src="site-data.js"></script>
+  <script src="skill-deps.js"></script>
   <script>
     document.getElementById('cat-total').textContent = SKILL_COUNT;
     document.getElementById('cat-agents').textContent = AGENT_COUNT;
@@ -69,6 +70,10 @@
       const path = isAgent
         ? `agents/${item.id}/AGENT.md`
         : (item.category === 'core' ? `skills/core/${item.id}/SKILL.md` : `skills/optional/${item.id}/SKILL.md`);
+      const deps = isAgent ? [] : (SKILL_DEPS[item.id] || []);
+      const depsHtml = deps.length
+        ? `<div class="meta" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-soft);"><span style="color: var(--text-faint); font-size: 11px; margin-right: 6px;">references</span>${deps.map(d => `<a href="catalog.html#${d}" class="dep-chip" onclick="event.stopPropagation()">${d}</a>`).join('')}</div>`
+        : '';
       return `<a href="${repoUrl}/blob/main/${path}" target="_blank" rel="noopener" class="skill-card" style="text-decoration:none; color:inherit; display:block">
         <h3><span class="name">${item.name}</span><span class="id">${item.id}</span></h3>
         <div class="desc">${item.description}</div>
@@ -77,6 +82,7 @@
           ${isAgent ? `<span>${item.model}</span>` : `<span>${item.lines} lines</span>`}
           <span>${item.version}</span>
         </div>
+        ${depsHtml}
       </a>`;
     }
 
