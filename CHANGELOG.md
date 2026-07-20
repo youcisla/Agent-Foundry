@@ -4,12 +4,29 @@
 
 Initial release.
 
-**Core skills (5):**
+**Core skills (16):**
+
+Adapted (from MIT/Apache-2.0):
 - `prompt-discipline` — adapted from multica-ai/andrej-karpathy-skills (MIT)
+- `plan-before-code` — adapted from obra/superpowers (MIT)
+
+Inspired (idea adopted, content rewritten):
 - `context-optimization` — inspired by mksglu/context-mode (MIT) + headroomlabs-ai/headroom (MIT)
 - `anti-slop` — inspired by Leonxlnx/taste-skill (MIT) + JuliusBrussee/caveman (MIT)
-- `plan-before-code` — adapted from obra/superpowers (MIT)
 - `session-closeout` — inspired by thedotmack/claude-mem (Apache-2.0), REMvisual/claude-handoff (MIT), and KKKKhazix/khazix-skills/neat-freak (MIT)
+- `plan-then-act` — inspired by Glint-Research/Fable-5-traces (CC-BY-4.0 dataset)
+- `constraint-then-solve` — inspired by SupraLabs/reasoning-corpus-4K-5M-v1 (CC-BY-4.0 dataset)
+
+Original (authored from operational experience):
+- `verify-first` — triangle verification meta-discipline
+- `re-verify-findings` — re-verify audits / bug claims before executing
+- `measure-first` — query live data before planning
+- `bottleneck-gating` — phase by measured bottleneck, not requested order
+- `pushback-when-wrong` — surface discrepancies with evidence
+- `read-before-build` — read source before trusting plan claims
+- `show-your-work` — output a thinking-trace after complex work
+- `landscape-first` — research 5-10 competitors before building
+- `quality-protocol` — unified maximum-quality protocol for every non-trivial task
 
 **Optional skill:**
 - `design-language` — inspired by pbakaus/impeccable (MIT) + emilkowalski/skills/apple-design (MIT)

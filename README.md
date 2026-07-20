@@ -12,11 +12,22 @@ The community has 2,000+ skills and 50+ MCPs across dozens of repos. Installing 
 
 ## What's in v0.1.0
 
-Five **core** skills (always-on for every project):
+Sixteen **core** skills (always-on for every project):
 - `prompt-discipline` — think before acting, minimum viable change, surgical edits
 - `context-optimization` — small outputs, sandbox large files, reference not repeat
 - `anti-slop` — kill generic AI patterns before they ship
 - `plan-before-code` — spec → approval → code; no implementation without a plan
+- `plan-then-act` — plan in one sentence before every tool call; write-then-verify; batch independent calls
+- `constraint-then-solve` — restate → list unknowns → catalog constraints → solve → self-verify
+- `quality-protocol` — unified maximum-quality protocol for every non-trivial task
+- `verify-first` — triangle verification meta-discipline; every claim is a hypothesis
+- `re-verify-findings` — re-verify audits / bug claims before executing
+- `measure-first` — query live data before planning
+- `bottleneck-gating` — phase by measured bottleneck, not requested order
+- `pushback-when-wrong` — surface discrepancies with evidence
+- `read-before-build` — read source before trusting plan claims
+- `show-your-work` — output a thinking-trace after complex work
+- `landscape-first` — research 5-10 competitors before building
 - `session-closeout` — reconcile, document, hand off cleanly
 
 One **optional** skill bundle:
