@@ -28,20 +28,20 @@ const ADAPTERS = [
     name: "Cursor",
     path: ".cursor/rules/agent-foundry.mdc",
     status: "documented",
-    note: "Rules file written. Cursor harness behavior NOT tested."
+    note: "Hooks + 2 rules installed via --harness=cursor. No Cursor binary to test."
   },
   {
     id: "gemini-cli",
     name: "Gemini CLI",
     path: "~/.gemini/skills/agent-foundry",
     status: "untested",
-    note: "Install path documented. Gemini CLI not installed on the build machine."
+    note: "Config AGENTS.md shipped. Gemini CLI has no plugin system."
   },
   {
     id: "opencode",
     name: "OpenCode",
     path: "~/.config/opencode/skills/agent-foundry",
-    status: "untested",
-    note: "Same as Gemini. No build-machine install to verify against."
+    status: "documented",
+    note: "Skills + opensechat.json + agents shipped. Config merge via jq."
   },
 ];

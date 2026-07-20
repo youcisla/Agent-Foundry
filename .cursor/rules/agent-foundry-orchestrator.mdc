@@ -1,0 +1,16 @@
+---
+description: Use when working with Agent Foundry's orchestration daemon
+---
+
+# Agent Foundry Orchestrator
+
+Plan -> execute -> verify with the local daemon on port 8765.
+
+- `agent-foundry plan "<prompt>"` — rank skills
+- `agent-foundry run "<prompt>"` — plan + execute top match
+- `agent-foundry doctor` — health check
+- `agent-foundry status` — routing accuracy, cost
+
+Always check `agent-foundry doctor` before assuming the daemon is running.
+The daemon is lazy-started; first command may take ~1s to boot.
+Data stays in `~/.config/agent-foundry/executions.db`.

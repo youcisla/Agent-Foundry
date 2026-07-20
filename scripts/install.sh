@@ -75,9 +75,16 @@ install_for_harness() {
           fi
           ;;
     cursor)
-      echo "Cursor: copy skills/core/ and skills/optional/ contents into .cursor/rules/ as you see fit."
-      echo "  Source: $REPO_ROOT/skills/core"
-      echo "  Source: $REPO_ROOT/skills/optional"
+      local cursor_dst="$HOME/.cursor/rules"
+      if $DRY_RUN; then
+        echo "Would copy: $REPO_ROOT/.cursor/rules/*.mdc -> $cursor_dst"
+        echo "Would copy: $REPO_ROOT/.cursor/hooks.json -> $HOME/.cursor/hooks.json"
+      else
+        mkdir -p "$cursor_dst"
+        cp "$REPO_ROOT/.cursor/rules/"*.mdc "$cursor_dst/" 2>/dev/null && echo "Installed: $cursor_dst/ (rules)"
+        cp "$REPO_ROOT/.cursor/hooks.json" "$HOME/.cursor/hooks.json" 2>/dev/null && echo "Installed: $HOME/.cursor/hooks.json"
+        echo "Cursor: restart to pick up rules + hooks."
+      fi
       ;;
     hermes)
       local dst="$HOME/AppData/Local/hermes/skills/agent-foundry"
@@ -88,19 +95,29 @@ install_for_harness() {
       fi
       ;;
     gemini-cli)
-      local dst="$HOME/.gemini/skills/agent-foundry"
-      if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
-      else mkdir -p "$(dirname "$dst")"
-           ln -sfn "$REPO_ROOT/skills" "$dst"
-           echo "Installed: $dst -> $REPO_ROOT/skills"
+      local d="$HOME/.gemini"
+      if $DRY_RUN; then
+        echo "Would symlink: $REPO_ROOT/.gemini -> $d/agent-foundry-config"
+      else
+        mkdir -p "$d"
+        [ ! -e "$d/agent-foundry-config" ] && ln -sfn "$REPO_ROOT/.gemini" "$d/agent-foundry-config"
+        echo "Installed: $d/agent-foundry-config -> $REPO_ROOT/.gemini"
+        echo "Gemini CLI has no plugin system. Reference: $d/agent-foundry-config/AGENTS.md"
       fi
       ;;
     opencode)
-      local dst="$HOME/.config/opencode/skills/agent-foundry"
-      if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
-      else mkdir -p "$(dirname "$dst")"
-           ln -sfn "$REPO_ROOT/skills" "$dst"
-           echo "Installed: $dst -> $REPO_ROOT/skills"
+      local d="$HOME/.config/opencode"
+      if $DRY_RUN; then
+        echo "Would copy: $REPO_ROOT/.opencode/ -> $d/agent-foundry-config"
+        echo "Would symlink: $REPO_ROOT/skills -> $d/skills/agent-foundry"
+      else
+        mkdir -p "$d"
+        cp -r "$REPO_ROOT/.opencode" "$d/agent-foundry-config" 2>/dev/null
+        echo "Installed: $d/agent-foundry-config/ -> $REPO_ROOT/.opencode"
+        mkdir -p "$d/skills"
+        ln -sfn "$REPO_ROOT/skills" "$d/skills/agent-foundry"
+        echo "Installed: $d/skills/agent-foundry -> $REPO_ROOT/skills"
+        echo "Merge config: jq -s '.[0] * .[1]' $d/opencode.json $d/agent-foundry-config/opencode.json > merge.json"
       fi
       ;;
     *)

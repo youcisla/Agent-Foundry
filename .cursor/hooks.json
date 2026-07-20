@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "cat .cursor/rules/agent-foundry-orchestrator.mdc >> /dev/null",
+        "event": "sessionStart",
+        "description": "Load Agent Foundry instructions into context"
+      }
+    ]
+  }
+}

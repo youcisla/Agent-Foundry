@@ -1,0 +1,83 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5",
+  "default_agent": "build",
+  "instructions": [
+    "AGENTS.md",
+    ".opencode/instructions/PLAN.md",
+    ".opencode/instructions/VERIFY.md",
+    "skills/core/prompt-discipline/SKILL.md",
+    "skills/core/plan-before-code/SKILL.md",
+    "skills/core/verify-first/SKILL.md",
+    "skills/core/anti-slop/SKILL.md",
+    "skills/core/api-design/SKILL.md",
+    "skills/core/session-closeout/SKILL.md",
+    "skills/core/workflow-decompose/SKILL.md",
+    "skills/core/context-optimization/SKILL.md"
+  ],
+  "skills": {
+    "paths": [
+      "../skills"
+    ]
+  },
+  "agent": {
+    "build": {
+      "description": "Primary coding agent for development work",
+      "mode": "primary",
+      "model": "anthropic/claude-sonnet-4-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "read": true
+      }
+    },
+    "af-planner": {
+      "description": "Decompose a request into a skill/agent plan",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-5",
+      "prompt": "{file:agents/af-planner/AGENT.md}",
+      "tools": {
+        "read": true,
+        "bash": true,
+        "write": false,
+        "edit": false
+      }
+    },
+    "af-critic": {
+      "description": "Score completed output on correctness, slop, scope",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-5",
+      "prompt": "{file:agents/af-critic/AGENT.md}",
+      "tools": {
+        "read": true,
+        "bash": true,
+        "write": false,
+        "edit": false
+      }
+    }
+  },
+  "command": {
+    "plan": {
+      "description": "Rank and plan skills for a prompt",
+      "template": "Run agent-foundry plan \"$ARGUMENTS\"",
+      "agent": "af-planner"
+    },
+    "execute": {
+      "description": "Execute a specific skill on a prompt",
+      "template": "Run agent-foundry execute $ARGUMENTS"
+    },
+    "doctor": {
+      "description": "Health check: config, index, daemon, API key",
+      "template": "Run agent-foundry doctor"
+    },
+    "audit": {
+      "description": "Run session closeout \u2014 reconcile, update, hand off",
+      "template": "{file:skills/core/session-closeout/SKILL.md}\n\nRun the 6-surface reconciliation."
+    }
+  },
+  "permission": {
+    "mcp_*": "ask"
+  }
+}
