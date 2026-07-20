@@ -75,6 +75,7 @@
   <nav>
     <div class="container">
       <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
+      <a href="why.html" class="nav-link">Why</a>
       <a href="catalog.html" class="nav-link">Catalog</a>
       <a href="graph.html" class="nav-link">Graph</a>
       <a href="audit.html" class="nav-link">Audit</a>
@@ -94,7 +95,7 @@
       <div class="hero-grid">
         <div class="fade-in" style="min-width: 0;">
           <h1 style="font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; margin-bottom: 16px;">Skills <span style="color: var(--text-dim);">for</span><br><span class="accent">AI coding assistants</span></h1>
-          <p style="font-size: 17px; color: var(--text-dim); max-width: 520px; margin-bottom: 28px; line-height: 1.6;">Plan, execute, and verify with <strong style="color: var(--text);">30 curated skills</strong> and <strong style="color: var(--text);">2 agents</strong>. Local daemon, no cloud lock-in, MIT licensed. Every change passes three quality gates — measured, not claimed.</p>
+          <p style="font-size: 17px; color: var(--text-dim); max-width: 520px; margin-bottom: 28px; line-height: 1.6;">The only MIT-licensed, graph-native skill runtime with <strong style="color: var(--text);">zero external dependencies</strong> and <strong style="color: var(--text);">every skill quality-gated</strong> on every commit. Plan, execute, and verify — all local, no cloud.</p>
           <div class="install-section" style="max-width: 600px;">
             <div class="install-toggle" id="hero-install-tabs">
               <button class="active" data-tab="default">curl | bash</button>
@@ -171,9 +172,10 @@
         <div class="feature-card fade-in"><div class="icon">🧠</div><h3>Skills</h3><p>Disciplines the model applies to its own work — <em>how to think</em>, not what to know. Each ≤150 lines, trigger phrase, anti-patterns, verification checklist. 24 core + 6 optional.</p></div>
         <div class="feature-card fade-in" style="animation-delay: 60ms"><div class="icon">🤖</div><h3>Agents</h3><p>Roles the orchestrator dispatches. af-planner decomposes requests into skill plans. af-critic scores correctness, slop, scope. Model tier + tool allowlist per agent.</p></div>
         <div class="feature-card fade-in" style="animation-delay: 120ms"><div class="icon">⚙️</div><h3>Orchestrator</h3><p>Local daemon: ranks, dispatches, executes, logs, judges. FastAPI + SQLite. Lazy-started. HTTP endpoints: /plan, /execute, /loop, /health.</p></div>
-        <div class="feature-card fade-in" style="animation-delay: 180ms"><div class="icon">🔍</div><h3>Knowledge graph</h3><p>287 nodes, 467 edges, 27 communities. God nodes, surprising connections, cohesion scores. Generated on every commit via tree-sitter AST extraction.</p></div>
-        <div class="feature-card fade-in" style="animation-delay: 240ms"><div class="icon">🛡️</div><h3>Audit gates</h3><p>Three quality gates run on every commit: static eval, schema validation, external-reference scan. 32/32 passing, 0 external refs, 30/30 skills validated.</p></div>
-        <div class="feature-card fade-in" style="animation-delay: 300ms"><div class="icon">📦</div><h3>6 adapters</h3><p>Install script targets 6 harnesses: Claude Code, Hermes, Codex, Cursor, OpenCode, Gemini. 3 tested end-to-end. Smoke tests verify every install.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 180ms"><div class="icon">🧠</div><h3>Self-improvement</h3><p>Rate executions, run <code>agent-foundry learn</code> — the system suggests new trigger patterns. Instincts stored in SQLite, user-approvable, MIT.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 240ms"><div class="icon">🔍</div><h3>Knowledge graph</h3><p>287 nodes, 467 edges, 27 communities. God nodes, surprising connections. Graph-aware planning boosts related skills.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 300ms"><div class="icon">🛡️</div><h3>Audit gates</h3><p>Three quality gates on every commit — 33/33 passing, 0 external refs, every skill validated.</p></div>
+        <div class="feature-card fade-in" style="animation-delay: 360ms"><div class="icon">📦</div><h3>6 harness adapters</h3><p>Install target for Claude Code, Hermes, Codex, Cursor, OpenCode, Gemini. Smoke tests verify each path. 3 tested end-to-end on this machine.</p></div>
       </div>
     </div>
   </section>

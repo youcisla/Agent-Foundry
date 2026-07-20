@@ -436,6 +436,53 @@ def cmd_serve(ctx, port, host, detach):
         uvicorn.run(app, host=host, port=cfg.core.daemon_port)
 
 
+@cli.command("feedback")
+@click.argument("execution_id", type=int)
+@click.argument("score", type=int)
+@click.pass_context
+def cmd_feedback(ctx, execution_id, score):
+    """Rate an execution: 1 = thumbs_up, -1 = thumbs_down."""
+    if score not in (1, -1):
+        click.echo("Score must be 1 (up) or -1 (down)", err=True)
+        ctx.exit(1)
+    from .logging_db import set_feedback, LOG_DB_PATH
+    ok = set_feedback(LOG_DB_PATH, execution_id, score)
+    click.echo("✓ Feedback recorded" if ok else "✗ Execution not found")
+
+
+@cli.command("learn")
+@click.pass_context
+def cmd_learn(ctx):
+    """Analyze execution log and generate trigger-pattern instincts."""
+    from .logging_db import learn, LOG_DB_PATH
+    result = learn(LOG_DB_PATH)
+    click.echo(f"New instincts: {result['new_instincts']}")
+    click.echo(f"Updated: {result['updated_instincts']}")
+    for p in result["patterns_found"]:
+        click.echo(f"  {p['skill']} → \"{p['pattern']}\"")
+
+
+@cli.command("instincts")
+@click.option("--approved", is_flag=True, help="Show approved only")
+@click.pass_context
+def cmd_instincts(ctx, approved):
+    """List learned trigger-pattern instincts."""
+    from .logging_db import list_instincts, LOG_DB_PATH
+    for inst in list_instincts(LOG_DB_PATH, approved_only=approved):
+        flag = "✓" if inst["approved"] else "○"
+        click.echo(f"  {flag} #{inst['id']} [{inst['skill']}] \"{inst['pattern']}\" conf={inst['confidence']:.2f} ({inst['samples']} samples)")
+
+
+@cli.command("instinct-approve")
+@click.argument("instinct_id", type=int)
+@click.pass_context
+def cmd_instinct_approve(ctx, instinct_id):
+    """Approve a suggested instinct."""
+    from .logging_db import approve_instinct, LOG_DB_PATH
+    ok = approve_instinct(LOG_DB_PATH, instinct_id)
+    click.echo("✓ Approved" if ok else "✗ Not found")
+
+
 def main():
     cli(obj={})
 

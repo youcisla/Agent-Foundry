@@ -125,6 +125,29 @@ class LoopResponse(BaseModel):
 
 # ===== Index =====
 
+class StatsResponse(BaseModel):
+    total_executions: int = 0
+    successful: int = 0
+    failed: int = 0
+    fallback_count: int = 0
+    avg_tokens: int = 0
+    avg_duration: float = 0.0
+    thumbs_up: int = 0
+    thumbs_down: int = 0
+    instincts_count: int = 0
+
+
+class FeedbackRequest(BaseModel):
+    execution_id: int
+    feedback: int = Field(..., description="1 = thumbs_up, -1 = thumbs_down")
+
+
+class LearnResponse(BaseModel):
+    new_instincts: int = 0
+    updated_instincts: int = 0
+    patterns_found: list[dict] = Field(default_factory=list)
+
+
 class IndexResponse(BaseModel):
     total_skills: int
     took_ms: float

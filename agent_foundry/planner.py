@@ -1,7 +1,9 @@
-"""Planner: rank skills by prompt relevance + cost penalty."""
+"""Planner: rank skills by prompt relevance + cost penalty + graph relationships."""
 from __future__ import annotations
 
+import json
 import re
+from pathlib import Path
 from typing import Iterable
 
 from .config import PlannerConfig
@@ -21,8 +23,6 @@ def _cost_penalty(total_cost: int, divisor: float) -> float:
 
 
 def _match_patterns(prompt: str, patterns: Iterable[str]) -> list[str]:
-    """Return list of patterns that match the prompt (substring/regex).
-    Patterns are tried as regex; if invalid or empty, fall back to plain substring."""
     matched: list[str] = []
     p_lower = prompt.lower()
     for pat in patterns or []:
@@ -34,8 +34,7 @@ def _match_patterns(prompt: str, patterns: Iterable[str]) -> list[str]:
                 continue
         except re.error:
             pass
-        # Fallback: literal substring match
-        raw = pat.replace(r"\b", "").replace("\\", "")
+        raw = pat.replace(r"\b", "").replace("\\\\", "")
         if raw and raw.lower() in p_lower:
             matched.append(pat)
     return matched
@@ -52,8 +51,28 @@ def _name_in_prompt(prompt: str, skill: SkillManifest) -> bool:
     return False
 
 
-def rank_skills(prompt: str, idx: SkillIndex, cfg: PlannerConfig) -> list[PlanResult]:
-    """Return skills ranked by score (desc). Excludes the fallback from pattern-based ranking."""
+def _graph_related(skill_id: str, graph_path: Path | None) -> list[str]:
+    """Return skill IDs connected in the knowledge graph (max 3)."""
+    if not graph_path or not graph_path.exists():
+        return []
+    try:
+        data = json.loads(graph_path.read_text())
+        edges = data.get("links", data.get("edges", []))
+        related: set[str] = set()
+        for e in edges:
+            src = e.get("source", "")
+            tgt = e.get("target", "")
+            if src == skill_id:
+                related.add(tgt)
+            if tgt == skill_id:
+                related.add(src)
+        return sorted(related)[:3]
+    except Exception:
+        return []
+
+
+def rank_skills(prompt: str, idx: SkillIndex, cfg: PlannerConfig, graph_path: Path | None = None) -> list[PlanResult]:
+    """Return skills ranked by score (desc). Graph-aware: boosts skills related to the top match."""
     results: list[tuple[float, PlanResult]] = []
 
     for skill in idx.skills:
@@ -90,11 +109,23 @@ def rank_skills(prompt: str, idx: SkillIndex, cfg: PlannerConfig) -> list[PlanRe
         ))
 
     results.sort(key=lambda x: x[0], reverse=True)
+
+    # Graph-aware boost: top match gets its related skills boosted
+    if graph_path and results:
+        top_id = results[0][1].skill_id
+        related = _graph_related(top_id, graph_path)
+        if related:
+            for i, (s, r) in enumerate(results):
+                if r.skill_id in related:
+                    results[i] = (s * 1.15, r)  # 15% boost
+
+    results.sort(key=lambda x: x[0], reverse=True)
     return [r for _, r in results[:cfg.max_results]]
 
 
 def plan(request: PlanRequest, idx: SkillIndex, cfg: PlannerConfig) -> PlanResponse:
-    ranked = rank_skills(request.prompt, idx, cfg)
+    graph_path = Path(request.graph_path) if request.graph_path else None
+    ranked = rank_skills(request.prompt, idx, cfg, graph_path=graph_path)
     return PlanResponse(
         prompt=request.prompt,
         results=ranked,

@@ -17,11 +17,21 @@ from .indexer import (
     invalidate_cache,
     write_index,
 )
-from .logging_db import count_executions
+from .logging_db import (
+    count_executions,
+    log_execution,
+    set_feedback,
+    learn,
+    list_instincts,
+    approve_instinct,
+    get_stats as db_stats,
+)
 from .loop import run_loop
 from .models import (
     ExecuteRequest,
+    FeedbackRequest,
     IndexResponse,
+    LearnResponse,
     LoopRequest,
     PlanRequest,
 )
@@ -85,5 +95,32 @@ def create_app(cfg: Config | None = None) -> FastAPI:
     @app.get("/stats")
     def stats():
         return {"executions": count_executions(db_path)}
+
+    @app.post("/feedback")
+    def do_feedback(req: FeedbackRequest):
+        ok = set_feedback(db_path, req.execution_id, req.feedback)
+        if not ok:
+            raise HTTPException(status_code=404, detail="Execution not found or invalid feedback")
+        return {"ok": True}
+
+    @app.post("/learn")
+    def do_learn():
+        result = learn(db_path)
+        return LearnResponse(
+            new_instincts=result["new_instincts"],
+            updated_instincts=result["updated_instincts"],
+            patterns_found=result["patterns_found"],
+        )
+
+    @app.get("/instincts")
+    def get_instincts(approved: bool = False):
+        return {"instincts": list_instincts(db_path, approved_only=approved)}
+
+    @app.post("/instincts/{instinct_id}/approve")
+    def approve(instinct_id: int):
+        ok = approve_instinct(db_path, instinct_id)
+        if not ok:
+            raise HTTPException(status_code=404, detail="Instinct not found")
+        return {"ok": True}
 
     return app

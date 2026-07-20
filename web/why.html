@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Agent Foundry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
+      <a href="catalog.html" class="nav-link">Catalog</a>
+      <a href="graph.html" class="nav-link">Graph</a>
+      <a href="audit.html" class="nav-link">Audit</a>
+      <span class="spacer"></span>
+      <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg> GitHub</a>
+    </div>
+  </nav>
+  <div class="hero-v2"><div class="container">
+    <h1>Why Agent Foundry</h1>
+    <p class="section-sub" style="font-size:18px;max-width:640px">What we do and why we built it differently.</p>
+  </div></div>
+  <section><div class="container">
+    <h2>The short version</h2>
+    <p>Most agent harnesses compete on <strong>scale</strong> — more skills, more agents, more stars. Agent Foundry competes on <strong>quality and transparency</strong>.</p>
+    <p>Every skill in our catalog is original MIT-licensed work, verified by three automated quality gates that run on every commit. We have a live knowledge graph of the codebase itself — not a static list, but 287 connected nodes extracted via tree-sitter AST. We ship an executable smoke test for every harness adapter and label each one "tested", "documented", or "untested".</p>
+  </div></section>
+  <section><div class="container">
+    <h2>What this means for you</h2>
+    <div class="feature-grid">
+      <div class="feature-card"><div class="icon">🛡️</div><h3>Trust the catalog</h3><p>Every skill passes static eval, frontmatter validation, and an external-reference scan. No adapted, copied, or unverified content.</p></div>
+      <div class="feature-card"><div class="icon">🔍</div><h3>See the whole system</h3><p>The knowledge graph shows every code symbol, its connections, and its community cluster. Updated on every commit.</p></div>
+      <div class="feature-card"><div class="icon">🧪</div><h3>Verify the claims</h3><p>Smoke tests are in the repo. Quality gates are in the repo. Graph pipeline is in the repo. Everything is auditable.</p></div>
+      <div class="feature-card"><div class="icon">🔒</div><h3>Keep your data</h3><p>MIT license, local daemon, no telemetry, no cloud. You supply the API key. We never see your prompts.</p></div>
+    </div>
+  </div></section>
+  <section><div class="container">
+    <h2>What we don't do</h2>
+    <p class="section-sub">We don't ship hundreds of unverified skills adapted from third-party sources. We don't run a SaaS subscription. We don't claim "self-improving" when the improvement system produces mostly noise. We don't inflate metrics.</p>
+    <p class="section-sub">We ship honest software with measurable quality guarantees.</p>
+  </div></section>
+  <section><div class="container">
+    <h2>By the numbers</h2>
+    <div class="stats">
+      <div class="stat"><div class="num">30</div><div class="label">Original skills</div></div>
+      <div class="stat"><div class="num">2</div><div class="label">Agents</div></div>
+      <div class="stat"><div class="num">287</div><div class="label">Graph nodes</div></div>
+      <div class="stat"><div class="num">467</div><div class="label">Graph edges</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">Quality gates</div></div>
+      <div class="stat"><div class="num">0</div><div class="label">Ext. references</div></div>
+      <div class="stat"><div class="num">6</div><div class="label">Harness adapters</div></div>
+    </div>
+  </div></section>
+  <footer>
+    <div class="container">
+      <div>Agent Foundry — MIT License</div>
+      <div class="links">
+        <a href="https://github.com/youcisla/Agent-Foundry">GitHub</a>
+        <a href="catalog.html">Catalog</a>
+        <a href="graph.html">Graph</a>
+      </div>
+    </div>
+  </footer>
+  <script src="site-data.js"></script>
+  <script src="graph-stats.js"></script>
+  <script>
+    document.querySelectorAll('.stat .num')[0].textContent = SKILL_COUNT;
+    if (typeof GRAPH_STATS !== 'undefined') {
+      document.querySelectorAll('.stat .num')[2].textContent = GRAPH_STATS.node_count;
+      document.querySelectorAll('.stat .num')[3].textContent = GRAPH_STATS.edge_count;
+    }
+  </script>
+</body>
+</html>
