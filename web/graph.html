@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <script src="icons.js"></script>
   <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
@@ -16,7 +17,7 @@
   <nav>
     <div class="container">
       <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
-      <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+      <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu"><span class="icon-svg">menu</span></button>
       <div class="nav-links">
         <a href="why.html" class="nav-link">Why</a>
         <a href="catalog.html" class="nav-link">Catalog</a>
@@ -60,15 +61,16 @@
       <div class="graph-canvas">
         <div id="network"></div>
         <div class="graph-controls">
-          <button class="btn btn-sm" onclick="network.fit()">⊞ Fit</button>
-          <button class="btn btn-sm" onclick="var p=network.physics.options.enabled;network.setOptions({physics:{enabled:!p}});this.textContent=p?'▶ Resume':'⏸ Pause'">⏸ Pause</button>
-          <button class="btn btn-sm" onclick="exportPNG()">⬇ PNG</button>
+          <button class="btn btn-sm" onclick="network.fit()"><span class="icon-svg">fit</span> Fit</button>
+          <button class="btn btn-sm" onclick="var p=network.physics.options.enabled;network.setOptions({physics:{enabled:!p}});this.innerHTML=p?(ICONS.play+' Resume'):(ICONS.pause+' Pause')"><span class="icon-svg">pause</span> Pause</button>
+          <button class="btn btn-sm" onclick="exportPNG()"><span class="icon-svg">download</span> PNG</button>
         </div>
         <div class="graph-info">
           <h4>Legend</h4>
-          <div>🟠 Node = code symbol</div>
-          <div>🔗 Edge = call/import/reference</div>
+          <div><span class="icon-svg lg-node">dot</span> Node = code symbol</div>
+          <div><span class="icon-svg lg-edge">link</span> Edge = call/import/reference</div>
           <div style="margin-top:4px;color:var(--text-faint);font-size:10px">Click a node → details + file</div>
+          <div style="margin-top:2px;color:var(--text-faint);font-size:10px">Ctrl / ⌘ + scroll to zoom</div>
         </div>
         <!-- Node detail panel -->
         <div class="node-panel" id="node-panel">
@@ -82,12 +84,70 @@
     </div>
   </div>
 
+  <!-- In-app file / markdown viewer -->
+  <div class="doc-viewer" id="doc-viewer" aria-hidden="true">
+    <div class="doc-panel" role="dialog" aria-modal="true">
+      <div class="doc-head">
+        <span class="doc-path" id="doc-path"></span>
+        <div class="doc-actions">
+          <a class="btn btn-sm" id="doc-gh" target="_blank" rel="noopener"><span class="icon-svg">github</span> Source</a>
+          <button class="btn btn-sm" id="doc-copy"><span class="icon-svg">clipboard</span> Copy</button>
+          <button class="doc-close" id="doc-close" aria-label="Close"><span class="icon-svg">close</span></button>
+        </div>
+      </div>
+      <div class="doc-body" id="doc-body"></div>
+    </div>
+  </div>
+
   <script src="site-data.js"></script>
   <script src="graph-data.js"></script>
   <script src="graph-stats.js"></script>
   <script src="file-tree.js"></script>
+  <script src="file-content.js"></script>
   <script>
     const repoUrl = "https://github.com/youcisla/Agent-Foundry/blob/main/";
+
+    // ── In-app file / markdown viewer (no GitHub redirect) ──
+    const escapeHtml = (s) => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const viewer = document.getElementById("doc-viewer");
+    let currentDocPath = "";
+    function openFile(path, displayName) {
+      const entry = (typeof FILE_CONTENT !== "undefined") && FILE_CONTENT[path];
+      currentDocPath = path;
+      document.getElementById("doc-path").textContent = displayName || path;
+      document.getElementById("doc-gh").href = repoUrl + path;
+      const body = document.getElementById("doc-body");
+      if (!entry) {
+        body.innerHTML = '<p style="color:var(--text-dim)">Preview unavailable for this file. Use <strong>Source</strong> to view it on GitHub.</p>';
+      } else {
+        let raw;
+        try { raw = decodeURIComponent(escape(atob(entry.b64))); }
+        catch (e) { raw = atob(entry.b64); }
+        if (entry.ext === ".md") {
+          body.className = "doc-body markdown";
+          body.innerHTML = marked.parse(raw);
+        } else {
+          body.className = "doc-body";
+          body.innerHTML = '<pre class="code-view"><code>' + escapeHtml(raw) + "</code></pre>";
+        }
+      }
+      viewer.classList.add("open");
+      viewer.setAttribute("aria-hidden", "false");
+    }
+    function closeDoc() { viewer.classList.remove("open"); viewer.setAttribute("aria-hidden", "true"); }
+    window.openFile = openFile;
+    document.getElementById("doc-close").addEventListener("click", closeDoc);
+    viewer.addEventListener("click", e => { if (e.target === viewer) closeDoc(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && viewer.classList.contains("open")) closeDoc(); });
+    document.getElementById("doc-copy").addEventListener("click", function () {
+      const entry = FILE_CONTENT && FILE_CONTENT[currentDocPath];
+      if (!entry) return;
+      let raw; try { raw = decodeURIComponent(escape(atob(entry.b64))); } catch (e) { raw = atob(entry.b64); }
+      navigator.clipboard.writeText(raw);
+      this.innerHTML = '<span class="icon-svg">check</span> Copied';
+      window.ICONS && (this.querySelector('.icon-svg').innerHTML = ICONS.check);
+      setTimeout(() => { this.innerHTML = '<span class="icon-svg">clipboard</span> Copy'; window.ICONS && (this.querySelector('.icon-svg').innerHTML = ICONS.clipboard); }, 1500);
+    });
     const nodes = new vis.DataSet(GRAPH_NODES.map(n => ({
       id: n.id, label: n.label, title: n.title, group: n.group,
       file: n.file || "",
@@ -106,11 +166,22 @@
     const data = { nodes, edges };
     const options = {
       physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -40, springLength: 120, springConstant: 0.01 }, stabilization: { iterations: 200 } },
-      interaction: { hover: true, tooltipDelay: 200, navigationButtons: false, keyboard: true },
+      // zoomView disabled so the mouse wheel scrolls the PAGE by default;
+      // Ctrl/⌘ + wheel zooms the graph (handled below). Fixes the scroll trap.
+      interaction: { hover: true, tooltipDelay: 200, navigationButtons: false, keyboard: false, zoomView: false, dragView: true },
       nodes: { borderWidth: 1, borderWidthSelected: 2 },
       edges: { smooth: { type: "continuous" } },
     };
     const network = new vis.Network(container, data, options);
+
+    // Ctrl/⌘ + wheel = zoom the graph; plain wheel = let the page scroll.
+    container.addEventListener("wheel", function (e) {
+      if (!(e.ctrlKey || e.metaKey)) return;   // page scroll passes through
+      e.preventDefault();
+      const scale = network.getScale() * (e.deltaY < 0 ? 1.12 : 0.89);
+      const pointer = { x: e.offsetX, y: e.offsetY };
+      network.moveTo({ scale: scale, position: network.DOMtoCanvas(pointer) });
+    }, { passive: false });
 
     // Search
     document.getElementById("graph-search").addEventListener("input", function() {
@@ -138,7 +209,7 @@
       }).join("<br>");
 
       let details = '<div class="detail-row"><span class="dt">Symbol:</span> ' + node.label + '</div>';
-      if (node.file) details += '<div class="detail-row"><span class="dt">File:</span> <a href="' + repoUrl + node.file + '" target="_blank">' + node.file + '</a></div>';
+      if (node.file) details += '<div class="detail-row"><span class="dt">File:</span> <a href="#" onclick="event.preventDefault();openFile(\'' + node.file + '\',\'' + node.file + '\')">' + node.file + '</a></div>';
       details += '<div class="detail-row"><span class="dt">Group:</span> ' + node.group + '</div>';
       details += '<div class="detail-row"><span class="dt">Degree:</span> ' + connectedEdges.length + '</div>';
       document.getElementById("np-details").innerHTML = details;
@@ -196,8 +267,8 @@
           const a = document.createElement("a");
           a.className = "fentry";
           a.innerHTML = '<span class="icon-svg">file</span> ' + key;
-          a.href = repoUrl + val.path;
-          a.target = "_blank";
+          a.href = "#";
+          a.addEventListener("click", (e) => { e.preventDefault(); openFile(val.path, key); });
           parentEl.appendChild(a);
         }
       }
@@ -218,16 +289,6 @@
     });
   });
   </script>
-<div id="af-context-menu" onclick="this.style.display='none'">
-  <div class="cm-item" onclick="window.history.back()">← Back</div>
-  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
-  <div class="cm-sep"></div>
-  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
-  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
-</div>
-<script>
-document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
-document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
-</script>
+<script src="context-menu.js"></script>
 </body>
 </html>

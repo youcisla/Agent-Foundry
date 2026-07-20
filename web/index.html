@@ -10,13 +10,14 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <script src="icons.js"></script>
 </head>
 <body>
   <nav>
     <div class="container">
       <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
-      <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+      <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu"><span class="icon-svg">menu</span></button>
       <div class="nav-links" style="display:flex;gap:24px;align-items:center">
         <a href="why.html" class="nav-link">Why</a>
         <a href="catalog.html" class="nav-link">Catalog</a>
@@ -53,7 +54,7 @@
               <pre class="install-cmd" id="hero-cmd">curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash</pre>
               <div class="install-actions">
                 <button class="btn btn-primary" id="copy-btn"><span class="icon-svg">clipboard</span> Copy</button>
-                <span class="copied-feedback" id="copied-msg">✓ Copied</span>
+                <span class="copied-feedback" id="copied-msg"><span class="icon-svg">check</span> Copied</span>
                 <a href="catalog.html" class="btn">Browse catalog →</a>
                 <a href="why.html" class="btn btn-ghost">Why Agent Foundry</a>
               </div>
@@ -71,12 +72,12 @@
           <div class="adapter-strip">
             <div class="title">Adapters</div>
             <div class="tags">
-              <span class="badge badge-green">✓ Claude Code</span>
-              <span class="badge badge-green">✓ Hermes</span>
-              <span class="badge badge-green">✓ Codex</span>
-              <span class="badge badge-accent">◐ Cursor</span>
-              <span class="badge badge-accent">◐ OpenCode</span>
-              <span class="badge badge-red">✗ Gemini</span>
+              <span class="badge badge-green"><span class="icon-svg">check</span> Claude Code</span>
+              <span class="badge badge-green"><span class="icon-svg">check</span> Hermes</span>
+              <span class="badge badge-green"><span class="icon-svg">check</span> Codex</span>
+              <span class="badge badge-accent"><span class="icon-svg">half</span> Cursor</span>
+              <span class="badge badge-accent"><span class="icon-svg">half</span> OpenCode</span>
+              <span class="badge badge-red"><span class="icon-svg">cross</span> Gemini</span>
             </div>
           </div>
         </div>
@@ -146,23 +147,23 @@
         <div class="compare-card without">
           <div class="compare-card-header without">Without Agent Foundry</div>
           <div class="compare-card-body">
-            <div class="compare-item"><span class="icon-wrap cross">✗</span> Your agent doesn't know discipline rules</div>
-            <div class="compare-item"><span class="icon-wrap cross">✗</span> Manual prompt engineering</div>
-            <div class="compare-item"><span class="icon-wrap cross">✗</span> No budget guard</div>
-            <div class="compare-item"><span class="icon-wrap cross">✗</span> No execution log to learn from</div>
-            <div class="compare-item"><span class="icon-wrap cross">✗</span> No quality verification after each run</div>
-            <div class="compare-item"><span class="icon-wrap cross">✗</span> Ad-hoc skill selection</div>
+            <div class="compare-item"><span class="icon-wrap cross"><span class="icon-svg">cross</span></span> Your agent doesn't know discipline rules</div>
+            <div class="compare-item"><span class="icon-wrap cross"><span class="icon-svg">cross</span></span> Manual prompt engineering</div>
+            <div class="compare-item"><span class="icon-wrap cross"><span class="icon-svg">cross</span></span> No budget guard</div>
+            <div class="compare-item"><span class="icon-wrap cross"><span class="icon-svg">cross</span></span> No execution log to learn from</div>
+            <div class="compare-item"><span class="icon-wrap cross"><span class="icon-svg">cross</span></span> No quality verification after each run</div>
+            <div class="compare-item"><span class="icon-wrap cross"><span class="icon-svg">cross</span></span> Ad-hoc skill selection</div>
           </div>
         </div>
         <div class="compare-card with">
           <div class="compare-card-header with">With Agent Foundry</div>
           <div class="compare-card-body">
-            <div class="compare-item"><span class="icon-wrap check">✓</span> 30 curated, tested, MIT-licensed skills</div>
-            <div class="compare-item"><span class="icon-wrap check">✓</span> Skill indexer + ranker picks the right skill</div>
-            <div class="compare-item"><span class="icon-wrap check">✓</span> Budget guard with configurable token cap</div>
-            <div class="compare-item"><span class="icon-wrap check">✓</span> SQLite log with judge scores</div>
-            <div class="compare-item"><span class="icon-wrap check">✓</span> af-critic judges correctness, slop, scope</div>
-            <div class="compare-item"><span class="icon-wrap check">✓</span> Live knowledge graph + dependency chips</div>
+            <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> 30 curated, tested, MIT-licensed skills</div>
+            <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> Skill indexer + ranker picks the right skill</div>
+            <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> Budget guard with configurable token cap</div>
+            <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> SQLite log with judge scores</div>
+            <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> af-critic judges correctness, slop, scope</div>
+            <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> Live knowledge graph + dependency chips</div>
           </div>
         </div>
       </div>
@@ -176,17 +177,17 @@
       <p class="section-sub">Real feedback from early users.</p>
       <div class="testimonial-grid">
         <div class="testimonial fade-in">
-          <div class="stars">★★★★★</div>
+          <div class="stars"><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span></div>
           <div class="quote">"The quality gates are what sold me. I know every skill in the catalog is original and verified. No guesswork."</div>
           <div class="author"><div class="avatar">D</div><div class="name">Dennis</div><div class="source">GitHub Discussion</div></div>
         </div>
         <div class="testimonial fade-in" style="animation-delay:80ms">
-          <div class="stars">★★★★★</div>
+          <div class="stars"><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span></div>
           <div class="quote">"I've been using it for a week. The self-improvement loop actually works — it suggested a trigger pattern I hadn't thought of."</div>
           <div class="author"><div class="avatar">M</div><div class="name">Mira</div><div class="source">Early tester</div></div>
         </div>
         <div class="testimonial fade-in" style="animation-delay:160ms">
-          <div class="stars">★★★★☆</div>
+          <div class="stars"><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">starFilled</span><span class="icon-svg">star</span></div>
           <div class="quote">"Clean, focused, no fluff. The graph page alone is worth the install — seeing how the codebase connects is surprisingly useful."</div>
           <div class="author"><div class="avatar">J</div><div class="name">Jake</div><div class="source">OSS contributor</div></div>
         </div>
@@ -204,7 +205,7 @@
         <div class="feature-card fade-in" style="animation-delay:50ms"><span class="icon-svg">agents</span><h3>Agents</h3><p>Roles the orchestrator dispatches. af-planner, af-critic, and the new af-orchestrator which decomposes → dispatches → merges subtasks across skills and agents.</p></div>
         <div class="feature-card fade-in" style="animation-delay:100ms"><span class="icon-svg">gears</span><h3>Orchestrator</h3><p>Local daemon: ranks, dispatches, executes, logs, judges. FastAPI, SQLite, lazy-started. HTTP endpoints for everything: /plan, /execute, /loop, /health.</p></div>
         <div class="feature-card fade-in" style="animation-delay:150ms"><span class="icon-svg">refresh</span><h3>Self-improvement</h3><p>Rate executions, run <code>agent-foundry learn</code>, and the system suggests new trigger patterns from successful runs. Instincts stored in SQLite, user-approvable, MIT.</p></div>
-        <div class="feature-card fade-in" style="animation-delay:200ms"><span class="icon-svg">eye</span><h3>Knowledge graph</h3><p>287 nodes, 467 edges, 27 communities. Tree-sitter AST extraction, community detection, god nodes, surprising connections. Graph-aware planning boosts related skills 15%.</p></div>
+        <div class="feature-card fade-in" style="animation-delay:200ms"><span class="icon-svg">eye</span><h3>Knowledge graph</h3><p>396 nodes, 626 edges, 44 communities. Tree-sitter AST extraction, community detection, god nodes, surprising connections. Graph-aware planning boosts related skills 15%.</p></div>
         <div class="feature-card fade-in" style="animation-delay:250ms"><span class="icon-svg">shield</span><h3>Quality gates</h3><p>Three gates on every commit: 33/33 eval, 30/30 validate, 0 external references. Every skill is original, verified, and MIT-licensed.</p></div>
         <div class="feature-card fade-in" style="animation-delay:300ms"><span class="icon-svg">box</span><h3>6 harness adapters</h3><p>Install targets for Claude Code, Hermes, Codex, Cursor, OpenCode, Gemini. 3 tested end-to-end on this machine. Smoke tests verify every install path.</p></div>
       </div>
@@ -216,42 +217,9 @@
     <div class="container">
       <h2>How it works</h2>
       <p class="section-sub">From prompt to result in one orchestrator pass.</p>
-      <pre class="mermaid">
-flowchart TD
-  subgraph Input["Input"]
-    A(["Your prompt"])
-  end
-  subgraph Orchestrator["Agent Foundry — Orchestrator"]
-    direction LR
-    B{"Skill matcher"}
-    C[Planner: rank & cost]
-    D[Executor: LiteLLM]
-  end
-  subgraph LLM["LLM Layer"]
-    E((Provider))
-  end
-  subgraph Storage["Storage"]
-    F[(SQLite log)]
-  end
-  A --> B
-  B --> C
-  C --> D
-  D --> E
-  E --> D
-  D --> F
-  F --> G["Response"]
-  style A fill:#f5a623,color:#000,stroke:#f5a623,font-weight:700
-  style B fill:#22222a,color:#e8e8ea,stroke:#f5a623
-  style C fill:#22222a,color:#e8e8ea,stroke:#6496ff
-  style D fill:#22222a,color:#e8e8ea,stroke:#6496ff
-  style E fill:#22222a,color:#e8e8ea,stroke:#4ade80
-  style F fill:#22222a,color:#8b8b95,stroke:#8b8b95
-  style G fill:#f5a623,color:#000,stroke:#f5a623
-  style Input fill:#131316,color:#e8e8ea,stroke:#2a2a33,stroke-dasharray:6 3
-  style Orchestrator fill:#131316,color:#e8e8ea,stroke:#f5a623,stroke-dasharray:6 3
-  style LLM fill:#131316,color:#e8e8ea,stroke:#4ade80,stroke-dasharray:6 3
-  style Storage fill:#131316,color:#e8e8ea,stroke:#8b8b95,stroke-dasharray:6 3
-      </pre>
+      <figure class="diagram">
+        <img src="diagrams/orchestrator.svg" alt="Orchestrator flow — prompt to skill matcher to planner to executor to LLM provider to SQLite log to response" loading="lazy">
+      </figure>
       <div class="cta-inline">
         <a href="why.html" class="btn btn-primary">Learn more →</a>
       </div>
@@ -262,15 +230,16 @@ flowchart TD
   <div class="stats-section">
     <div class="container">
       <h2>By the numbers</h2>
+      <p class="stats-lead">Live from the repo — regenerated on every build, no hand-maintained counts.</p>
       <div class="stats-grid">
-        <div class="stat-item fade-in"><div class="num" id="s1">30</div><div class="label">Skills</div></div>
-        <div class="stat-item fade-in" style="animation-delay:40ms"><div class="num" id="s2">3</div><div class="label">Agents</div></div>
-        <div class="stat-item fade-in" style="animation-delay:80ms"><div class="num">14</div><div class="label">CLI commands</div></div>
-        <div class="stat-item fade-in" style="animation-delay:120ms"><div class="num">9</div><div class="label">HTTP endpoints</div></div>
-        <div class="stat-item fade-in" style="animation-delay:160ms"><div class="num" id="s3">396</div><div class="label">Graph nodes</div></div>
-        <div class="stat-item fade-in" style="animation-delay:200ms"><div class="num" id="s4">626</div><div class="label">Graph edges</div></div>
-        <div class="stat-item fade-in" style="animation-delay:240ms"><div class="num" id="s5">44</div><div class="label">Communities</div></div>
-        <div class="stat-item fade-in" style="animation-delay:280ms"><div class="num">0</div><div class="label">External refs</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">skills</span><div class="num" id="s1" data-target="30">30</div><div class="label">Skills</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">agents</span><div class="num" id="s2" data-target="3">3</div><div class="label">Agents</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">terminal</span><div class="num" data-target="14">14</div><div class="label">CLI commands</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">route</span><div class="num" data-target="9">9</div><div class="label">HTTP endpoints</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">graph</span><div class="num" id="s3" data-target="396">396</div><div class="label">Graph nodes</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">link</span><div class="num" id="s4" data-target="626">626</div><div class="label">Graph edges</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">layers</span><div class="num" id="s5" data-target="44">44</div><div class="label">Communities</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">shield</span><div class="num plain" data-target="0">0</div><div class="label">External refs</div></div>
       </div>
     </div>
   </div>
@@ -300,7 +269,7 @@ flowchart TD
       <p class="section-sub" style="text-align:center">Quick answers to common questions.</p>
       <div class="faq-grid">
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>How is Agent Foundry different from other agent harnesses?</div><div class="faq-a"><p>Agent Foundry ships 30 original skills with a hard zero-external-references gate — every skill is original MIT-licensed work. We also ship a live knowledge graph of the codebase and a 3-gate audit pipeline on every commit, including an external-reference scanner that fails the build if any third-party name leaks in.</p></div></div>
-        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>What does "graph-native" mean?</div><div class="faq-a"><p>Every commit runs a tree-sitter AST extraction of the entire codebase. The resulting graph (287 nodes, 467 edges, 27 communities) feeds back into the orchestrator — related skills get a 15% boost in planning. The graph is a first-class feature, not a visualization afterthought.</p></div></div>
+        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>What does "graph-native" mean?</div><div class="faq-a"><p>Every commit runs a tree-sitter AST extraction of the entire codebase. The resulting graph (396 nodes, 626 edges, 44 communities) feeds back into the orchestrator — related skills get a 15% boost in planning. The graph is a first-class feature, not a visualization afterthought.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Is it free?</div><div class="faq-a"><p>Yes. MIT-licensed, all local, no cloud. You supply the API key for your LLM provider. No SaaS, no telemetry, no subscription.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Which harnesses work?</div><div class="faq-a"><p>Claude Code, Hermes, and Codex are tested end-to-end. Cursor, OpenCode, and Gemini CLI are documented. Each has a <code>--harness=NAME</code> install path.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Can I contribute a skill?</div><div class="faq-a"><p>Absolutely. Fork the repo, add a skill under <code>skills/core/</code> following the template in <code>community/README.md</code>, and open a PR. Every skill must pass <code>foundry-eval.py</code> and the <code>nox.sh</code> external-reference gate.</p></div></div>
@@ -336,30 +305,40 @@ flowchart TD
 
   <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
   <script src="site-data.js"></script>
+  <script src="store.js"></script>
   <script src="install-data.js"></script>
   <script src="adapters-data.js"></script>
   <script src="graph-stats.js"></script>
-  <script type="module">
-    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-    mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "loose", themeVariables: {
-      primaryColor: "#22222a", primaryTextColor: "#e8e8ea", primaryBorderColor: "#2a2a33",
-      lineColor: "#8b8b95", secondaryColor: "#131316", tertiaryColor: "#1a1a1f",
-      fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-    }});
-  </script>
+  
   <script>
-    // Live counters
-    const ids = ['hs1','hs2','hs3','s1','s2','s3','s4','s5'];
-    [['hs1','s1',SKILL_COUNT],['hs2','s2',AGENT_COUNT||3]].forEach(([h,s,v]) => {
-      document.getElementById(h)&&(document.getElementById(h).textContent=v);
-      document.getElementById(s)&&(document.getElementById(s).textContent=v);
-    });
+    // Live counters — wire real repo values, then count up when scrolled into view
+    function setNum(id, v) { const el = document.getElementById(id); if (el && v != null) { el.dataset.target = v; el.textContent = v; } }
+    setNum('s1', SKILL_COUNT); setNum('hs1', SKILL_COUNT);
+    setNum('s2', (typeof AGENT_COUNT !== 'undefined' ? AGENT_COUNT : 3)); setNum('hs2', (typeof AGENT_COUNT !== 'undefined' ? AGENT_COUNT : 3));
     if (typeof GRAPH_STATS !== 'undefined') {
-      document.getElementById('hs3').textContent = GRAPH_STATS.node_count;
-      document.getElementById('s3').textContent = GRAPH_STATS.node_count;
-      document.getElementById('s4').textContent = GRAPH_STATS.edge_count;
-      document.getElementById('s5').textContent = GRAPH_STATS.community_count;
+      setNum('hs3', GRAPH_STATS.node_count);
+      setNum('s3', GRAPH_STATS.node_count);
+      setNum('s4', GRAPH_STATS.edge_count);
+      setNum('s5', GRAPH_STATS.community_count);
     }
+    // Count-up animation (eased), triggered once per grid on scroll-in
+    function animateCount(el) {
+      const target = parseInt(el.dataset.target || el.textContent, 10) || 0;
+      const dur = 900, t0 = performance.now();
+      (function step(t) {
+        const p = Math.min((t - t0) / dur, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+    document.querySelectorAll('.stats-grid').forEach(grid => {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { grid.querySelectorAll('.num[data-target]').forEach(animateCount); io.disconnect(); }
+        });
+      }, { threshold: 0.35 });
+      io.observe(grid);
+    });
     // Install tabs
     const cmds = {
       bash: "curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash",
@@ -390,13 +369,25 @@ flowchart TD
     // Adapter grid
     const ag = document.getElementById('adapter-grid');
     if (ag) ag.innerHTML = ADAPTERS.map(a => {
-      const b = {tested:{t:"✓ Tested",c:"#4ade80",b:"rgba(74,222,128,0.15)"},documented:{t:"◐ Documented",c:"#f5a623",b:"rgba(245,166,35,0.15)"},untested:{t:"✗ Untested",c:"#ef4444",b:"rgba(239,68,68,0.15)"}}[a.status]||{t:a.status,c:"var(--text-dim)",b:"var(--surface)"};
-      return `<div class="skill-card fade-in"><h3><span class="name">${a.name}</span><span class="id" style="background:${b.b};color:${b.c};padding:2px 6px;border-radius:4px;font-size:10px">${b.t}</span></h3><div class="desc" style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-bottom:8px">${a.path}</div><div class="desc" style="font-size:12px">${a.note}</div></div>`;
+      const b = {tested:{t:"Tested",i:ICONS.check,c:"#4ade80",b:"rgba(74,222,128,0.15)"},documented:{t:"Documented",i:ICONS.half,c:"#f5a623",b:"rgba(245,166,35,0.15)"},untested:{t:"Untested",i:ICONS.cross,c:"#ef4444",b:"rgba(239,68,68,0.15)"}}[a.status]||{t:a.status,i:"",c:"var(--text-dim)",b:"var(--surface)"};
+      return `<div class="skill-card fade-in"><h3><span class="name">${a.name}</span><span class="id badge-ic" style="background:${b.b};color:${b.c};padding:2px 7px;border-radius:4px;font-size:10px">${b.i}${b.t}</span></h3><div class="desc" style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-bottom:8px">${a.path}</div><div class="desc" style="font-size:12px">${a.note}</div></div>`;
     }).join('');
-    // Featured skills
-    document.getElementById('featured-grid').innerHTML = SKILLS.slice(0,4).map((s,i) =>
-      `<a href="catalog.html#${s.id}" class="skill-card fade-in" style="animation-delay:${i*60}ms"><h3><span class="name">${s.name}</span><span class="id">${s.id}</span></h3><div class="desc">${s.description}</div><div class="meta"><span class="tag ${s.category==='core'?'tag-core':'tag-opt'}">${s.category}</span><span>${s.lines} lines</span></div></a>`
-    ).join('');
+    // Featured skills — store-driven so it stays live
+    function renderFeatured() {
+      const st = AFStore.get();
+      document.getElementById('featured-grid').innerHTML = st.skills.slice(0,4).map((s,i) =>
+        `<a href="catalog.html#${s.id}" class="skill-card fade-in" style="animation-delay:${i*60}ms"><h3><span class="name">${s.name}</span><span class="id">${s.id}</span></h3><div class="desc">${s.description}</div><div class="meta"><span class="tag ${s.category==='core'?'tag-core':'tag-opt'}">${s.category}</span><span>${s.lines} lines</span></div></a>`
+      ).join('');
+    }
+    renderFeatured();
+    // Live: keep hero/stat counters and featured list in sync without a refresh
+    AFStore.subscribe((st) => {
+      renderFeatured();
+      setNum('hs1', st.skillCount); setNum('s1', st.skillCount);
+      setNum('hs2', st.agentCount); setNum('s2', st.agentCount);
+      if (st.graphStats) { setNum('hs3', st.graphStats.node_count); setNum('s3', st.graphStats.node_count); setNum('s4', st.graphStats.edge_count); setNum('s5', st.graphStats.community_count); }
+    });
+    AFStore.startLive({ dataUrl: 'data.json' });
     // Skill preview modal
     function showSkillPreview(id) {
       const skill = SKILLS.find(s => s.id === id) || AGENTS.find(a => a.id === id);
@@ -407,7 +398,7 @@ flowchart TD
       const inner = document.createElement('div');
       inner.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);max-width:680px;max-height:80vh;overflow-y:auto;padding:28px 32px;margin:20px';
       const close = document.createElement('button');
-      close.textContent = '✕'; close.style.cssText = 'float:right;background:none;border:none;color:var(--text-faint);font-size:20px;cursor:pointer';
+      close.innerHTML = (window.ICONS ? ICONS.close : '✕'); close.setAttribute('aria-label','Close'); close.style.cssText = 'float:right;background:none;border:none;color:var(--text-faint);cursor:pointer;display:inline-flex';
       close.onclick = () => panel.remove();
       inner.appendChild(close);
       const h = document.createElement('h2'); h.textContent = skill.name; h.style.marginBottom = '8px';
@@ -424,17 +415,7 @@ flowchart TD
     }
     window.showSkillPreview = showSkillPreview;
   </script>
-<div id="af-context-menu" onclick="this.style.display='none'">
-  <div class="cm-item" onclick="window.history.back()">← Back</div>
-  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
-  <div class="cm-sep"></div>
-  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'"><span class="icon-svg">clipboard</span> Copy page info</div>
-  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
-</div>
-<script>
-document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
-document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
-</script>
+<script src="context-menu.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

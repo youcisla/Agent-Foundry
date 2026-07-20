@@ -1,13 +1,34 @@
-"""FastAPI daemon: /health, /index, /plan, /execute, /loop."""
+"""FastAPI daemon: /health, /index, /plan, /execute, /loop, /events (SSE), /site-data."""
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import time
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
+
+# Repo + generated web assets (used by the live-update SSE endpoint for local dev).
+_REPO = Path(__file__).resolve().parent.parent
+_WEB = _REPO / "web"
+
+
+def _site_signature() -> str:
+    """A cheap fingerprint of the skill/agent sources so the SSE loop can detect edits."""
+    parts = []
+    for base in ("skills", "agents"):
+        d = _REPO / base
+        if not d.exists():
+            continue
+        for f in sorted(d.rglob("*.md")):
+            try:
+                parts.append(f"{f.relative_to(_REPO)}:{int(f.stat().st_mtime)}")
+            except OSError:
+                continue
+    return "|".join(parts)
 
 from .config import Config, LOG_DB_PATH
 from .executor import execute as executor_run
@@ -42,9 +63,46 @@ def create_app(cfg: Config | None = None) -> FastAPI:
     app = FastAPI(title="Agent Foundry", version="0.2.0")
     db_path = LOG_DB_PATH
 
+    # Dev-only: allow the statically served site (different origin) to reach the
+    # SSE + site-data endpoints for instant live updates.
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["GET"],
+        allow_headers=["*"],
+    )
+
     @app.get("/health")
     def health():
         return {"status": "ok", "skills_indexed": 0}
+
+    @app.get("/site-data")
+    def site_data():
+        """Serve the generated data.json consumed by the reactive store (store.js)."""
+        f = _WEB / "data.json"
+        if not f.exists():
+            raise HTTPException(status_code=404, detail="data.json not generated yet — run scripts/gen-site-data.py")
+        return JSONResponse(json.loads(f.read_text(encoding="utf-8")))
+
+    @app.get("/events")
+    async def events():
+        """Server-Sent Events: emit a 'changed' event when skill/agent sources change."""
+        async def stream():
+            last = _site_signature()
+            yield "event: changed\ndata: init\n\n"
+            beat = 0
+            while True:
+                await asyncio.sleep(1.0)
+                sig = _site_signature()
+                if sig != last:
+                    last = sig
+                    yield "event: changed\ndata: update\n\n"
+                else:
+                    beat += 1
+                    if beat >= 15:  # heartbeat keeps the connection alive
+                        beat = 0
+                        yield ": keep-alive\n\n"
+        return StreamingResponse(stream(), media_type="text/event-stream")
 
     @app.post("/index", response_model=IndexResponse)
     def do_index():

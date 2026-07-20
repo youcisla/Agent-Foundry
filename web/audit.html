@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <script src="icons.js"></script>
 </head>
 <body>
@@ -40,30 +41,9 @@
     <div class="container">
       <h2>Community cohesion</h2>
       <p class="section-sub">Low cohesion doesn't always mean &ldquo;split it.&rdquo; Most low-cohesion clusters are cross-cutting infrastructure.</p>
-      <pre class="mermaid">
-flowchart TB
-  classDef tight fill:#22222a,stroke:#4ade80,color:#e8e8ea
-  classDef med fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  classDef low fill:#22222a,stroke:#8b8b95,color:#e8e8ea
-  subgraph Tight["Tight (cohesion &gt; 0.5)"]
-    F["foundry-eval"]
-    P["provenance-audit"]
-  end
-  subgraph Medium["Medium (0.1 - 0.5)"]
-    LOG["logging_db"]
-    IDX["indexer"]
-    EX["executor"]
-    PL["planner"]
-  end
-  subgraph Low["Low (&lt; 0.1 - cross-cutting)"]
-    CFG["Config"]
-    CLI["cli"]
-    SCH["JSON schema fields"]
-  end
-  class F,P tight
-  class LOG,IDX,EX,PL med
-  class CFG,CLI,SCH low
-      </pre>
+      <figure class="diagram">
+        <img src="diagrams/cohesion.svg" alt="Community cohesion clusters — tight, medium, and low-cohesion (cross-cutting) modules" loading="lazy">
+      </figure>
     </div>
   </section>
 
@@ -71,56 +51,12 @@ flowchart TB
     <div class="container">
       <h2>God nodes</h2>
       <p class="section-sub">Top 10 most-connected symbols. Refactor with care.</p>
-      <pre class="mermaid">
-sequenceDiagram
-    autonumber
-    participant U as User prompt
-    participant L as run_loop
-    participant P as planner.rank_skills
-    participant E as executor
-    participant M as LiteLLM (any model)
-    participant J as judge (af-critic)
-    participant DB as SQLite executions.db
-    U->>L: /af "kill generic AI slop"
-    L->>P: rank_skills(prompt, index)
-    P-->>L: top match (e.g. anti-slop, 0.24)
-    L->>L: budget guard
-    L->>E: build_messages(prompt, body)
-    E->>M: POST /v1/messages
-    M-->>E: response text
-    E-->>L: response + cost
-    opt judge=true
-      L->>J: score output
-      J-->>L: {corr, slop, scope, verdict}
-    end
-    L->>DB: log_execution(...)
-    L-->>U: LoopResponse {output, plan, judge_score?}
-      </pre>
-      <pre class="mermaid">
-flowchart TB
-  style cfg fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style cap fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style rl fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style bi fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style gc fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style te fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style rs fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style si fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style ex fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style pl fill:#22222a,stroke:#f5a623,color:#e8e8ea
-
-  cfg["Config<br/>14 edges"] -. consumed by .-> cap["create_app<br/>15 edges"]
-  cfg -. consumed by .-> rl["run_loop<br/>14 edges"]
-  cap --> rl
-  rl --> bi["build_index<br/>12 edges"]
-  rl --> gc["get_index_cached<br/>12 edges"]
-  rl --> rs["rank_skills<br/>12 edges"]
-  rl --> ex["execute<br/>10 edges"]
-  rl --> pl["plan<br/>10 edges"]
-  bi --> si["SkillIndex<br/>11 edges"]
-  rs --> si
-  ex --> te["TokenEstimate<br/>12 edges"]
-      </pre>
+      <figure class="diagram">
+        <img src="diagrams/sequence.svg" alt="Request sequence — user prompt through run_loop, planner, executor, LiteLLM, judge, and SQLite" loading="lazy">
+      </figure>
+      <figure class="diagram">
+        <img src="diagrams/godnodes.svg" alt="God nodes — most-connected symbols and their dependency edges" loading="lazy">
+      </figure>
       <div class="audit-grid" id="god-grid"></div>
     </div>
   </section>
@@ -137,46 +73,9 @@ flowchart TB
     <div class="container">
       <h2>How to read this page</h2>
       <p class="section-sub">Numbers come from the static knowledge graph. Run <code>python scripts/graphify-run.py</code> to refresh.</p>
-      <pre class="mermaid">
-flowchart LR
-  subgraph AF["Agent Foundry /"]
-    direction TB
-    cfg["config.py<br/>frozen Config"]
-    cli["cli.py<br/>10 commands"]
-    daemon["daemon.py<br/>FastAPI"]
-    planner["planner.py"]
-    executor["executor.py<br/>LiteLLM"]
-    loop["loop.py"]
-    judge["judge.py<br/>af-critic"]
-    indexer["indexer.py"]
-    logdb["logging_db.py"]
-    models["models.py"]
-  end
-  subgraph Out["Repo root"]
-    sk["skills/<br/>30 SKILL.md"]
-    ag["agents/<br/>2 AGENT.md"]
-    web["web/<br/>this site"]
-    sc["scripts/<br/>graphify, eval, nox"]
-    doc["docs/<br/>plans, architecture"]
-    gfy["graphify-out/<br/>generated"]
-  end
-  cfg --> daemon
-  cfg --> loop
-  indexer --> planner
-  planner --> loop
-  loop --> executor
-  executor --> loop
-  loop --> judge
-  loop --> logdb
-  daemon --> loop
-  sk --> indexer
-  sk --> gfy
-  sc --> gfy
-  gfy --> web
-  style cfg fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style daemon fill:#22222a,stroke:#4ade80,color:#e8e8ea
-  style gfy fill:#22222a,stroke:#6496ff,color:#e8e8ea
-      </pre>
+      <figure class="diagram">
+        <img src="diagrams/architecture.svg" alt="Repository architecture map — Agent Foundry package modules and repo-root directories" loading="lazy">
+      </figure>
     </div>
   </section>
 
@@ -189,18 +88,7 @@ flowchart LR
   <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
   <script src="site-data.js"></script>
   <script src="graph-stats.js"></script>
-  <script type="module">
-    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-    mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "loose", themeVariables: {
-      primaryColor: "#22222a",
-      primaryTextColor: "#e8e8ea",
-      primaryBorderColor: "#2a2a33",
-      lineColor: "#8b8b95",
-      secondaryColor: "#131316",
-      tertiaryColor: "#1a1a1f",
-      fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-    }});
-  </script>
+  
   <script>
     const godGrid = document.getElementById('god-grid');
     godGrid.innerHTML = (GRAPH_STATS.god_nodes || []).map((g, i) => `
@@ -220,17 +108,7 @@ flowchart LR
       </div>
     `).join('');
   </script>
-<div id="af-context-menu" onclick="this.style.display='none'">
-  <div class="cm-item" onclick="window.history.back()">← Back</div>
-  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
-  <div class="cm-sep"></div>
-  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
-  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
-</div>
-<script>
-document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
-document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
-</script>
+<script src="context-menu.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

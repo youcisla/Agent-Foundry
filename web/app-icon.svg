@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" role="img" aria-label="Agent Foundry">
+  <!-- Fully transparent canvas — only the rounded tile and monogram paint. -->
+  <defs>
+    <linearGradient id="tile" x1="40" y1="28" x2="216" y2="228" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f5a623"/>
+      <stop offset="1" stop-color="#ff6b35"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="24" y="24" width="208" height="208" rx="52" fill="url(#tile)"/>
+  <rect x="24" y="24" width="208" height="208" rx="52" fill="url(#sheen)"/>
+  <!-- knowledge-graph nod: a faint connected node in the corner -->
+  <g stroke="#0a0a0b" stroke-opacity="0.28" stroke-width="4" fill="#0a0a0b" fill-opacity="0.28">
+    <line x1="176" y1="70" x2="196" y2="54"/>
+    <circle cx="176" cy="70" r="7"/>
+    <circle cx="198" cy="52" r="5"/>
+  </g>
+  <!-- AF monogram -->
+  <text x="128" y="140" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="118" font-weight="800" letter-spacing="-6" fill="#0a0a0b"
+        text-anchor="middle" dominant-baseline="central">AF</text>
+</svg>

@@ -76,6 +76,26 @@ const FILE_TREE = {
       }
     }
   },
+  "AUTHORSHIP.md": {
+    "path": "AUTHORSHIP.md",
+    "size": 644,
+    "ext": ".md"
+  },
+  "CHANGELOG.md": {
+    "path": "CHANGELOG.md",
+    "size": 4475,
+    "ext": ".md"
+  },
+  "INSTALL.md": {
+    "path": "INSTALL.md",
+    "size": 2444,
+    "ext": ".md"
+  },
+  "README.md": {
+    "path": "README.md",
+    "size": 13359,
+    "ext": ".md"
+  },
   "agent_foundry": {
     "__files": {
       "__init__.py": {
@@ -100,7 +120,7 @@ const FILE_TREE = {
       },
       "daemon.py": {
         "path": "agent_foundry/daemon.py",
-        "size": 4017,
+        "size": 6208,
         "ext": ".py"
       },
       "executor.py": {
@@ -189,11 +209,6 @@ const FILE_TREE = {
       }
     }
   },
-  "AUTHORSHIP.md": {
-    "path": "AUTHORSHIP.md",
-    "size": 644,
-    "ext": ".md"
-  },
   "catalog": {
     "__files": {
       "decisions.md": {
@@ -202,11 +217,6 @@ const FILE_TREE = {
         "ext": ".md"
       }
     }
-  },
-  "CHANGELOG.md": {
-    "path": "CHANGELOG.md",
-    "size": 4475,
-    "ext": ".md"
   },
   "claude_code_plugin.json": {
     "path": "claude_code_plugin.json",
@@ -226,6 +236,11 @@ const FILE_TREE = {
     "__files": {
       "adapters": {
         "__files": {
+          "README.md": {
+            "path": "docs/adapters/README.md",
+            "size": 3174,
+            "ext": ".md"
+          },
           "gemini-cli.md": {
             "path": "docs/adapters/gemini-cli.md",
             "size": 734,
@@ -234,11 +249,6 @@ const FILE_TREE = {
           "opencode.md": {
             "path": "docs/adapters/opencode.md",
             "size": 82,
-            "ext": ".md"
-          },
-          "README.md": {
-            "path": "docs/adapters/README.md",
-            "size": 3174,
             "ext": ".md"
           }
         }
@@ -293,11 +303,6 @@ const FILE_TREE = {
       }
     }
   },
-  "INSTALL.md": {
-    "path": "INSTALL.md",
-    "size": 2444,
-    "ext": ".md"
-  },
   "install.sh": {
     "path": "install.sh",
     "size": 2681,
@@ -307,11 +312,6 @@ const FILE_TREE = {
     "path": "pyproject.toml",
     "size": 804,
     "ext": ".toml"
-  },
-  "README.md": {
-    "path": "README.md",
-    "size": 13359,
-    "ext": ".md"
   },
   "schemas": {
     "__files": {
@@ -346,7 +346,7 @@ const FILE_TREE = {
       },
       "gen-site-data.py": {
         "path": "scripts/gen-site-data.py",
-        "size": 9520,
+        "size": 13669,
         "ext": ".py"
       },
       "graphify-run.py": {
@@ -381,7 +381,7 @@ const FILE_TREE = {
       },
       "validate.sh": {
         "path": "scripts/validate.sh",
-        "size": 2531,
+        "size": 2927,
         "ext": ".sh"
       }
     }
@@ -401,6 +401,11 @@ const FILE_TREE = {
           },
           "api-design": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/api-design/SKILL.md",
+                "size": 1827,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -409,16 +414,16 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/api-design/SKILL.md",
-                "size": 1827,
-                "ext": ".md"
               }
             }
           },
           "automation-pick": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/automation-pick/SKILL.md",
+                "size": 2045,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -427,11 +432,6 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/automation-pick/SKILL.md",
-                "size": 2045,
-                "ext": ".md"
               }
             }
           },
@@ -464,6 +464,11 @@ const FILE_TREE = {
           },
           "cron-troubleshoot": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/cron-troubleshoot/SKILL.md",
+                "size": 1996,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -472,16 +477,16 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/cron-troubleshoot/SKILL.md",
-                "size": 1996,
-                "ext": ".md"
               }
             }
           },
           "e2e-test-strategy": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/e2e-test-strategy/SKILL.md",
+                "size": 2593,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -490,16 +495,16 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/e2e-test-strategy/SKILL.md",
-                "size": 2593,
-                "ext": ".md"
               }
             }
           },
           "feedback-loop": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/feedback-loop/SKILL.md",
+                "size": 1859,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -508,16 +513,16 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/feedback-loop/SKILL.md",
-                "size": 1859,
-                "ext": ".md"
               }
             }
           },
           "knowledge-extract": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/knowledge-extract/SKILL.md",
+                "size": 1830,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -526,11 +531,6 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/knowledge-extract/SKILL.md",
-                "size": 1830,
-                "ext": ".md"
               }
             }
           },
@@ -590,6 +590,11 @@ const FILE_TREE = {
           },
           "quality-protocol": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/quality-protocol/SKILL.md",
+                "size": 2564,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -598,11 +603,6 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/quality-protocol/SKILL.md",
-                "size": 2564,
-                "ext": ".md"
               }
             }
           },
@@ -635,6 +635,11 @@ const FILE_TREE = {
           },
           "session-distill": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/session-distill/SKILL.md",
+                "size": 2416,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -643,11 +648,6 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/session-distill/SKILL.md",
-                "size": 2416,
-                "ext": ".md"
               }
             }
           },
@@ -671,6 +671,11 @@ const FILE_TREE = {
           },
           "workflow-decompose": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/workflow-decompose/SKILL.md",
+                "size": 2334,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -679,11 +684,6 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/workflow-decompose/SKILL.md",
-                "size": 2334,
-                "ext": ".md"
               }
             }
           }
@@ -716,6 +716,11 @@ const FILE_TREE = {
           },
           "funnel-pr-guard": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/optional/funnel-pr-guard/SKILL.md",
+                "size": 2438,
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
@@ -724,11 +729,6 @@ const FILE_TREE = {
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/optional/funnel-pr-guard/SKILL.md",
-                "size": 2438,
-                "ext": ".md"
               }
             }
           },
@@ -777,32 +777,57 @@ const FILE_TREE = {
       },
       "audit.html": {
         "path": "web/audit.html",
-        "size": 7848,
+        "size": 5417,
         "ext": ".html"
       },
       "catalog.html": {
         "path": "web/catalog.html",
-        "size": 6726,
+        "size": 10552,
         "ext": ".html"
+      },
+      "context-menu.js": {
+        "path": "web/context-menu.js",
+        "size": 3140,
+        "ext": ".js"
+      },
+      "data.json": {
+        "path": "web/data.json",
+        "size": 100566,
+        "ext": ".json"
+      },
+      "file-content.js": {
+        "path": "web/file-content.js",
+        "size": 662261,
+        "ext": ".js"
+      },
+      "file-tree.js": {
+        "path": "web/file-tree.js",
+        "size": 21468,
+        "ext": ".js"
       },
       "graph-data.js": {
         "path": "web/graph-data.js",
-        "size": 91904,
+        "size": 129355,
         "ext": ".js"
       },
       "graph-stats.js": {
         "path": "web/graph-stats.js",
-        "size": 1410,
+        "size": 1426,
         "ext": ".js"
       },
       "graph.html": {
         "path": "web/graph.html",
-        "size": 9777,
+        "size": 15832,
         "ext": ".html"
+      },
+      "icons.js": {
+        "path": "web/icons.js",
+        "size": 11261,
+        "ext": ".js"
       },
       "index.html": {
         "path": "web/index.html",
-        "size": 25156,
+        "size": 31460,
         "ext": ".html"
       },
       "install-data.js": {
@@ -812,22 +837,27 @@ const FILE_TREE = {
       },
       "site-data.js": {
         "path": "web/site-data.js",
-        "size": 101873,
+        "size": 101541,
         "ext": ".js"
       },
       "skill-deps.js": {
         "path": "web/skill-deps.js",
-        "size": 1541,
+        "size": 1446,
+        "ext": ".js"
+      },
+      "store.js": {
+        "path": "web/store.js",
+        "size": 3540,
         "ext": ".js"
       },
       "styles.css": {
         "path": "web/styles.css",
-        "size": 18769,
+        "size": 31634,
         "ext": ".css"
       },
       "why.html": {
         "path": "web/why.html",
-        "size": 5516,
+        "size": 6642,
         "ext": ".html"
       }
     }

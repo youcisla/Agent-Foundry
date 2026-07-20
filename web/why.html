@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <script src="icons.js"></script>
 </head>
 <body>
@@ -33,15 +34,15 @@
   <section><div class="container">
     <h2>The short version</h2>
     <p>Most agent harnesses compete on <strong>scale</strong> — more skills, more agents, more stars. Agent Foundry competes on <strong>quality and transparency</strong>.</p>
-    <p>Every skill in our catalog is original MIT-licensed work, verified by three automated quality gates that run on every commit. We have a live knowledge graph of the codebase itself — not a static list, but 287 connected nodes extracted via tree-sitter AST. We ship an executable smoke test for every harness adapter and label each one "tested", "documented", or "untested".</p>
+    <p>Every skill in our catalog is original MIT-licensed work, verified by three automated quality gates that run on every commit. We have a live knowledge graph of the codebase itself — not a static list, but 396 connected nodes extracted via tree-sitter AST. We ship an executable smoke test for every harness adapter and label each one "tested", "documented", or "untested".</p>
   </div></section>
   <section><div class="container">
     <h2>What this means for you</h2>
     <div class="feature-grid">
-      <div class="feature-card"><div class="icon-svg">🛡️</div><h3>Trust the catalog</h3><p>Every skill passes static eval, frontmatter validation, and an external-reference scan. No adapted, copied, or unverified content.</p></div>
-      <div class="feature-card"><div class="icon-svg">🔍</div><h3>See the whole system</h3><p>The knowledge graph shows every code symbol, its connections, and its community cluster. Updated on every commit.</p></div>
-      <div class="feature-card"><div class="icon-svg">🧪</div><h3>Verify the claims</h3><p>Smoke tests are in the repo. Quality gates are in the repo. Graph pipeline is in the repo. Everything is auditable.</p></div>
-      <div class="feature-card"><div class="icon-svg">🔒</div><h3>Keep your data</h3><p>MIT license, local daemon, no telemetry, no cloud. You supply the API key. We never see your prompts.</p></div>
+      <div class="feature-card"><div class="icon-svg">shield</div><h3>Trust the catalog</h3><p>Every skill passes static eval, frontmatter validation, and an external-reference scan. No adapted, copied, or unverified content.</p></div>
+      <div class="feature-card"><div class="icon-svg">search</div><h3>See the whole system</h3><p>The knowledge graph shows every code symbol, its connections, and its community cluster. Updated on every commit.</p></div>
+      <div class="feature-card"><div class="icon-svg">beaker</div><h3>Verify the claims</h3><p>Smoke tests are in the repo. Quality gates are in the repo. Graph pipeline is in the repo. Everything is auditable.</p></div>
+      <div class="feature-card"><div class="icon-svg">lock</div><h3>Keep your data</h3><p>MIT license, local daemon, no telemetry, no cloud. You supply the API key. We never see your prompts.</p></div>
     </div>
   </div></section>
   <section><div class="container">
@@ -82,17 +83,7 @@
       document.querySelectorAll('.stat .num')[3].textContent = GRAPH_STATS.edge_count;
     }
   </script>
-<div id="af-context-menu" onclick="this.style.display='none'">
-  <div class="cm-item" onclick="window.history.back()">← Back</div>
-  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
-  <div class="cm-sep"></div>
-  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
-  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
-</div>
-<script>
-document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
-document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
-</script>
+<script src="context-menu.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

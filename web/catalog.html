@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <script src="icons.js"></script>
 </head>
 <body>
@@ -31,16 +32,21 @@
   <div style="padding: 60px 0 32px;">
     <div class="container">
       <h1 style="font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px;">Catalog</h1>
-      <p class="section-sub" style="margin: 0;">All <span id="cat-total">30</span> skills and <span id="cat-agents">2</span> agents. Click a card to see its source on GitHub.</p>
+      <p class="section-sub" style="margin: 0;">All <span id="cat-total">30</span> skills and <span id="cat-agents">2</span> agents. Click a card to preview it in place.</p>
     </div>
   </div>
 
   <div class="container" style="padding-bottom: 60px;">
     <div class="filter-bar">
-      <div class="search-wrap"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input type="search" id="search" placeholder="Filter by name, description, or trigger phrase…" autocomplete="off">
-      <button class="filter-btn active" data-cat="all">All</button>
-      <button class="filter-btn" data-cat="core">Core (<span id="cat-core-count">0</span>)</button>
-      <button class="filter-btn" data-cat="optional">Optional (<span id="cat-opt-count">0</span>)</button>
+      <div class="search-wrap">
+        <span class="icon"><span class="icon-svg">search</span></span>
+        <input type="search" id="search" placeholder="Filter by name, description, or trigger phrase…" autocomplete="off">
+      </div>
+      <div class="filter-cats" role="tablist" aria-label="Filter by category">
+        <button class="filter-btn active" data-cat="all">All</button>
+        <button class="filter-btn" data-cat="core">Core <span class="cnt" id="cat-core-count">0</span></button>
+        <button class="filter-btn" data-cat="optional">Optional <span class="cnt" id="cat-opt-count">0</span></button>
+      </div>
       <span class="filter-count" id="visible-count"></span>
     </div>
 
@@ -62,16 +68,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
   <script src="site-data.js"></script>
+  <script src="store.js"></script>
   <script src="skill-deps.js"></script>
   <script>
-    document.getElementById('cat-total').textContent = SKILL_COUNT;
-    document.getElementById('cat-agents').textContent = AGENT_COUNT;
-
-    const coreCount = SKILLS.filter(s => s.category === 'core').length;
-    const optCount = SKILLS.filter(s => s.category === 'optional').length;
-    document.getElementById('cat-core-count').textContent = coreCount;
-    document.getElementById('cat-opt-count').textContent = optCount;
-
     function cardHTML(item, isAgent) {
       const repoUrl = 'https://github.com/youcisla/Agent-Foundry';
       const path = isAgent
@@ -101,17 +100,20 @@
     let currentCat = 'all';
     const searchInput = document.getElementById('search');
     const filterBtns = document.querySelectorAll('.filter-btn');
+    const visibleCount = document.getElementById('visible-count');
 
     function applyFilter() {
+      const st = AFStore.get();
+      const skills = st.skills, agents = st.agents;
       const q = searchInput.value.toLowerCase().trim();
       const matches = (s) => {
         if (currentCat !== 'all' && s.category !== currentCat) return false;
         if (!q) return true;
         return (s.name + ' ' + s.id + ' ' + s.description).toLowerCase().includes(q);
       };
-      const filteredCore = SKILLS.filter(s => s.category === 'core' && matches(s));
-      const filteredOpt = SKILLS.filter(s => s.category === 'optional' && matches(s));
-      const filteredAgents = AGENTS.filter(a => {
+      const filteredCore = skills.filter(s => s.category === 'core' && matches(s));
+      const filteredOpt = skills.filter(s => s.category === 'optional' && matches(s));
+      const filteredAgents = agents.filter(a => {
         if (currentCat !== 'all' && currentCat !== 'agents') return false;
         if (!q) return true;
         return (a.name + ' ' + a.id + ' ' + a.description).toLowerCase().includes(q);
@@ -120,7 +122,18 @@
       optGrid.innerHTML = filteredOpt.map(s => cardHTML(s, false)).join('') || '<div style="color: var(--text-faint)">No matching skills.</div>';
       agentsGrid.innerHTML = filteredAgents.map(a => cardHTML(a, true)).join('') || '<div style="color: var(--text-faint)">No matching agents.</div>';
       const total = filteredCore.length + filteredOpt.length + filteredAgents.length;
-      document.getElementById('visible-count').textContent = `${total} of ${SKILL_COUNT + AGENT_COUNT}`;
+      visibleCount.textContent = `${total} of ${st.skillCount + st.agentCount}`;
+    }
+
+    // Render everything driven by the reactive store, so the catalog re-renders
+    // automatically when skills/agents change (no manual refresh).
+    function render() {
+      const st = AFStore.get();
+      document.getElementById('cat-total').textContent = st.skillCount;
+      document.getElementById('cat-agents').textContent = st.agentCount;
+      document.getElementById('cat-core-count').textContent = st.skills.filter(s => s.category === 'core').length;
+      document.getElementById('cat-opt-count').textContent = st.skills.filter(s => s.category === 'optional').length;
+      applyFilter();
     }
 
     filterBtns.forEach(b => b.addEventListener('click', () => {
@@ -130,11 +143,19 @@
       applyFilter();
     }));
     searchInput.addEventListener('input', applyFilter);
-    applyFilter();
+
+    render();
+    AFStore.subscribe(() => {           // live update: flash the count, re-render
+      render();
+      visibleCount.classList.remove('flash'); void visibleCount.offsetWidth;
+      visibleCount.classList.add('flash');
+    });
+    AFStore.startLive({ dataUrl: 'data.json' });
 
     // Skill preview modal
     function showSkillPreview(id) {
-      const item = SKILLS.find(s => s.id === id) || AGENTS.find(a => a.id === id);
+      const st = AFStore.get();
+      const item = st.skills.find(s => s.id === id) || st.agents.find(a => a.id === id);
       if (!item || !item.body_md) return;
       const panel = document.createElement('div');
       panel.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center';
@@ -142,7 +163,7 @@
       const inner = document.createElement('div');
       inner.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);max-width:680px;max-height:80vh;overflow-y:auto;padding:28px 32px;margin:20px';
       const close = document.createElement('button');
-      close.textContent = '✕'; close.style.cssText = 'float:right;background:none;border:none;color:var(--text-faint);font-size:20px;cursor:pointer';
+      close.innerHTML = (window.ICONS ? ICONS.close : '✕'); close.setAttribute('aria-label','Close'); close.style.cssText = 'float:right;background:none;border:none;color:var(--text-faint);cursor:pointer;display:inline-flex';
       close.onclick = () => panel.remove();
       inner.appendChild(close);
       const h = document.createElement('h2'); h.textContent = item.name; h.style.marginBottom = '8px';
@@ -159,17 +180,7 @@
     }
     window.showSkillPreview = showSkillPreview;
   </script>
-<div id="af-context-menu" onclick="this.style.display='none'">
-  <div class="cm-item" onclick="window.history.back()">← Back</div>
-  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
-  <div class="cm-sep"></div>
-  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
-  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
-</div>
-<script>
-document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
-document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
-</script>
+<script src="context-menu.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
