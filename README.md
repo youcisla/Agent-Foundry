@@ -1,165 +1,177 @@
-# Agent-Foundry
+# Agent Foundry
 
-A skill orchestrator for Claude Code. Install once, get a curated set of 30+ skills dispatched against your prompts via a local daemon.
+<div align="center">
+<br>
 
-**This file documents v0.1** — the public launch baseline (Option C). For the design rationale, see [`docs/launch-plan.md`](docs/launch-plan.md).
+**A curated runtime orchestrator for AI coding assistants.**
 
-## What this is
+Plan → execute → verify. Skills, agents, a local daemon, and a growing catalog — all MIT, all your data stays local.
 
-- A **Python package** (`agent-foundry`) that indexes your `SKILL.md` files and exposes:
-  - `init`, `index`, `cost-report` — setup / maintenance
-  - `plan "prompt"` — get a ranked list of relevant skills
-  - `execute <skill_id> "prompt"` — run a specific skill
-  - `run "prompt"` — plan + execute the top-ranked skill (with budget guard)
-  - `serve` — run the daemon
-- A **FastAPI daemon** with `/health`, `/index`, `/plan`, `/execute`, `/loop`
-- A **thin Claude Code plugin** (`/plan`, `/af`) that forwards to the daemon
-- A **fallback skill** (`generic-reasoning`) that runs when no skill matches your prompt
-- An **interactive budget guard** — you'll be asked `y/n` before any run that exceeds your configured token budget (`--force` to skip)
-- **SQLite logging** of every execution, including `planner_score` and `was_fallback` for later accuracy analysis
-
-## v0.1 scope
-
-**In scope:**
-- Plan → execute → return (single pass)
-- Configurable planner scoring weights (`config.toml`)
-- Token budget confirmation flow
-- Generic-reasoning fallback for unmatched prompts
-- SQLite logging (`executions` table)
-
-**Deferred to v0.2+:**
-- Judge agent (output quality scoring)
-- Retry loop (re-plan on failure)
-- Knowledge graph store
-- Auto-trigger via hooks
-- PyPI publication
-- SSE/WebSocket streaming
-- systemd/launchd auto-start
+</div>
 
 ## Quick start
 
-### 1. Install
-
 ```bash
-# Clone and install in editable mode
-git clone https://github.com/youcisla/Agent-Foundry.git ~/.agent-foundry
-cd ~/.agent-foundry
-pip install -e .
-
-# Or via the install script (Linux / macOS only)
 curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash
-```
-
-The installer:
-- Creates a venv at `~/.config/agent-foundry/venv`
-- Runs `agent-foundry init` (writes `~/.config/agent-foundry/config.toml` + first index)
-- Symlinks the repo to `~/.claude/plugins/agent-foundry`
-
-### 2. Set your API key
-
-```bash
 export ANTHROPIC_API_KEY=sk-...
 ```
 
-The daemon uses `litellm` and supports any model — Claude, GPT, etc.
-
-### 3. Use the Claude Code plugin
-
-In Claude Code:
-```
-/plan "write a react component"        # see which skills match
-/af   "write a react component"        # plan + execute top skill
+```bash
+/af "build a react component"   # plan + execute in Claude Code
+/plan "audit this API"          # see which skills match
 ```
 
-If the run would exceed your budget, you'll be asked `y/n` first. Pass `--force` (or use a setup that disables the prompt) to skip.
-
-### 4. Or use the CLI directly
+Or without Claude Code:
 
 ```bash
-agent-foundry --help
-agent-foundry plan "audit this code"
-agent-foundry execute anti-slop "revise this README"
+agent-foundry plan "kill generic AI slop"
 agent-foundry run  "refactor the API design"
-agent-foundry serve --port 8765        # foreground; CLI commands start it lazily on first call
 ```
 
-## Configuration
+## What it is
 
-Config file: `~/.config/agent-foundry/config.toml`
+Agent Foundry is three things:
 
-```toml
-[core]
-skills_dir = "~/.claude/plugins/agent-foundry/skills"
-index_path = "~/.config/agent-foundry/skills-index.json"
-default_llm = "claude-3-7-sonnet-20250219"
-token_budget = 100000
-daemon_port = 8765
-index_cache_ttl_seconds = 60
-harness_type = "claude-code"
+| Layer | What | File |
+|---|---|---|
+| **Skills** | Disciplines the model applies to its own work — how to *think*, not what to *know*. | `skills/core/<name>/SKILL.md` |
+| **Agents** | Roles the orchestrator can dispatch — critic, planner, verifier. | `agents/af-*/AGENT.md` |
+| **Orchestrator** | Local daemon that ranks, dispatches, executes, and logs every run. | `agent_foundry/` (Python) |
 
-[planner]
-pattern_match_weight = 0.3
-name_in_prompt_boost = 0.2
-cost_penalty_divisor = 5000.0
-max_results = 5
+## The catalog
+
+30 skills, 2 agents. All original work under MIT. Each skill:
+
+- **≤150 lines / ≤8 KB** — Codex cap, no exceptions
+- **Exactly one trigger phrase** — `Use when...` so the model knows when to fire
+- **Anti-patterns + Verification checklist** — teach what *not* to do, then confirm it was done
+- **Action verbs, not tool names** — `examine` not `Read`, `create` not `Write`
+
+### Core skills (24)
+
+| Skill | Trigger | Lines |
+|---|---|---|
+| `anti-slop` | Kill generic AI patterns before they ship | 36 |
+| `api-design` | Design or review a new API endpoint | 57 |
+| `automation-pick` | Decide whether to automate a task | 50 |
+| `bottleneck-gating` | Phase a project by measured bottleneck | 46 |
+| `constraint-then-solve` | Restate, catalog constraints, then solve | 46 |
+| `context-optimization` | Keep tool outputs small, reference not repeat | 47 |
+| `cron-troubleshoot` | Debug a missing or wrong cron job | 68 |
+| `e2e-test-strategy` | Plan an E2E test pyramid | 69 |
+| `feedback-loop` | After shipping, instrument → measure → iterate | 61 |
+| `knowledge-extract` | Turn a session into a skill draft | 68 |
+| `landscape-first` | Research competitors before building | 46 |
+| `measure-first` | Measure before optimizing | 45 |
+| `plan-before-code` | Spec before implementation | 46 |
+| `plan-then-act` | Plan first, then act | 46 |
+| `prompt-discipline` | Think, simplify, edit surgical, stay goal-driven | 52 |
+| `pushback-when-wrong` | Push back against incorrect briefs | 47 |
+| `quality-protocol` | Maximum-quality gate before declaring done | 60 |
+| `read-before-build` | Read source files before writing code | 49 |
+| `re-verify-findings` | Re-verify every claimed audit finding | 45 |
+| `session-closeout` | Reconcile, update, hand off at session end | 67 |
+| `session-distill` | Extract patterns from every session | 67 |
+| `show-your-work` | Output a thinking trace after complex tasks | 44 |
+| `verify-first` | Verify claims before committing to action | 47 |
+| `workflow-decompose` | Decompose tasks into DAG steps | 62 |
+
+### Optional skills (6)
+
+| Skill | Trigger |
+|---|---|
+| `persistent-memory` | Persist context across sessions |
+| `token-compression` | Compress tool outputs before they consume context |
+| `chrome-devtools-mcp-bridge` | Drive Chrome DevTools from an agent |
+| `design-language` | Apply Apple-grade UI polish |
+| `funnel-pr-guard` | Guard conversion-critical paths from breaking |
+| `sql-migration-trio` | Three-file migration pattern (up/down/schema) |
+
+### Agents (2)
+
+| Agent | Model | Job |
+|---|---|---|
+| `af-critic` | opus | Score output on correctness, slop, scope |
+| `af-planner` | opus | Decompose a request into a skill/agent plan |
+
+## Commands
+
+| Command | What it does |
+|---|---|
+| `agent-foundry plan "..."` | Rank skills for a prompt |
+| `agent-foundry run "..."` | Plan + execute the top-ranked skill |
+| `agent-foundry execute <id> "..."` | Run a specific skill |
+| `agent-foundry doctor` | Health-check config, index, daemon, API key |
+| `agent-foundry status` | Routing accuracy, fallback rate, average cost |
+| `agent-foundry consult "..."` | Recommend skills for a need |
+| `agent-foundry cost-report` | Token and time estimates per skill |
+| `agent-foundry index` | Rebuild the skill index |
+| `agent-foundry serve` | Start the daemon (lazy-started on first command) |
+
+## Architecture
+
+```
+/af <prompt>          /plan <prompt>
+    │                      │
+    ▼                      ▼
+┌──────────────────────────────────┐
+│       Agent Foundry daemon       │
+│  FastAPI  · planner  · judge    │
+│  executor  · budget guard       │
+│  SQLite log  · indexer          │
+└──────────────────┬───────────────┘
+                   │
+                   ▼
+┌──────────────────────────────────┐
+│  Skill catalog  +  Agent catalog │
+│  references/  ·  scripts/  ·    │
+│  hooks/  ·  executions.db       │
+└──────────────────────────────────┘
 ```
 
-Edit any field and re-run `agent-foundry init --force` to apply. The planner weights are tunable from `config.toml` without code changes.
+The daemon is lazy-started by the CLI (no systemd/launchd requirement). Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.db`.
 
-## File layout
+## Install profiles
 
-```
-agent-foundry/                 # Python package
-  __init__.py
-  __main__.py                  # python -m agent_foundry
-  cli.py                       # Click commands
-  config.py                    # Config dataclasses + TOML load/save
-  indexer.py                   # Walk skills/ + build SkillIndex
-  models.py                    # Pydantic data models
-  planner.py                   # Score + rank skills
-  executor.py                  # LiteLLM call wrapper
-  loop.py                      # plan → budget guard → execute
-  daemon.py                    # FastAPI app
-  logging_db.py                # SQLite exec logger
-pyproject.toml                # Install via `pip install -e .`
-install.sh                    # curl | bash installer
-claude_code_plugin.json       # /plan + /af commands
-docs/launch-plan.md           # v0.1 design spec
+```bash
+AF_PROFILE=minimal ./install.sh    # Skills only (no daemon)
+AF_PROFILE=core    ./install.sh    # Skills + daemon (default)
+AF_PROFILE=full    ./install.sh    # Skills + daemon + hooks
 ```
 
-## Behavior notes
+## Requirements
 
-- **Lazy daemon start**: when you run `agent-foundry plan`, `execute`, or `run`, the CLI checks `/health`. If absent, it spawns `agent-foundry serve --detach` in the background and waits for it. The daemon stays alive between calls.
-- **In-memory index cache**: the daemon caches `skills-index.json` for `index_cache_ttl_seconds` (default 60). Call `POST /index` to force a rebuild.
-- **Trigger patterns**: extracted from each skill's `description` field's "Use when ..." clause. Patterns are exact regexes; **v0.1 does not fuzzy-match**. If a prompt doesn't trigger any pattern, the `generic-reasoning` fallback runs instead.
-- **Budget guard**: the daemon returns `requires_confirmation=true` (instead of executing) when estimated cost exceeds `token_budget`. The CLI prompts `y/n` (skipped in non-TTY without `--force`). On `y`, the CLI re-sends with `force=true`. Zero tokens spent on a declined confirmation.
+- Python 3.10+
+- Claude Code, Codex, Gemini, Hermes, or OpenCode (any harness that accepts slash commands)
+- An Anthropic or OpenAI API key
 
-## Validation results
+## Quality gates
 
-End-to-end checks performed during v0.1 development:
+Every commit runs:
 
-| Test | Result |
-|------|--------|
-| `init` writes config and indexes 30 skills + 1 fallback | ✅ |
-| `cost-report` lists all skills with cost estimates | ✅ |
-| `plan "kill generic AI slop in this essay"` → `anti-slop` | ✅ |
-| `plan "xyz nonsense"` → empty (no match, fallback will run on `/loop`) | ✅ |
-| `run --budget 50` over-budget → returns `requires_confirmation`, no execution | ✅ |
-| `run` non-TTY input + over-budget → "declining without --force" | ✅ |
-| Daemon `/health`, `/plan`, `/index`, `/loop` all return 200 | ✅ |
-| Skill content indexed (31 entries with trigger patterns, location, costs) | ✅ |
-| Logs written to `~/.config/agent-foundry/executions.db` | ✅ |
-| Budget refusal does NOT log a real execution | ✅ |
-| Fallback selection sets `was_fallback=1` in the log | ✅ |
+```bash
+# 32 assets pass static quality checks
+python scripts/foundry-eval.py
 
-## What's next
+# All skills have correct frontmatter
+./scripts/validate.sh
 
-After using v0.1 for a week:
+# No external-reference names in tracked files
+bash scripts/nox.sh
+```
 
-- Tune planner scoring weights (`config.toml`) based on observed success
-- Review `~/.config/agent-foundry/executions.db` for accuracy signals
-- File issues for v0.2 features (judge, retry loop, graph store)
+Current: **32 passed, 0 failed** | **30 skills, 0 failed** | **0 external references**
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. All skills, agents, and authored artifacts are original work by the Agent Foundry Contributors.
+
+## Related
+
+- [ECC](https://github.com/affaan-m/ECC) — The agent harness optimization system that inspired this project's approach to skill curation and selective install
+- [AGENTS.md](https://agents.md/) — The open cross-harness context-file convention
+- [wshobson/agents](https://github.com/wshobson/agents) — Reference marketplace for multi-harness agent deployment
+
+## Status
+
+Public v0.1 — active development. [docs/launch-plan.md](docs/launch-plan.md) for the original spec, [docs/improvement-plan.md](docs/improvement-plan.md) for the roadmap.
