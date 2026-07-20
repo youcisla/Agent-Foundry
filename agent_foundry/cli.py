@@ -259,11 +259,13 @@ def cmd_execute(ctx, skill_id, prompt, model, force):
 @click.option("--model", default=None)
 @click.option("--budget", type=int, default=None)
 @click.option("--force", is_flag=True, help="Skip budget confirmation prompt")
+@click.option("--judge", is_flag=True, help="Score output via af-critic after execution")
 @click.pass_context
-def cmd_run(ctx, prompt, model, budget, force):
+def cmd_run(ctx, prompt, model, budget, force, judge):
     """Plan + execute the top-ranked skill."""
     cfg = ctx.obj["cfg"]
-    payload = {"prompt": prompt, "force": force, "model": model, "budget": budget}
+    payload = {"prompt": prompt, "force": force, "model": model,
+               "budget": budget, "judge": judge}
 
     def call(req):
         return _call_or_daemon(cfg, "POST", "/loop", req)
@@ -303,6 +305,9 @@ def cmd_run(ctx, prompt, model, budget, force):
         f"time={data.get('duration_seconds', 0):.2f}s]",
         err=True,
     )
+    if data.get("judged") and data.get("judge_score"):
+        click.echo(f"\nJudge (af-critic): {json.dumps(data['judge_score'], indent=2)}",
+                   err=True)
 
 
 @cli.command("serve")

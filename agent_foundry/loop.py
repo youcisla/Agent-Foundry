@@ -131,9 +131,35 @@ def run_loop(req: LoopRequest, *, cfg: Config, db_path, model_override: str | No
 
     truncated = text[:8000]
     from .logging_db import log_execution
-    log_execution(db_path, skill_id=skill_id, prompt=req.prompt, output=truncated,
-                  tokens_used=tokens_used, duration_seconds=dur, success=True,
-                  planner_score=planner_score, was_fallback=was_fallback)
+
+    judge_payload = None
+    judged_flag = False
+    if getattr(req, "judge", False):
+        from .judge import judge_output
+        judge_payload = judge_output(
+            task=req.prompt,
+            output=truncated,
+            model=model,
+            skill_paths=idx.skill_paths,
+            fallback_prompt=fallback_prompt,
+        )
+        judged_flag = judge_payload is not None
+
+    log_execution(
+        db_path,
+        skill_id=skill_id,
+        prompt=req.prompt,
+        output=truncated,
+        tokens_used=tokens_used,
+        duration_seconds=dur,
+        success=True,
+        planner_score=planner_score,
+        was_fallback=was_fallback,
+        judge_corr=judge_payload.get("correctness") if judge_payload else None,
+        judge_slop=judge_payload.get("slop") if judge_payload else None,
+        judge_scope=judge_payload.get("scope") if judge_payload else None,
+        judge_verdict=judge_payload.get("verdict") if judge_payload else None,
+    )
 
     return LoopResponse(
         plan=plan_list,
@@ -143,4 +169,6 @@ def run_loop(req: LoopRequest, *, cfg: Config, db_path, model_override: str | No
         duration_seconds=dur,
         success=True,
         was_fallback=was_fallback,
+        judge_score=judge_payload,
+        judged=judged_flag,
     )

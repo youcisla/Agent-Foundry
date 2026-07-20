@@ -104,6 +104,7 @@ class LoopRequest(BaseModel):
     force: bool = False
     model: str | None = None
     budget: int | None = None
+    judge: bool = False  # if true, score output via af-critic
 
 
 class LoopResponse(BaseModel):
@@ -118,6 +119,8 @@ class LoopResponse(BaseModel):
     requires_confirmation: bool = False
     estimated_cost: TokenEstimate | None = None
     was_fallback: bool = False
+    judge_score: dict | None = None   # correctness/slop/scope/verdict if --judge
+    judged: bool = False
 
 
 # ===== Index =====

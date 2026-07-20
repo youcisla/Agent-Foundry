@@ -19,7 +19,11 @@ CREATE TABLE IF NOT EXISTS executions (
     success INTEGER NOT NULL DEFAULT 0,
     error TEXT,
     planner_score REAL,
-    was_fallback INTEGER NOT NULL DEFAULT 0
+    was_fallback INTEGER NOT NULL DEFAULT 0,
+    judge_corr REAL,
+    judge_slop REAL,
+    judge_scope REAL,
+    judge_verdict TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_executions_ts ON executions(timestamp);
 CREATE INDEX IF NOT EXISTS idx_executions_skill ON executions(skill_id);
@@ -36,7 +40,11 @@ def init_db(db_path: Path) -> None:
 def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
                   tokens_used: int, duration_seconds: float, success: bool,
                   error: str | None = None, planner_score: float | None = None,
-                  was_fallback: bool = False) -> int:
+                  was_fallback: bool = False,
+                  judge_corr: float | None = None,
+                  judge_slop: float | None = None,
+                  judge_scope: float | None = None,
+                  judge_verdict: str | None = None) -> int:
     init_db(db_path)
     with sqlite3.connect(str(db_path)) as conn:
         cur = conn.execute(
@@ -55,6 +63,7 @@ def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
                 error,
                 planner_score,
                 1 if was_fallback else 0,
+                judge_corr, judge_slop, judge_scope, judge_verdict,
             ),
         )
         conn.commit()

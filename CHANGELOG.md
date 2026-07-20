@@ -26,6 +26,31 @@ The repo delivers a working Python package that orchestrates 30+ skills via a Fa
 
 ---
 
+## 0.2.0-pre — 2026-07-20
+
+In development per [`docs/improvement-plan.md`](docs/improvement-plan.md). Working on Option C (public launch) was v0.1. v0.2 brings the structure to support multiple harnesses, agents, and quality eval.
+
+**New in v0.2-pre:**
+
+- **`docs/architecture.md`** — the skill-vs-agent taxonomy. Single page that explains what each is and how to decide which to make.
+- **`docs/authoring.md`** — portability rules: action verbs over tool names, ≤8 KB / ≤150 lines, exactly one `Use when...` trigger phrase, plugin-scoped agent names. The portability contract for Codex/Gemini/Hermes/OpenCode.
+- **`scripts/foundry-eval.py`** — static quality evaluation that replaces `validate.sh` as the CI gate. Checks description trigger phrase, body size, tool vocabulary, anti-patterns section, verification checklist, references/ split, and agent-name uniqueness. Run via `python scripts/foundry-eval.py`.
+- **`scripts/provenance-audit.py`** — per-skill provenance audit for §2.12. Detects whether a skill body retains verbatim text from a known upstream or is a clean-room rewrite. Output is a checklist; it does not delete anything. Current snapshot: 30 skills, 0 review-required (all `credit_only`).
+- **`agents/af-critic/`** — the judge agent. Scores output on correctness, slop, scope. Returns JSON only.
+- **`agents/af-planner/`** — the decomposer. Takes a request, returns a JSON plan naming skills/agents in order.
+- **`agent_foundry/judge.py`** + `--judge` flag on `run` + `LoopRequest.judge` field + `LoopResponse.judge_score` + 4 new columns in the SQLite `executions` table.
+- **`hooks/session-end.sh`** — real distillation via the daemon when reachable, falls back to a fillable placeholder.
+
+**Not yet implemented (per the plan):**
+
+- Adapter framework (`tools/adapters/capabilities.py`, harness emitters, Makefile) — Cut #2 work.
+- Attribution purge (depends on audit sign-off)
+- New discipline skills (`spec-first`, `dependency-diet`, etc.)
+- Component-split marketplace install
+
+
+---
+
 ## 0.1.0-pre — 2026-07-20
 
 Initial development; superseded by 0.1.0 (Python implementation shipped).

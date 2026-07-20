@@ -104,10 +104,27 @@ while [[ -f "$OUT" ]]; do
 done
 
 # 5. Generate the artifact
-# Note: This template is filled in by the agent-foundry session-distill skill.
-# When this hook runs, it should be invoked by a harness that has the
-# session-distill skill loaded; otherwise, this script writes a placeholder
-# that the user fills in by hand or by invoking the skill post-hoc.
+# Priority: try the live daemon first; fall back to placeholder.
+
+PLACEHOLDER_ARTIFACT='placeholder'
+
+# Attempt to distill via the daemon (if it's reachable and the
+# session-distill skill is loaded).
+DISTILLED=""
+DISTILL_OK=0
+if command -v curl >/dev/null 2>&1; then
+  # Best-effort: POST the transcript to /loop with --force so the
+  # budget guard does not interrupt. This silently no-ops if the daemon
+  # is unreachable, if the harness is offline, or if ANTHROPIC_API_KEY
+  # is missing.
+  DISTILLED=$(curl -fsS --max-time 10 -X POST "http://127.0.0.1:8765/loop" \
+    -H "Content-Type: application/json" \
+    -d "{\"prompt\": \"Distill this working session into the artifact.\\n\\n$(printf '%s' "$TRANSCRIPT_CONTENT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' 2>/dev/null || echo "\\\"\\\"")\", \"force\": true, \"budget\": 100000, \"judge\": false}" \
+    2>/dev/null | python3 -c "import json,sys; print(json.load(sys.stdin).get('output',''))" 2>/dev/null) || true
+fi
+if [ -n "$DISTILLED" ] && [ "$DISTILLED" != "null" ]; then
+  DISTILL_OK=1
+fi
 cat > "$OUT" <<EOF
 # Session: $DATE — $SHORT_NAME
 
