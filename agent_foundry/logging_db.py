@@ -50,8 +50,9 @@ def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
         cur = conn.execute(
             """INSERT INTO executions
             (timestamp, skill_id, prompt, output, tokens_used, duration_seconds,
-             success, error, planner_score, was_fallback)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+             success, error, planner_score, was_fallback,
+             judge_corr, judge_slop, judge_scope, judge_verdict)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 datetime.utcnow().isoformat(),
                 skill_id,
