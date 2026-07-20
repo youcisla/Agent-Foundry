@@ -1,9 +1,16 @@
-"""Generate web/ assets from live repo state."""
+"""Generate web/ assets from live repo state.
+
+Works from any working directory: derives REPO from this script's location,
+not absolute Windows paths, so the same script runs locally on Windows and
+on Linux (Vercel build workers).
+"""
 import json
 import re
 from pathlib import Path
 
-REPO = Path(r"C:\Users\Y.CHEHBOUB\PERSONAL__DO_NOT_TOUCH\Agent-Foundry")
+# Derive REPO from this file's location — works on Windows (local dev)
+# and Linux (Vercel build workers) without modification.
+REPO = Path(__file__).resolve().parent.parent
 WEB = REPO / "web"
 
 
