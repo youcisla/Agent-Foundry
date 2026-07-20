@@ -1,7 +1,8 @@
 ---
 name: context-optimization
 description: Keep tool outputs small, sandbox large files, reference not repeat. Use
-  on any task with >2K-token outputs, big files, or repeated reads.
+  on any task with >2K-token outputs, big files, or repeated reads. Use on any task
+  that touches files > 50 KB or runs longer than a few minutes.
 version: 0.1.0
 license: MIT
 provenance:
@@ -39,3 +40,18 @@ If the user asks for a literal paste of a file, do it. Context is a default, not
 
 - The user is debugging interactively and needs the full output once.
 - The tool returns <500 tokens — already small enough.
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

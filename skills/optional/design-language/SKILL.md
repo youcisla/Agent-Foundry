@@ -61,3 +61,18 @@ Show the design to someone for 3 seconds. Ask "what does this do?"
 - Internal tools where polish doesn't matter
 - Backend / CLI work (not visual)
 - The user wants a 1:1 clone of an existing design (replicate, don't redesign)
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

@@ -2,7 +2,8 @@
 name: bottleneck-gating
 description: Phase plans by measured bottleneck, not by requested order. Each phase
   has a gate condition (metric must move before proceeding). Never monetize or beautify
-  a loop that doesn't complete.
+  a loop that doesn't complete. Use when planning a multi-phase project where phases
+  haven't been ordered by measurement.
 version: 0.1.0
 license: MIT
 provenance:
@@ -68,7 +69,16 @@ Every multi-phase plan must explicitly state:
 
 Building billing features when no users complete the core flow. Building redesign when retention is the actual problem. Optimizing for power users when activation is the bottleneck.
 
+- Skipping verification when the change 'feels small'
+- Reasoning by analogy without a real example
 ## Composes With
 
 - `measure-first` — provides the bottleneck measurement
 - `verify-first` — confirms the gate metric actually moved
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

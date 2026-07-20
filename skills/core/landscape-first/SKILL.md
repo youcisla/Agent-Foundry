@@ -2,12 +2,14 @@
 name: landscape-first
 description: 'Before building anything in a competitive space, research 5-10 competitors:
   pricing, UX patterns, positioning, weaknesses. Extract what to steal, adapt, or
-  avoid. Every project should do this before the first feature commit.'
+  avoid. Every project should do this before the first feature commit. Use when starting
+  a feature in a competitive space.'
 version: 0.1.0
 license: MIT
 provenance:
+  author: Youcisla
+  source: operational methodology
   inspired: true
-author: Youcisla
 ---
 
 # Landscape First
@@ -64,8 +66,17 @@ Save the table + extracted patterns as `competitive/<date>-landscape.md`. Refere
 
 Building in a vacuum because "we know our users." You know YOUR users. The landscape shows you who's winning them away.
 
+- Skipping verification when the change 'feels small'
+- Reasoning by analogy without a real example
 ## Composes With
 
 - `measure-first` — supplements with usage data of your own product
 - `pushback-when-wrong` — surfaces "users want X because competitor Y has it"
 - `bottleneck-gating` — landscape gaps feed the bottleneck analysis
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

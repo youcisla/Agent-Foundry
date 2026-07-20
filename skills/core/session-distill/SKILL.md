@@ -54,7 +54,7 @@ Save to `plans/sessions/YYYY-MM-DD-<short-name>.md`:
 - [Person/agent who should pick this up]
 ```
 
-## How to Write Each Section
+## How to create Each Section
 
 ### What we did
 Bullets, not prose. Each bullet = one concrete thing. If you can't make it concrete, drop it.
@@ -76,50 +76,7 @@ The most valuable section. This is what makes the session reusable:
 ### Next session
 Specific, not vague. "Pick up the open questions" is not specific. "Implement the retry logic for the webhook handler per `plans/sessions/2026-07-20-distill.md#open-questions`" is.
 
-## When to Run
-
-| Trigger | Why |
-|---------|-----|
-| End of work session | Capture context before it fades |
-| Before context-compaction | Preserve the most important things |
-| After a long debug | Record what worked |
-| Before handoff | Other agent/person needs the context |
-| Weekly (Friday) | Distill the week into one doc |
-
-## Auto-trigger Option
-
-Add to your hooks config:
-
-```json
-{
-  "hooks": {
-    "SessionEnd": [
-      {
-        "matcher": "*",
-        "hooks": [{
-          "type": "command",
-          "command": "bash ~/.claude/skills/agent-foundry/hooks/session-distill.sh"
-        }]
-      }
-    ]
-  }
-}
-```
-
-The hook reads the current transcript and writes the structured artifact.
-
 ## Anti-patterns
 
-- "I'll remember it" — you won't
-- Writing a wall of prose (no signal)
-- Decisions without "because" (can't revisit them)
-- Skipping open questions (they vanish)
-- No patterns observed (the most valuable section missed)
-
-## Verification Checklist
-
-- [ ] Output file is in `plans/sessions/YYYY-MM-DD-<name>.md`
-- [ ] All sections filled (or explicitly "none")
-- [ ] Every decision has a "because"
-- [ ] Every open question has a specific next action
-- [ ] At least one pattern observed (or "no patterns")
+- Skipping verification when the change 'feels small'
+- Reasoning by analogy without a real example

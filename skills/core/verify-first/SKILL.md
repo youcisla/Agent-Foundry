@@ -2,12 +2,13 @@
 name: verify-first
 description: 'Every assertion about the codebase, product, or market is a hypothesis.
   Verify it against live sources before committing to action. The master discipline:
-  verify first, act second. Always on.'
+  verify first, act second. Apply before committing to any claim.'
 version: 0.1.0
 license: MIT
 provenance:
+  author: Youcisla
+  source: operational methodology
   inspired: true
-author: Youcisla
 ---
 
 # Verify First
@@ -61,3 +62,18 @@ When you discover a new type of stale claim, add it to known-patterns so future 
 - `re-verify-findings` — for audit/bug claim context
 - `measure-first` — adds live data to the triangulation
 - `read-before-build` — applies the same discipline to plan claims
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

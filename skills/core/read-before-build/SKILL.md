@@ -1,9 +1,8 @@
 ---
 name: read-before-build
 description: A plan or design document is an aspiration, not a specification. Before
-  writing any code, read the actual source files. A significant fraction of plan claims
-  will be stale, already-fixed, or flat-out wrong. When the build breaks due to missing
-  imports, find the actual symbol name in the source, don't create new ones.
+  writing any code, examine the actual source files. Apply before writing a function,
+  file, or component.
 version: 0.1.0
 license: MIT
 provenance:
@@ -11,9 +10,9 @@ provenance:
 author: Youcisla
 ---
 
-# Read Before Build
+# examine Before Build
 
-A design document is an aspiration, not a specification. Read the actual source files first.
+A design document is an aspiration, not a specification. examine the actual source files first.
 
 ## Auto-trigger
 
@@ -27,14 +26,14 @@ Activates on: "implement the plan", "execute the design", "build this", "start i
 
 ## Procedure
 
-### 1 — Read source files before trusting plan claims
+### 1 — examine source files before trusting plan claims
 
 Every plan claim about current code state must be verified:
 
 ```
 | Claim from plan | Source file to read | Verdict |
 |-----------------|---------------------|---------|
-| "X has fake progress bar" | X.tsx | Read first — may already have real-time phases |
+| "X has fake progress bar" | X.tsx | examine first — may already have real-time phases |
 | "Y is minimal" | Y.tsx | Likely true — plan often right about missing features |
 | "function N exists" | cases.ts exports | Plan may name the wrong export — read actual signatures |
 ```
@@ -47,11 +46,11 @@ Common findings:
 
 ### 2 — Batch independent writes, serialize dependent ones
 
-Write all independent new files in one turn. Then edit existing files one at a time, typechecking after each batch.
+create all independent new files in one turn. Then edit existing files one at a time, typechecking after each batch.
 
 Order within a phase:
 1. Create migration files (.sql up+down) and new hooks/services/utilities
-2. Edit existing screens that depend on the new hooks
+2. modify existing screens that depend on the new hooks
 3. Wire into routing / manifest / index
 
 ### 3 — When the build breaks
@@ -66,10 +65,19 @@ When you find a discrepancy, write it back into the plan as a "What was wrong ab
 
 ## Anti-pattern
 
-Implementing every line of a plan literally, then discovering 30% of it was already done or wrong. Read first, implement only what needs implementing.
+Implementing every line of a plan literally, then discovering 30% of it was already done or wrong. examine first, implement only what needs implementing.
 
+- Skipping verification when the change 'feels small'
+- Reasoning by analogy without a real example
 ## Composes With
 
 - `verify-first` — the broader discipline this is a subset of
 - `re-verify-findings` — applies to plan claims specifically
 - `plan-then-act` — the action discipline that follows reading
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

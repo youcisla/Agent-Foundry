@@ -2,7 +2,7 @@
 name: plan-then-act
 description: Plan first, then act. State the plan in one sentence BEFORE any tool
   call. Every Bash call must include a description field explaining WHY. Use on every
-  non-trivial task.
+  non-trivial task. Use when a task has multiple steps and the order matters.
 version: 0.1.0
 license: MIT
 provenance:
@@ -27,13 +27,13 @@ ASSISTANT: Bash(command=..., description="Why this command is needed")
 
 The `description` field is mandatory. It structures the agent's own reasoning about what the tool call achieves.
 
-### 2. Write-Then-Verify Loop
+### 2. create-Then-Verify Loop
 
 Every write is immediately followed by verification:
-1. Write file(s)
+1. create file(s)
 2. Start the runtime
 3. Take screenshot / check console / run typecheck
-4. Read back the output, inspect for errors
+4. examine back the output, inspect for errors
 5. Iterate based on evidence
 
 Anti-pattern: write files then move on without testing them.
@@ -41,9 +41,9 @@ Anti-pattern: write files then move on without testing them.
 ### 3. Batching Independent Calls
 
 Batch parallel reads and writes that don't depend on each other:
-- Multiple Read calls in one turn for initial codebase understanding
-- Multiple Write calls for independent subsystems
-- Bash + Read in parallel when read doesn't depend on bash output
+- Multiple examine calls in one turn for initial codebase understanding
+- Multiple create calls for independent subsystems
+- Bash + examine in parallel when read doesn't depend on bash output
 
 ### 4. Massive Single-File Outputs (Coherent Subsystems)
 
@@ -73,3 +73,18 @@ When building UI, run a real browser. Take screenshots. Click through flows. Com
 ## Verification
 
 After applying: confirm every Bash call has a `description` field, every write is followed by a verify step, and independent calls are batched.
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

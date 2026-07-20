@@ -2,7 +2,8 @@
 name: anti-slop
 description: Kill generic AI patterns before they ship — filler prose, over-commenting,
   defensive over-engineering, unnecessary abstractions, emoji headers. Apply on any
-  UI, copy, or code that will be read by a human.
+  UI, copy, or code that will be read by a human. Use when reviewing or writing UI
+  text, code comments, READMEs, or any output a human will read.
 version: 0.1.0
 license: MIT
 provenance:
@@ -36,3 +37,18 @@ Show your output to a fresh pair of eyes (a subagent with no context). If they s
 
 - The user is asking for a specific style and slop is what they want (rare, but it happens — internal brainstorming, first drafts).
 - The output is throwaway (a debug print, a test).
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

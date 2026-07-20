@@ -1,8 +1,7 @@
 ---
 name: session-closeout
 description: 'Before ending a session: reconcile changed files, update docs and changelog,
-  list loose ends, write a handoff note. Apply at the end of any multi-step project0),
-  REMvisual/claude-handoff (MIT), and KKKKhazix/khazix-skills/neat-freak (MIT).'
+  list loose ends, write a handoff note. Apply at the end of any multi-step project.'
 version: 0.1.0
 license: MIT
 provenance:
@@ -54,3 +53,18 @@ Save it: commit to the repo, paste it as the session's last message, both.
 ## When in doubt
 
 Do the closeout. The cost is 2 minutes. The cost of NOT doing it is the next session starting from zero.
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

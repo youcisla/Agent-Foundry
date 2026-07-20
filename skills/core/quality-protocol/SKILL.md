@@ -3,7 +3,7 @@ name: quality-protocol
 description: The unified maximum-quality protocol — restate → catalog constraints
   → plan → single-file subsystems → write-verify → self-verify → batch. Always on
   for every non-trivial task. Distilled from 50+ high-quality agent traces (Fable-5,
-  Reasoning Corpus, UltraX, OpenThoughts).
+  Reasoning Corpus, UltraX, OpenThoughts). Use before declaring a task complete.
 version: 0.1.0
 license: MIT
 provenance:
@@ -48,10 +48,10 @@ When generating code, co-locate tightly-coupled logic in single files. Extract o
 - A file has multiple responsibilities that are independently testable
 - A module has multiple consumers that don't need the full file
 
-### Step 5: Write → Verify Loop
+### Step 5: create → Verify Loop
 
 EVERY write is immediately followed by verification:
-1. Write the file
+1. create the file
 2. Run the typecheck / compile / test command
 3. Inspect the output
 4. Fix any errors before the next write
@@ -67,16 +67,14 @@ Verify: [solution] satisfies [constraint A] ✓, [constraint B] ✓, [constraint
 ### Step 7: Batching
 
 Batch INDEPENDENT tool calls in a single response:
-- Multiple Read calls when they don't depend on each other
-- Multiple independent Write calls
+- Multiple examine calls when they don't depend on each other
+- Multiple independent create calls
 
-## Composes With
+## Anti-patterns
 
-- `plan-then-act` — the action layer of this protocol
-- `constraint-then-solve` — the reasoning layer of this protocol
-- `verify-first` — adds triangle verification to the whole flow
-- `prompt-discipline` — applies the same rules at code level
-
-## Verification
-
-After applying: confirm each of the 7 steps appears in the response in order, and the final output includes the constraint-by-constraint self-verify line.
+Calling a task done without running the verification checklist
+Skipping the restate step because the task seemed familiar
+- Skipping the restate step because the task seems familiar
+- Declaring done without running the verification checklist
+- [ ] Output matches the task's stated scope
+- [ ] No scope creep added

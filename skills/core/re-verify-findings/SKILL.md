@@ -3,7 +3,7 @@ name: re-verify-findings
 description: Before executing any audit finding, claimed bug, or reported issue, re-verify
   it against LIVE sources (repo, DB, API, browser). Never accept stale assertions
   — a significant fraction of external claims are already fixed or wrong by the time
-  you see them.
+  you see them. Use after any prior verification claimed a finding.
 version: 0.1.0
 license: MIT
 provenance:
@@ -64,7 +64,16 @@ This goes in the final report so the user understands why an item was skipped or
 
 Accepting the brief's claim at face value, executing, then discovering the fix was unnecessary. Wastes work and erodes trust.
 
+- Skipping verification when the change 'feels small'
+- Reasoning by analogy without a real example
 ## Composes With
 
 - `verify-first` — broader discipline this is a subset of
 - `pushback-when-wrong` — the delivery vehicle for the discrepancy
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

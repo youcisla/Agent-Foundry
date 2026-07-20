@@ -1,7 +1,8 @@
 ---
 name: prompt-discipline
 description: Enforce the four coding rules — think before acting, minimum viable change,
-  surgical edits, stay on the stated goal. Use on every non-trivial task.
+  surgical edits, stay on the stated goal. Use on every non-trivial task. Use before
+  any tool call, file write, or substantive response.
 version: 0.1.0
 license: MIT
 author: Agent Foundry Contributors
@@ -48,3 +49,18 @@ For multi-step tasks, state a brief plan before the first action:
 - One-line typo fix.
 - Pure Q&A, no code change.
 - The user explicitly says "just do it, don't overthink" — then go fast and check at the end.
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

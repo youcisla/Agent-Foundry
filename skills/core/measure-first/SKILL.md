@@ -2,7 +2,8 @@
 name: measure-first
 description: Before planning any change, query live data (DB, API, analytics, logs)
   to find the actual bottleneck. Static analysis reveals structure; live data reveals
-  truth. Plans must sequence by measured bottleneck, not by requested order.
+  truth. Plans must sequence by measured bottleneck, not by requested order. Use when
+  about to optimize, refactor, or claim a system is slow.
 version: 0.1.0
 license: MIT
 provenance:
@@ -71,8 +72,17 @@ Sources: [DB query / API / logs]
 
 Planning based on the order things were requested. The user asked for feature X but the data says Y is the bottleneck — fix Y first.
 
+- Skipping verification when the change 'feels small'
+- Reasoning by analogy without a real example
 ## Composes With
 
 - `verify-first` — uses live data as one triangle source
 - `bottleneck-gating` — uses this measurement to set phase gates
 - `pushback-when-wrong` — delivers the "your order is wrong" message
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

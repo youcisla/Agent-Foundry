@@ -3,6 +3,7 @@ name: pushback-when-wrong
 description: When the brief contradicts verified reality, push back with evidence.
   Identify what the user is wrong about AND what they haven't thought of. Every plan
   must include a pushback section — silent execution of wrong premises wastes weeks.
+  Use when reviewing an assertion that smells off, or an action you suspect is wrong.
 version: 0.1.0
 license: MIT
 provenance:
@@ -74,3 +75,18 @@ Direct, evidence-based, not aggressive. The user knows they're fallible; they hi
 - `verify-first` — provides the evidence base
 - `measure-first` — provides the data for "your order is wrong"
 - `show-your-work` — documents the pushback in the final report
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

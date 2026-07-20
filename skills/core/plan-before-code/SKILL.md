@@ -2,7 +2,7 @@
 name: plan-before-code
 description: No implementation without an approved spec for non-trivial work. Brainstorm
   → write spec → get approval → then code. Use before any feature, component, behavior
-  change, or refactor.
+  change, or refactor. Use before writing any non-trivial code change.
 version: 0.1.0
 license: MIT
 author: Agent Foundry Contributors
@@ -20,7 +20,7 @@ Ask clarifying questions **one at a time**. Purpose, constraints, success criter
 
 Propose 2-3 approaches with tradeoffs and your recommendation. Let the user pick.
 
-### 2. Write the spec
+### 2. create the spec
 
 Save to `docs/specs/YYYY-MM-DD-<topic>.md`. Required sections:
 
@@ -61,3 +61,18 @@ This applies to **every** project, even the "simple" ones. The spec for a one-li
 - Forces the user to think about success criteria
 - Gives you a reference document to consult when the work gets fuzzy
 - Makes it easy to abandon a bad plan — you lose a doc, not a codebase
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

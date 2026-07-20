@@ -2,7 +2,8 @@
 name: constraint-then-solve
 description: Before solving, restate the problem, list unknowns, and catalog every
   constraint. Verify the solution against every constraint at the end. Use on any
-  non-trivial reasoning task67M thought traces from 50+ models).
+  non-trivial reasoning task. Use on any non-trivial reasoning task before jumping
+  to a solution.
 version: 0.1.0
 license: MIT
 provenance:
@@ -67,3 +68,18 @@ The reasoning should use:
 ## Verification
 
 After applying: confirm the constraint catalog is numbered, every constraint is verified in the final solution, and unknowns are stated before being inferred.
+
+
+## Anti-patterns
+
+- Skipping verification when the change "feels small"
+- Reasoning by analogy without a real example
+- Acting on a claim you have not verified this session
+- Choosing speed over accuracy when accuracy is what the task requires
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

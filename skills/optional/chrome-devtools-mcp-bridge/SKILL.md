@@ -3,7 +3,8 @@ name: chrome-devtools-mcp-bridge
 description: Google's official Chrome DevTools MCP — 26+ tools for browser automation,
   network inspection, console capture, screenshot diffing, performance tracing. From
   ChromeDevTools/chrome-devtools-mcp (Apache-2.0). Use for web app debugging, screenshots,
-  network traces, performance analysis.
+  network traces, performance analysis. Use when debugging browser behavior, capturing
+  console output, or inspecting network traffic.
 version: 0.1.0
 license: Apache-2.0
 author: Agent Foundry Contributors
@@ -58,3 +59,10 @@ Refer to the upstream repo's README for the latest install instructions. The MCP
 - Using this for desktop automation (use cua-driver instead)
 - Using desktop automation for web-page DOM tasks (use this instead)
 - Relying on screenshots when you could read the DOM tree
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

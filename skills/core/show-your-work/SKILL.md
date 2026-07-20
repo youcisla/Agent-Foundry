@@ -3,7 +3,8 @@ name: show-your-work
 description: After any complex task (audit, plan, redesign, multi-agent execution),
   output a separate THINKING TRACE section. Document how you decomposed the problem,
   what surprised you, what you rejected, and what uncertainties remain. The reasoning
-  is where the learning happens.
+  is where the learning happens. Use when explaining a non-obvious decision or claiming
+  a result.
 version: 0.1.0
 license: MIT
 provenance:
@@ -60,8 +61,17 @@ Future agents reading the trace should be able to apply the same reasoning. Gene
 
 Skipping the trace because the result looks obvious. The trace explains WHY, not WHAT.
 
+- Skipping verification when the change 'feels small'
+- Reasoning by analogy without a real example
 ## Composes With
 
 - `verify-first` — the trust posture section
 - `pushback-when-wrong` — feeds into the pivot section
 - `bottleneck-gating` — drives the rejected-approaches section
+
+
+## Verification Checklist
+
+- [ ] The claim or action has been verified against a live source
+- [ ] The output matches the request's scope (no scope creep)
+- [ ] Slop markers are absent (filler, hedging, emoji headers)

@@ -2,7 +2,8 @@
 name: funnel-pr-guard
 description: Every PR that touches the front door must state which funnel step it
   changes and by how much. PR review discipline for landing, auth, onboarding, and
-  signup flows. Use whenever a diff touches conversion-critical paths.
+  signup flows. Use whenever a diff touches conversion-critical paths. Use when reviewing
+  a change that touches landing, auth, or pricing pages.
 version: 0.1.0
 license: MIT
 provenance:
@@ -80,6 +81,5 @@ Before merging, confirm:
 
 ## Anti-patterns
 
-- Merging a funnel change without stating the metric you expect to move
-- Including free-text content in event metadata
-- Changing the UI without adding tracking and rollback plan
+- Skipping verification when the change 'feels small'
+- Reasoning by analogy without a real example
