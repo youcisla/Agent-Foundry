@@ -1,24 +1,32 @@
 const GRAPH_STATS = {
-  "node_count": 287,
-  "edge_count": 467,
+  "node_count": 396,
+  "edge_count": 626,
   "skill_count": 30,
-  "agent_count": 2,
-  "community_count": 27,
+  "agent_count": 3,
+  "community_count": 44,
   "god_nodes": [
     {
       "label": "create_app()",
-      "degree": 15
+      "degree": 20
+    },
+    {
+      "label": "build_index()",
+      "degree": 16
     },
     {
       "label": "Config",
-      "degree": 14
+      "degree": 15
     },
     {
       "label": "run_loop()",
       "degree": 14
     },
     {
-      "label": "build_index()",
+      "label": "rank_skills()",
+      "degree": 14
+    },
+    {
+      "label": "instructions",
       "degree": 12
     },
     {
@@ -30,45 +38,37 @@ const GRAPH_STATS = {
       "degree": 12
     },
     {
-      "label": "rank_skills()",
-      "degree": 12
-    },
-    {
       "label": "SkillIndex",
       "degree": 11
     },
     {
-      "label": "execute()",
-      "degree": 10
-    },
-    {
       "label": "plan()",
-      "degree": 10
+      "degree": 11
     }
   ],
   "surprising": [
     {
-      "source": "estimate_judge_cost()",
-      "target": "TokenEstimate",
-      "relation": "references"
+      "source": "load_indexer()",
+      "target": "build_index()",
+      "relation": "indirect_call"
     },
     {
-      "source": "cmd_cost_report()",
-      "target": "get_index_cached()",
+      "source": "load_indexer()",
+      "target": "SkillManifest",
+      "relation": "indirect_call"
+    },
+    {
+      "source": "check_frontmatter()",
+      "target": "build_index()",
       "relation": "calls"
     },
     {
-      "source": "cmd_consult()",
-      "target": "read_index()",
+      "source": "check_indexer()",
+      "target": "build_index()",
       "relation": "calls"
     },
     {
-      "source": "_pick_skill()",
-      "target": "Config",
-      "relation": "references"
-    },
-    {
-      "source": "run_loop()",
+      "source": "_ensure_daemon()",
       "target": "Config",
       "relation": "references"
     }

@@ -4,230 +4,236 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Knowledge Graph — Agent Foundry</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+  <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
   <style>
-    #network { width: 100%; height: 70vh; min-height: 480px; background: var(--bg-elev); }
-    .graph-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
-    .graph-stats .stat { padding: 10px 14px; }
-    .graph-stats .stat .num { font-size: 22px; }
+    .graph-layout { display: grid; grid-template-columns: 260px 1fr; gap: 14px; min-height: 70vh; }
+    @media (max-width: 900px) { .graph-layout { grid-template-columns: 1fr; } }
+    .graph-sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; overflow-y: auto; max-height: 80vh; }
+    .graph-sidebar h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .graph-sidebar input { width: 100%; padding: 8px 10px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; margin-bottom: 10px; }
+    .graph-sidebar input::placeholder { color: var(--text-faint); }
+    .file-tree { font-size: 12px; color: var(--text-dim); }
+    .file-tree details { margin-left: 12px; margin-top: 2px; }
+    .file-tree summary { cursor: pointer; font-weight: 500; color: var(--text); padding: 2px 0; }
+    .file-tree summary:hover { color: var(--accent); }
+    .file-tree .fentry { display: block; padding: 2px 0 2px 16px; cursor: pointer; border-radius: 3px; font-size: 11px; color: var(--text-dim); }
+    .file-tree .fentry:hover { color: var(--accent); background: var(--accent-soft); }
+    .graph-canvas { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); position: relative; min-height: 70vh; }
+    .graph-canvas #network { width: 100%; height: 70vh; }
+    .graph-controls { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 2; }
+    .graph-info { position: absolute; bottom: 10px; left: 10px; background: rgba(26,26,31,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 11px; max-width: 240px; z-index: 2; color: var(--text-dim); }
+    .graph-info h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-faint); margin-bottom: 4px; }
+
+    /* Node detail panel */
+    .node-panel { position: absolute; bottom: 10px; right: 10px; width: 380px; max-height: 60vh; background: rgba(26,26,31,0.95); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; overflow-y: auto; z-index: 3; display: none; backdrop-filter: blur(4px); }
+    .node-panel.open { display: block; }
+    .node-panel .close { float: right; background: none; border: none; color: var(--text-faint); font-size: 18px; cursor: pointer; }
+    .node-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .node-panel .detail-row { display: flex; gap: 8px; font-size: 12px; margin-bottom: 4px; color: var(--text-dim); }
+    .node-panel .detail-row .dt { color: var(--text-faint); width: 80px; flex-shrink: 0; }
+    .node-panel .btn { font-size: 11px; padding: 4px 10px; }
+    .node-panel .md-preview { margin-top: 12px; border-top: 1px solid var(--border-soft); padding-top: 12px; font-size: 13px; line-height: 1.6; color: var(--text-dim); }
+    .node-panel .md-preview h1, .node-panel .md-preview h2 { font-size: 15px; color: var(--text); margin-top: 12px; }
+    .node-panel .md-preview h3 { font-size: 13px; margin-top: 8px; }
+    .node-panel .md-preview code { font-size: 11px; }
   </style>
 </head>
 <body>
   <nav>
     <div class="container">
-      <a href="index.html" class="logo">
-        <span class="logo-icon">AF</span>
-        Agent Foundry
-      </a>
+      <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
       <a href="why.html" class="nav-link">Why</a>
       <a href="catalog.html" class="nav-link">Catalog</a>
-      <a href="graph.html" class="nav-link active">Graph</a>
+      <a href="graph.html" class="nav-link" style="color:var(--text)">Graph</a>
       <a href="audit.html" class="nav-link">Audit</a>
       <span class="spacer"></span>
-      <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg> GitHub</a>
     </div>
   </nav>
 
-  <div style="padding: 48px 0 0;">
+  <div style="padding:32px 0 20px">
     <div class="container">
-      <h1 style="font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px;">Knowledge Graph</h1>
-      <p class="section-sub" style="margin: 0 0 24px;">Generated by Graphify from the Agent Foundry source tree. Each node is a code symbol; edges are calls/references. Drag nodes, zoom, click to inspect.</p>
-
-      <div class="graph-stats">
-        <div class="stat"><div class="num" id="stat-nodes">0</div><div class="label">Nodes</div></div>
-        <div class="stat"><div class="num" id="stat-edges">0</div><div class="label">Edges</div></div>
-        <div class="stat"><div class="num" id="stat-communities">0</div><div class="label">Communities</div></div>
-        <div class="stat"><div class="num" id="stat-skills">0</div><div class="label">Skills</div></div>
-        <div class="stat"><div class="num" id="stat-agents">0</div><div class="label">Agents</div></div>
-      </div>
+      <h1>Knowledge Graph</h1>
+      <p style="color:var(--text-dim);font-size:14px" id="graph-header-stats">396 nodes · 626 edges · 44 communities</p>
     </div>
   </div>
 
-  <div class="container" style="padding: 16px 0 24px;">
-    <div class="graph-container">
-      <div id="network"></div>
-      <div class="graph-controls">
-        <button class="btn" id="physics-toggle">⏸ Pause physics</button>
-        <button class="btn" id="reset-view">⟳ Reset view</button>
-        <button class="btn" id="export-png">⬇ PNG</button>
+  <div class="container">
+    <div class="graph-layout">
+      <!-- Sidebar: search + file tree -->
+      <div class="graph-sidebar">
+        <input type="text" id="graph-search" placeholder="Search nodes…" />
+        <div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">
+          <button class="btn" onclick="focusNode('create_app()')" style="font-size:10px">create_app</button>
+          <button class="btn" onclick="focusNode('Config')" style="font-size:10px">Config</button>
+          <button class="btn" onclick="focusNode('rank_skills()')" style="font-size:10px">rank_skills</button>
+        </div>
+        <h3>📁 Files</h3>
+        <div class="file-tree" id="file-tree-root"></div>
       </div>
-      <div class="graph-legend">
-        <h4>Node color</h4>
-        <div class="legend-row"><span class="legend-dot" style="background:#f5a623"></span> Community (color = cluster)</div>
-        <div class="legend-row" style="color: var(--text-faint); font-size: 11px; margin-top: 6px;">Click a node → see calls. Drag to reposition. Scroll to zoom.</div>
+
+      <!-- Graph canvas -->
+      <div class="graph-canvas">
+        <div id="network"></div>
+        <div class="graph-controls">
+          <button class="btn" onclick="network.fit()" style="font-size:11px">⊞ Fit</button>
+          <button class="btn" onclick="network.setOptions({physics:{enabled:!network.physics.options.enabled}});this.textContent=network.physics.options.enabled?'⏸ Pause':'▶ Resume'" style="font-size:11px">⏸ Pause</button>
+          <button class="btn" onclick="exportPNG()" style="font-size:11px">⬇ PNG</button>
+        </div>
+        <div class="graph-info">
+          <h4>LEGEND</h4>
+          <div>🟠 Node = code symbol</div>
+          <div>🔗 Edge = call/import/reference</div>
+          <div style="margin-top:4px;color:var(--text-faint);font-size:10px">Click a node → details + file</div>
+        </div>
+        <!-- Node detail panel -->
+        <div class="node-panel" id="node-panel">
+          <button class="close" onclick="closeNodePanel()">✕</button>
+          <h3 id="np-title"></h3>
+          <div id="np-details"></div>
+          <div id="np-connections" style="margin:8px 0;font-size:12px;color:var(--text-dim)"></div>
+          <div id="np-md-preview" class="md-preview"></div>
+        </div>
       </div>
     </div>
   </div>
-
-  <section>
-    <div class="container">
-      <h2>Community structure</h2>
-      <p class="section-sub">The 27 communities grouped by cohesion band — what stays tight, what gets the cross-cutting treatment.</p>
-      <pre class="mermaid">
-flowchart TB
-  classDef tight fill:#22222a,stroke:#4ade80,color:#e8e8ea
-  classDef med fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  classDef low fill:#22222a,stroke:#8b8b95,color:#e8e8ea
-  subgraph Tight["Tight (cohesion &gt; 0.5)"]
-    direction LR
-    F["foundry-eval"]
-    P["provenance-audit"]
-  end
-  subgraph Medium["Medium (0.1 - 0.5)"]
-    direction LR
-    LOG["logging_db"]
-    IDX["indexer"]
-    EX["executor + judge"]
-    PL["planner"]
-  end
-  subgraph Low["Low (&lt; 0.1)"]
-    direction LR
-    CFG["Config"]
-    CLI["CLI + daemon"]
-    SCH["JSON schema"]
-    OTHER["12 thin communities"]
-  end
-  class F,P tight
-  class LOG,IDX,EX,PL med
-  class CFG,CLI,SCH,OTHER low
-      </pre>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <h2>God Nodes</h2>
-      <p class="section-sub">The most-connected symbols — the load-bearing abstractions. A change to any of these ripples everywhere.</p>
-      <pre class="mermaid">
-flowchart TB
-  rl["run_loop<br/>14 edges"] --> bi["build_index<br/>12 edges"]
-  rl --> gc["get_index_cached<br/>12 edges"]
-  rl --> rs["rank_skills<br/>12 edges"]
-  rl --> ex["execute<br/>10 edges"]
-  rl --> pl["plan<br/>10 edges"]
-  cap["create_app<br/>15 edges"] --> rl
-  cfg["Config<br/>14 edges"] --> cap
-  cfg --> rl
-  bi --> si["SkillIndex<br/>11 edges"]
-  rs --> si
-  ex --> te["TokenEstimate<br/>12 edges"]
-  style cfg fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style cap fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style rl fill:#22222a,stroke:#f5a623,color:#e8e8ea
-      </pre>
-      <div class="audit-grid" id="god-grid"></div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="container">
-      <div>Agent Foundry — MIT License · Built by <a href="https://github.com/youcisla">Youcisla</a></div>
-    </div>
-  </footer>
 
   <script src="site-data.js"></script>
   <script src="graph-data.js"></script>
   <script src="graph-stats.js"></script>
-  <script type="module">
-    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-    mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "loose", themeVariables: {
-      primaryColor: "#22222a",
-      primaryTextColor: "#e8e8ea",
-      primaryBorderColor: "#2a2a33",
-      lineColor: "#8b8b95",
-      secondaryColor: "#131316",
-      tertiaryColor: "#1a1a1f",
-      fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-    }});
-  </script>
+  <script src="file-tree.js"></script>
   <script>
-    document.getElementById('stat-nodes').textContent = GRAPH_NODES.length;
-    document.getElementById('stat-edges').textContent = GRAPH_EDGES.length;
-    document.getElementById('stat-communities').textContent = GRAPH_STATS.community_count;
-    document.getElementById('stat-skills').textContent = GRAPH_STATS.skill_count;
-    document.getElementById('stat-agents').textContent = GRAPH_STATS.agent_count;
+    const repoUrl = "https://github.com/youcisla/Agent-Foundry/blob/main/";
+    const nodes = new vis.DataSet(GRAPH_NODES.map(n => ({
+      id: n.id, label: n.label, title: n.title, group: n.group,
+      file: n.file || "",
+      shape: "dot", size: 8 + Math.min(n.id.length * 0.3, 12),
+      borderWidth: 1, color: { background: "#f5a623", border: "#2a2a33", highlight: { background: "#ff6b35", border: "#f5a623" } },
+      font: { color: "#8b8b95", size: 10, strokeWidth: 0 },
+    })));
+    const edges = new vis.DataSet(GRAPH_EDGES.map(e => ({
+      from: e.from, to: e.to, label: e.label,
+      arrows: "to", color: { color: "#2a2a33", highlight: "#f5a623" },
+      font: { color: "#5b5b65", size: 8, strokeWidth: 0 },
+      width: 1,
+    })));
 
-    // Color by community
-    const communities = [...new Set(GRAPH_NODES.map(n => n.group))];
-    const palette = ['#f5a623', '#4ade80', '#6496ff', '#ef4444', '#a78bfa', '#fbbf24', '#34d399', '#f472b6', '#60a5fa', '#fb923c', '#94a3b8', '#10b981', '#facc15', '#e879f9', '#06b6d4', '#84cc16', '#f87171', '#22d3ee', '#a3e635', '#fb7185', '#d946ef', '#8b5cf6', '#fde047', '#86efac', '#fda4af', '#a5f3fc', '#d8b4fe'];
-    const colorByComm = {};
-    communities.forEach((c, i) => colorByComm[c] = palette[i % palette.length]);
-
-    const nodesForVis = GRAPH_NODES.map(n => ({
-      id: n.id,
-      label: n.label,
-      title: n.title,
-      group: n.group,
-      color: { background: colorByComm[n.group], border: colorByComm[n.group], highlight: { background: '#fff', border: '#fff' } },
-      font: { color: '#e8e8ea', size: 11, face: 'JetBrains Mono, monospace' },
-      shape: 'dot',
-      size: 8,
-    }));
-
-    const edgesForVis = GRAPH_EDGES.map(e => ({
-      from: e.from,
-      to: e.to,
-      label: '',
-      arrows: 'to',
-      color: { color: '#3a3a45', highlight: '#f5a623' },
-      width: 0.6,
-      smooth: { type: 'continuous' },
-    }));
-
-    const container = document.getElementById('network');
-    const data = { nodes: new vis.DataSet(nodesForVis), edges: new vis.DataSet(edgesForVis) };
+    const container = document.getElementById("network");
+    const data = { nodes, edges };
     const options = {
-      nodes: { borderWidth: 1 },
-      edges: { width: 0.6, color: { color: '#3a3a45' } },
-      physics: {
-        enabled: true,
-        barnesHut: { gravitationalConstant: -8000, centralGravity: 0.3, springLength: 80, springConstant: 0.04 },
-        stabilization: { iterations: 200 },
-      },
-      interaction: { hover: true, tooltipDelay: 100, hideEdgesOnDrag: true },
-      layout: { improvedLayout: true },
+      physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -40, springLength: 120, springConstant: 0.01 }, stabilization: { iterations: 200 } },
+      interaction: { hover: true, tooltipDelay: 200, navigationButtons: false, keyboard: true },
+      nodes: { borderWidth: 1, borderWidthSelected: 2 },
+      edges: { smooth: { type: "continuous" } },
     };
     const network = new vis.Network(container, data, options);
 
-    let physicsOn = true;
-    document.getElementById('physics-toggle').addEventListener('click', (e) => {
-      physicsOn = !physicsOn;
-      network.setOptions({ physics: { enabled: physicsOn } });
-      e.target.textContent = physicsOn ? '⏸ Pause physics' : '▶ Resume physics';
-    });
-    document.getElementById('reset-view').addEventListener('click', () => {
-      network.fit({ animation: { duration: 600 } });
-    });
-    document.getElementById('export-png').addEventListener('click', () => {
-      const canvas = container.querySelector('canvas');
-      if (!canvas) return;
-      const link = document.createElement('a');
-      link.download = 'agent-foundry-graph.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+    // Search
+    document.getElementById("graph-search").addEventListener("input", function() {
+      const q = this.value.toLowerCase();
+      nodes.forEach(n => {
+        const match = n.label.toLowerCase().includes(q);
+        nodes.update({ id: n.id, opacity: q ? (match ? 1 : 0.08) : 1 });
+        if (match) network.selectNodes([n.id]);
+      });
     });
 
-    network.on('click', (params) => {
-      if (params.nodes.length === 1) {
-        const node = GRAPH_NODES.find(n => n.id === params.nodes[0]);
-        if (node) {
-          const out = edgesForVis.filter(e => e.from === node.id || e.to === node.id).length;
-          network.selectNodes([node.id]);
+    // Click node → detail panel
+    network.on("click", function(params) {
+      if (params.nodes.length === 0) { closeNodePanel(); return; }
+      const nid = params.nodes[0];
+      const node = nodes.get(nid);
+      const panel = document.getElementById("node-panel");
+      panel.classList.add("open");
+      document.getElementById("np-title").textContent = node.label;
+
+      // Find this node in graph data for connections
+      const connectedEdges = GRAPH_EDGES.filter(e => e.from === nid || e.to === nid);
+      const connections = connectedEdges.map(e => {
+        const other = e.from === nid ? e.to : e.from;
+        return `${other} (${e.label})`;
+      }).join("<br>");
+
+      let details = `<div class="detail-row"><span class="dt">Symbol:</span> ${node.label}</div>`;
+      if (node.file) details += `<div class="detail-row"><span class="dt">File:</span> <a href="${repoUrl}${node.file}" target="_blank">${node.file}</a></div>`;
+      details += `<div class="detail-row"><span class="dt">Group:</span> ${node.group}</div>`;
+      details += `<div class="detail-row"><span class="dt">Degree:</span> ${connectedEdges.length}</div>`;
+      document.getElementById("np-details").innerHTML = details;
+      document.getElementById("np-connections").innerHTML = connections ? `<strong>Connections:</strong><br>${connections}` : "<em>No connections</em>";
+
+      // Try to find a matching skill or agent for markdown preview
+      const matchSkill = SKILLS.find(s => node.label.toLowerCase().includes(s.id));
+      const matchAgent = AGENTS.find(a => node.label.toLowerCase().includes(a.id));
+      let mdHtml = "";
+      if (matchSkill) {
+        const md = atob(matchSkill.body_md);
+        mdHtml = "<h4>Skill preview</h4>" + marked.parse(md);
+      } else if (matchAgent) {
+        const md = atob(matchAgent.body_md);
+        mdHtml = "<h4>Agent preview</h4>" + marked.parse(md);
+      }
+      document.getElementById("np-md-preview").innerHTML = mdHtml;
+
+      // Highlight connected nodes
+      const connectedIds = new Set(connectedEdges.flatMap(e => [e.from, e.to]));
+      nodes.forEach(n => {
+        const match = n.id === nid || connectedIds.has(n.id);
+        nodes.update({ id: n.id, opacity: match ? 1 : 0.12 });
+      });
+    });
+
+    function closeNodePanel() {
+      document.getElementById("node-panel").classList.remove("open");
+      nodes.forEach(n => nodes.update({ id: n.id, opacity: 1 }));
+    }
+    window.closeNodePanel = closeNodePanel;
+
+    function focusNode(label) {
+      const found = GRAPH_NODES.find(n => n.label === label);
+      if (found) { network.focus(found.id, { scale: 1.5, animation: true }); network.selectNodes([found.id]); }
+    }
+    window.focusNode = focusNode;
+
+    function exportPNG() {
+      const canvas = document.querySelector("#network canvas");
+      if (canvas) { const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = "agent-foundry-graph.png"; a.click(); }
+    }
+    window.exportPNG = exportPNG;
+
+    // Build file tree
+    function renderTree(obj, parentEl) {
+      for (const [key, val] of Object.entries(obj)) {
+        if (key === "__files") continue;
+        if (val.__files) {
+          const details = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.textContent = key + "/";
+          details.appendChild(summary);
+          const inner = document.createElement("div");
+          renderTree(val.__files, inner);
+          details.appendChild(inner);
+          parentEl.appendChild(details);
+        } else if (val.path) {
+          const a = document.createElement("a");
+          a.className = "fentry";
+          a.textContent = key;
+          a.href = `${repoUrl}${val.path}`;
+          a.target = "_blank";
+          parentEl.appendChild(a);
         }
       }
-    });
+    }
+    renderTree(FILE_TREE, document.getElementById("file-tree-root"));
 
-    // God nodes cards
-    const godGrid = document.getElementById('god-grid');
-    godGrid.innerHTML = (GRAPH_STATS.god_nodes || []).map(g => `
-      <div class="audit-card">
-        <h3>${g.label}</h3>
-        <div class="degree">${g.degree} connections</div>
-        <div class="file">Top-connected symbol in the codebase. Refactor here ripples to all consumers.</div>
-      </div>
-    `).join('');
+    // Stats
+    if (typeof GRAPH_STATS !== 'undefined') {
+      document.getElementById("graph-header-stats").textContent =
+        `${GRAPH_STATS.node_count} nodes · ${GRAPH_STATS.edge_count} edges · ${GRAPH_STATS.community_count} communities`;
+    }
   </script>
 </body>
 </html>
