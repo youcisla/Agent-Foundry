@@ -1,6 +1,6 @@
 # Philosophy
 
-This repo exists because the agent-skill ecosystem is fragmented. 2,000+ skills, 50+ MCPs, dozens of harnesses — all in different corners, with no shared curation. **Youcisla-Skills is the curation layer.**
+This repo exists because the agent-skill ecosystem is fragmented. 2,000+ skills, 50+ MCPs, dozens of harnesses — all in different corners, with no shared curation. **Agent-Foundry is the curation layer.** We forge/refine skills from many sources into a single maintained set.
 
 ## The token-budget doctrine
 

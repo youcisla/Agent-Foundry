@@ -1,12 +1,12 @@
 # Install
 
-Youcisla-Skills v0.1.0 installs as a single skills namespace into any supported harness.
+Agent-Foundry v0.1.0 installs as a single skills namespace into any supported harness.
 
 ## Quick install (auto-detect)
 
 ```bash
-git clone https://github.com/youcisla/Youcisla-Skills.git
-cd Youcisla-Skills
+git clone https://github.com/youcisla/Agent-Foundry.git
+cd Agent-Foundry
 ./scripts/install.sh
 ```
 
@@ -27,14 +27,14 @@ The script auto-detects your harness (Claude Code → Codex → Cursor → Herme
 Cursor reads `.cursor/rules/` directly. Copy what you want:
 
 ```bash
-cp skills/core/prompt-discipline/SKILL.md .cursor/rules/youcisla-prompt-discipline.mdc
+cp skills/core/prompt-discipline/SKILL.md .cursor/rules/agent-foundry-prompt-discipline.mdc
 ```
 
 (`.mdc` extension tells Cursor it's a rule file.)
 
 ## What gets installed
 
-- `~/.claude/skills/youcisla/` (or harness equivalent) — symlink to this repo's `skills/` dir
+- `~/.claude/skills/agent-foundry/` (or harness equivalent) — symlink to this repo's `skills/` dir
 - 5 core skills: `prompt-discipline`, `context-optimization`, `anti-slop`, `plan-before-code`, `session-closeout`
 - 1 optional skill (under `skills/optional/`): `design-language`
 
@@ -53,9 +53,9 @@ The harness picks them up via the standard `description` field trigger mechanism
 ## Uninstall
 
 ```bash
-rm ~/.claude/skills/youcisla     # Claude Code
-rm ~/.codex/skills/youcisla      # Codex
-rm ~/.hermes/skills/youcisla      # Hermes
+rm ~/.claude/skills/agent-foundry     # Claude Code
+rm ~/.codex/skills/agent-foundry      # Codex
+rm ~/.hermes/skills/agent-foundry     # Hermes
 # (etc.)
 ```
 

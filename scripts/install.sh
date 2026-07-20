@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install.sh - install Youcisla-Skills into a detected (or specified) harness
+# install.sh - install Agent-Foundry into a detected (or specified) harness
 # Usage:
 #   ./scripts/install.sh                       # auto-detect
 #   ./scripts/install.sh --harness=claude-code  # explicit
@@ -40,7 +40,7 @@ install_for_harness() {
   local harness=$1
   case "$harness" in
     claude-code)
-      local dst="$HOME/.claude/skills/youcisla"
+      local dst="$HOME/.claude/skills/agent-foundry"
       if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
       else mkdir -p "$(dirname "$dst")"
            ln -sfn "$REPO_ROOT/skills" "$dst"
@@ -48,7 +48,7 @@ install_for_harness() {
       fi
       ;;
     codex)
-      local dst="$HOME/.codex/skills/youcisla"
+      local dst="$HOME/.codex/skills/agent-foundry"
       if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
       else mkdir -p "$(dirname "$dst")"
            ln -sfn "$REPO_ROOT/skills" "$dst"
@@ -61,7 +61,7 @@ install_for_harness() {
       echo "  Source: $REPO_ROOT/skills/optional"
       ;;
     hermes)
-      local dst="$HOME/AppData/Local/hermes/skills/youcisla"
+      local dst="$HOME/AppData/Local/hermes/skills/agent-foundry"
       if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
       else mkdir -p "$(dirname "$dst")"
            ln -sfn "$REPO_ROOT/skills" "$dst"
@@ -69,7 +69,7 @@ install_for_harness() {
       fi
       ;;
     gemini-cli)
-      local dst="$HOME/.gemini/skills/youcisla"
+      local dst="$HOME/.gemini/skills/agent-foundry"
       if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
       else mkdir -p "$(dirname "$dst")"
            ln -sfn "$REPO_ROOT/skills" "$dst"
@@ -77,7 +77,7 @@ install_for_harness() {
       fi
       ;;
     opencode)
-      local dst="$HOME/.config/opencode/skills/youcisla"
+      local dst="$HOME/.config/opencode/skills/agent-foundry"
       if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
       else mkdir -p "$(dirname "$dst")"
            ln -sfn "$REPO_ROOT/skills" "$dst"
@@ -100,7 +100,7 @@ if $MANUAL; then
   echo "  3. Restart the harness so it picks up the new skills"
   echo ""
   echo "  Example for Claude Code:"
-  echo "    ln -s $REPO_ROOT/skills ~/.claude/skills/youcisla"
+  echo "    ln -s $REPO_ROOT/skills ~/.claude/skills/agent-foundry"
   exit 0
 fi
 
