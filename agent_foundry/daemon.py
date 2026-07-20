@@ -29,7 +29,7 @@ from .models import (
 
 def create_app(cfg: Config | None = None) -> FastAPI:
     cfg = cfg or Config.load()
-    app = FastAPI(title="Agent Foundry", version="0.1.0")
+    app = FastAPI(title="Agent Foundry", version="0.2.0")
     db_path = LOG_DB_PATH
 
     @app.get("/health")

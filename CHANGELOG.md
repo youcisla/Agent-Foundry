@@ -2,7 +2,7 @@
 
 All notable changes to Agent Foundry. Everything here is original work by the Agent Foundry contributors, released under MIT.
 
-## 0.2.0-pre — 2026-07-20 (in development)
+## 0.2.0 — 2026-07-20
 
 Structure to support agents, quality evaluation, and multiple harnesses. Tracked in `docs/launch-plan.md`.
 

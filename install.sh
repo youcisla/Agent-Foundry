@@ -24,7 +24,7 @@ OS="$(uname -s)"
 case "$OS" in
   Linux)  PLATFORM=linux ;;
   Darwin) PLATFORM=mac ;;
-  *) echo "ERROR: unsupported OS '$OS'. v0.1 supports macOS/Linux." >&2; exit 1 ;;
+  *) echo "ERROR: unsupported OS '$OS'. supports macOS/Linux." >&2; exit 1 ;;
 esac
 
 # 1) Python 3.10+

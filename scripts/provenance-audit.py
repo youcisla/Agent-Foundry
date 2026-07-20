@@ -2,7 +2,7 @@
 """
 provenance-audit.py - Per-skill provenance audit for the Agent Foundry catalog.
 
-This is the audit step for §2.12 of docs/improvement-plan.md. It produces a
+Confirms the catalog is clean-room original work (no verbatim third-party text). It produces a
 checklist output so a human can review which skills are clean-room rewrites
 (safe to drop third-party credit) vs. which retain copied expression
 (need a clean-room rewrite before attribution can be removed).

@@ -1,64 +1,76 @@
 # Install
 
-Agent-Foundry v0.1.0 installs as a single skills namespace into any supported harness.
+Agent Foundry is a Python package (`agent-foundry`) plus a thin Claude Code plugin. It installs a local daemon that plans, dispatches, executes, and logs skill runs. macOS and Linux; Python 3.10+.
 
-## Quick install (auto-detect)
+## Quick install (recommended)
 
 ```bash
-git clone https://github.com/youcisla/Agent-Foundry.git
-cd Agent-Foundry
-./scripts/install.sh
+curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash
+export ANTHROPIC_API_KEY=sk-...   # or OPENAI_API_KEY
 ```
 
-The script auto-detects your harness (Claude Code → Codex → Cursor → Hermes → Gemini CLI → OpenCode in that order) and creates the right symlink.
+The installer is idempotent (re-run to update). It:
 
-## Explicit harness
+1. Checks for Python 3.10+.
+2. Clones the repo to `~/.agent-foundry`.
+3. Creates a venv at `~/.config/agent-foundry/venv` and runs `pip install -e .`.
+4. Symlinks the plugin into `~/.claude/plugins/agent-foundry`.
+5. Runs `agent-foundry init` (writes `~/.config/agent-foundry/config.toml` + the first skill index).
+
+## Install profiles
 
 ```bash
-./scripts/install.sh --harness=claude-code
-./scripts/install.sh --harness=codex
-./scripts/install.sh --harness=hermes
-./scripts/install.sh --harness=gemini-cli
-./scripts/install.sh --harness=opencode
+AF_PROFILE=minimal curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash   # skills only, no daemon
+AF_PROFILE=core    curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash   # skills + daemon (default)
+AF_PROFILE=full    curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash   # skills + daemon + hooks
 ```
 
-## Manual install (Cursor)
-
-Cursor reads `.cursor/rules/` directly. Copy what you want:
+## Manual install
 
 ```bash
-cp skills/core/prompt-discipline/SKILL.md .cursor/rules/agent-foundry-prompt-discipline.mdc
+git clone https://github.com/youcisla/Agent-Foundry.git ~/.agent-foundry
+cd ~/.agent-foundry
+pip install -e .
+agent-foundry init
+ln -s "$PWD" ~/.claude/plugins/agent-foundry   # Claude Code plugin
 ```
 
-(`.mdc` extension tells Cursor it's a rule file.)
+## Use it
 
-## What gets installed
+In Claude Code:
 
-- `~/.claude/skills/agent-foundry/` (or harness equivalent) — symlink to this repo's `skills/` dir
-- 24 core skills (in `skills/core/`): `prompt-discipline`, `context-optimization`, `anti-slop`, `plan-before-code`, `plan-then-act`, `constraint-then-solve`, `quality-protocol`, `verify-first`, `re-verify-findings`, `measure-first`, `bottleneck-gating`, `pushback-when-wrong`, `read-before-build`, `show-your-work`, `landscape-first`, `session-closeout`, `api-design`, `cron-troubleshoot`, `e2e-test-strategy`, `feedback-loop`, `workflow-decompose`, `automation-pick`, `session-distill`, `knowledge-extract`
-- 6 optional skills (in `skills/optional/`): `design-language`, `chrome-devtools-mcp-bridge`, `persistent-memory`, `token-compression`, `funnel-pr-guard`, `sql-migration-trio`
-- 4 workflow runbooks (in `workflows/`): `ci-cd-vercel`, `e2e-on-pr`, `release-train`, `session-to-skill`
-- **Total: 30 skills + 4 workflow runbooks.**
+```
+/plan "audit this API"          # rank the skills that match
+/af   "build a react component" # plan + execute the top skill
+```
 
-The harness picks them up via the standard `description` field trigger mechanism. No force-loading.
-
-## Verify
+Or from the CLI:
 
 ```bash
-# In your harness
-# Trigger any core skill by name or trigger phrase
+agent-foundry plan "kill generic AI slop"
+agent-foundry run  "refactor the API design"
+agent-foundry doctor            # health-check config, index, daemon, API key
+agent-foundry --help
+```
 
-# Or run our quality gate
-python3 scripts/foundry-eval.py
+## Verify the install
+
+```bash
+agent-foundry doctor            # config / index / daemon / API key
+python3 scripts/foundry-eval.py # quality gate: 32 passed, 0 failed
+./scripts/validate.sh           # skill lint: 30 skills, 0 failed
 ```
 
 ## Uninstall
 
 ```bash
-rm ~/.claude/skills/agent-foundry     # Claude Code
-rm ~/.codex/skills/agent-foundry      # Codex
-rm ~/.hermes/skills/agent-foundry     # Hermes
-# (etc.)
+rm ~/.claude/plugins/agent-foundry   # remove the plugin symlink
+rm -rf ~/.agent-foundry              # remove the repo
+rm -rf ~/.config/agent-foundry       # remove config, venv, and logs
 ```
 
-The symlink is removed; the repo stays on disk.
+## Requirements
+
+- Python 3.10+
+- macOS or Linux (Windows not yet supported)
+- An Anthropic or OpenAI API key (the daemon uses LiteLLM, so any supported model works)

@@ -49,32 +49,32 @@ Agent Foundry is three things:
 
 ### Core skills (24)
 
-| Skill | Trigger | Lines |
-|---|---|---|
-| `anti-slop` | Kill generic AI patterns before they ship | 36 |
-| `api-design` | Design or review a new API endpoint | 57 |
-| `automation-pick` | Decide whether to automate a task | 50 |
-| `bottleneck-gating` | Phase a project by measured bottleneck | 46 |
-| `constraint-then-solve` | Restate, catalog constraints, then solve | 46 |
-| `context-optimization` | Keep tool outputs small, reference not repeat | 47 |
-| `cron-troubleshoot` | Debug a missing or wrong cron job | 68 |
-| `e2e-test-strategy` | Plan an E2E test pyramid | 69 |
-| `feedback-loop` | After shipping, instrument → measure → iterate | 61 |
-| `knowledge-extract` | Turn a session into a skill draft | 68 |
-| `landscape-first` | Research competitors before building | 46 |
-| `measure-first` | Measure before optimizing | 45 |
-| `plan-before-code` | Spec before implementation | 46 |
-| `plan-then-act` | Plan first, then act | 46 |
-| `prompt-discipline` | Think, simplify, edit surgical, stay goal-driven | 52 |
-| `pushback-when-wrong` | Push back against incorrect briefs | 47 |
-| `quality-protocol` | Maximum-quality gate before declaring done | 60 |
-| `read-before-build` | Read source files before writing code | 49 |
-| `re-verify-findings` | Re-verify every claimed audit finding | 45 |
-| `session-closeout` | Reconcile, update, hand off at session end | 67 |
-| `session-distill` | Extract patterns from every session | 67 |
-| `show-your-work` | Output a thinking trace after complex tasks | 44 |
-| `verify-first` | Verify claims before committing to action | 47 |
-| `workflow-decompose` | Decompose tasks into DAG steps | 62 |
+| Skill | Trigger |
+|---|---|
+| `anti-slop` | Kill generic AI patterns before they ship |
+| `api-design` | Design or review a new API endpoint |
+| `automation-pick` | Decide whether to automate a task |
+| `bottleneck-gating` | Phase a project by measured bottleneck |
+| `constraint-then-solve` | Restate, catalog constraints, then solve |
+| `context-optimization` | Keep tool outputs small, reference not repeat |
+| `cron-troubleshoot` | Debug a missing or wrong cron job |
+| `e2e-test-strategy` | Plan an E2E test pyramid |
+| `feedback-loop` | After shipping, instrument → measure → iterate |
+| `knowledge-extract` | Turn a session into a skill draft |
+| `landscape-first` | Research competitors before building |
+| `measure-first` | Measure before optimizing |
+| `plan-before-code` | Spec before implementation |
+| `plan-then-act` | Plan first, then act |
+| `prompt-discipline` | Think, simplify, edit surgical, stay goal-driven |
+| `pushback-when-wrong` | Push back against incorrect briefs |
+| `quality-protocol` | Maximum-quality gate before declaring done |
+| `read-before-build` | Read source files before writing code |
+| `re-verify-findings` | Re-verify every claimed audit finding |
+| `session-closeout` | Reconcile, update, hand off at session end |
+| `session-distill` | Extract patterns from every session |
+| `show-your-work` | Output a thinking trace after complex tasks |
+| `verify-first` | Verify claims before committing to action |
+| `workflow-decompose` | Decompose tasks into DAG steps |
 
 ### Optional skills (6)
 

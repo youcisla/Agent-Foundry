@@ -10,6 +10,12 @@ python3 -c "
 import json, os, re, yaml
 from pathlib import Path
 
+def _trunc(s, n=140):
+    s = ' '.join((s or '').split())
+    if len(s) <= n: return s
+    cut = s[:n].rsplit(' ', 1)[0].rstrip(',.;:—- ')
+    return cut + '\u2026'
+
 base = Path('.')
 skills = []
 for sm in sorted((base / 'skills').rglob('SKILL.md')):
@@ -23,7 +29,7 @@ for sm in sorted((base / 'skills').rglob('SKILL.md')):
         rel = str(sm.relative_to(base)).replace('\\\\', '/')
         skills.append({
             'id': rid, 'name': fm.get('name', rid),
-            'description': fm.get('description', '')[:120],
+            'description': _trunc(fm.get('description', '')),
             'category': 'core' if '/core/' in rel else 'optional',
             'lines': text.count(chr(10))
         })
@@ -41,7 +47,7 @@ for ap in sorted((base / 'agents').rglob('AGENT.md')):
         rid = ap.parent.name
         agents.append({
             'id': rid, 'name': fm.get('name', rid),
-            'description': fm.get('description', '')[:120],
+            'description': _trunc(fm.get('description', '')),
             'model': fm.get('model', 'inherit'),
         })
     except Exception:

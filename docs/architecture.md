@@ -53,7 +53,7 @@ An agent is a **role**. Things like "critic", "refactorer", "researcher". It is:
 - **Dispatched by the orchestrator** when the daemon decides it should run.
 - **Has a model tier** (`opus`/`sonnet`/`haiku`/`inherit`), a tool/MCP allowlist, and an optional prompt template.
 - **Stored as Markdown + manifest** under `agents/<name>/` with a YAML frontmatter block.
-- **Invoked by the daemon** via `POST /agents/<name>/run` (planned for v0.2; today dispatched by running the agent body as a skill-like prompt).
+- **Invoked by the daemon** by running the agent body as a skill-like prompt (`af-critic` is wired into `run --judge`). A dedicated `POST /agents/<name>/run` endpoint is planned.
 
 Concretely: an agent is what makes the model act differently on a task. It might write files, run commands, or call other agents.
 
@@ -110,7 +110,7 @@ Each layer is **independently testable**. Each layer's inputs/outputs are Pydant
 
 Skills are intentionally **non-domain**: they teach the model *how to think*, not *what to do*. There are no "JavaScript skill" or "Postgres skill" — those are domain references that should be loaded as a one-off, not installed.
 
-## Agent catalog (planned for v0.2)
+## Agent catalog
 
 The agent catalog ships in `agents/<name>/AGENT.md` with a YAML frontmatter block:
 
@@ -149,5 +149,5 @@ Three configuration surfaces, each with a different lifetime:
 - `docs/launch-plan.md` — the v0.1 design (now historical; this doc is its successor).
 - `docs/philosophy.md` — curation doctrine, why we say no.
 - `docs/authoring.md` — how to write portable skills and agents.
-- `docs/improvement-plan.md` — the v0.2 → v1.0 roadmap.
+- `docs/launch-plan.md` — the design specification.
 - `README.md` — install + usage.
