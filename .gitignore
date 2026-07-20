@@ -1,5 +1,5 @@
 # Private triage ledger — local only, not for distribution
-catalog/*.csv
+*.csv
 catalog/cache/
 catalog/*.tmp
 
