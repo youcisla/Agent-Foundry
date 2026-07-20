@@ -14,12 +14,12 @@ NOX_TERMS=(
   "thedotmack" "claude-mem"
   "REMvisual" "claude-handoff"
   "KKKKhazix" "khazix"
-  "pbakaus" "impeccable"
+  "pbakaus"
   "headroomlabs" "headroom-token-compression" "claude-mem-persistent"
   "emilkowalski" "apple-design"
   "Glint-Research" "fable-5-traces"
   "SupraLabs" "reasoning-corpus"
-  "wshobson" "affaan-m" "affaan/" "ruvnet" "ruflo" "claude-flow"
+  "wshobson"
   "ATTRIBUTIONS.md"
 )
 
