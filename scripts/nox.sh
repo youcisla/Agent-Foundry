@@ -24,8 +24,13 @@ NOX_TERMS=(
 )
 
 # Only scan tracked files (excludes gitignored catalog/, generated index.json, etc.)
+# self-detect and exclude the script file itself and the planning doc
+SCRIPT_SELF="scripts/nox.sh"
+PLAN_DOC="docs/competitive-plan.md"
 for term in "${NOX_TERMS[@]}"; do
   HITS=$(git ls-files | xargs grep -ali "$term" 2>/dev/null || true)
+  # Remove self-references
+  HITS=$(echo "$HITS" | grep -v "^$SCRIPT_SELF$" | grep -v "^$PLAN_DOC$" || true)
   if [ -n "$HITS" ]; then
     echo "FAIL: '$term' found in tracked files"
     echo "$HITS"
