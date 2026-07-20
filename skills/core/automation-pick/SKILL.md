@@ -1,12 +1,13 @@
 ---
 name: automation-pick
-description: "Before automating a task, decide whether to automate. Decision tree based on volume, frequency, error cost, and reversibility. Use when someone says 'we should automate this' or 'let's build a script for that'."
+description: Before automating a task, decide whether to automate. Decision tree based
+  on volume, frequency, error cost, and reversibility. Use when someone says 'we should
+  automate this' or 'let's build a script for that'.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Automation Pick

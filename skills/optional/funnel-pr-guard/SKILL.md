@@ -1,12 +1,13 @@
 ---
 name: funnel-pr-guard
-description: "Every PR that touches the front door must state which funnel step it changes and by how much. PR review discipline for landing, auth, onboarding, and signup flows. Use whenever a diff touches conversion-critical paths."
+description: Every PR that touches the front door must state which funnel step it
+  changes and by how much. PR review discipline for landing, auth, onboarding, and
+  signup flows. Use whenever a diff touches conversion-critical paths.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Funnel PR Guard

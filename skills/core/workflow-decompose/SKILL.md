@@ -1,12 +1,13 @@
 ---
 name: workflow-decompose
-description: "Decompose any workflow into a DAG: trigger → conditions → actions → retries → observability. Mental model for n8n, Temporal, Airflow, GitHub Actions, or hand-rolled scripts. Use when designing or debugging an automation."
+description: 'Decompose any workflow into a DAG: trigger → conditions → actions →
+  retries → observability. Mental model for n8n, Temporal, Airflow, GitHub Actions,
+  or hand-rolled scripts. Use when designing or debugging an automation.'
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Workflow Decompose

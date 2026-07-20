@@ -1,3 +1,0 @@
-# This file keeps the catalog/ directory tracked in git.
-# The skills.csv is gitignored (private working ledger — see /plans/PLAN.md).
-# decisions.md and sources.md ARE tracked (public veredicts).

@@ -1,13 +1,12 @@
 ---
 name: chrome-devtools-mcp-bridge
-description: "Google's official Chrome DevTools MCP — 26+ tools for browser automation, network inspection, console capture, screenshot diffing, performance tracing. From ChromeDevTools/chrome-devtools-mcp (Apache-2.0). Use for web app debugging, screenshots, network traces, performance analysis."
+description: Google's official Chrome DevTools MCP — 26+ tools for browser automation,
+  network inspection, console capture, screenshot diffing, performance tracing. From
+  ChromeDevTools/chrome-devtools-mcp (Apache-2.0). Use for web app debugging, screenshots,
+  network traces, performance analysis.
 version: 0.1.0
 license: Apache-2.0
-provenance:
-  source: ChromeDevTools/chrome-devtools-mcp
-  license: Apache-2.0
-  url: https://github.com/ChromeDevTools/chrome-devtools-mcp
-  adapted: true
+author: Agent Foundry Contributors
 ---
 
 # Chrome DevTools MCP Bridge

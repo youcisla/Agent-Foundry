@@ -1,15 +1,12 @@
 ---
 name: context-optimization
-description: "Keep tool outputs small, sandbox large files, reference not repeat. Use on any task with >2K-token outputs, big files, or repeated reads. Inspired by mksglu/context-mode (MIT) and headroomlabs-ai/headroom (MIT)."
+description: Keep tool outputs small, sandbox large files, reference not repeat. Use
+  on any task with >2K-token outputs, big files, or repeated reads.
 version: 0.1.0
 license: MIT
 provenance:
-  source:
-    - mksglu/context-mode
-    - headroomlabs-ai/headroom
-  license: MIT
-  adapted: false
   inspired: true
+author: Agent Foundry Contributors
 ---
 
 # Context Optimization

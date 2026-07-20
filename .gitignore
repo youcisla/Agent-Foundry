@@ -1,6 +1,7 @@
 # Private triage ledger — local only, not for distribution
 *.csv
-catalog/cache/
+catalog/
+catalog.cache/
 catalog/*.tmp
 
 # Generated / cached

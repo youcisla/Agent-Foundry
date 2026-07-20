@@ -1,12 +1,14 @@
 ---
 name: show-your-work
-description: After any complex task (audit, plan, redesign, multi-agent execution), output a separate THINKING TRACE section. Document how you decomposed the problem, what surprised you, what you rejected, and what uncertainties remain. The reasoning is where the learning happens.
+description: After any complex task (audit, plan, redesign, multi-agent execution),
+  output a separate THINKING TRACE section. Document how you decomposed the problem,
+  what surprised you, what you rejected, and what uncertainties remain. The reasoning
+  is where the learning happens.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Show Your Work

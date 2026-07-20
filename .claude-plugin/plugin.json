@@ -1,9 +1,9 @@
 {
   "name": "agent-foundry",
-  "description": "A curated, maintained set of agent skills distilled from the best of the ecosystem — harness-agnostic, token-efficient, attributed. v0.1.0: 5 core skills (prompt-discipline, context-optimization, anti-slop, plan-before-code, session-closeout) plus optional design-language bundle.",
-  "version": "0.1.0",
+  "description": "A curated, maintained set of agent skills for the local orchestrator — harness-agnostic, token-efficient, MIT-licensed. Original work by the Agent Foundry Contributors.",
+  "version": "0.2.0",
   "author": {
-    "name": "Youcisla Contributors"
+    "name": "Agent Foundry Contributors"
   },
   "license": "MIT",
   "keywords": [

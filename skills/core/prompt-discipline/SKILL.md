@@ -1,13 +1,10 @@
 ---
 name: prompt-discipline
-description: "Enforce the four coding rules — think before acting, minimum viable change, surgical edits, stay on the stated goal. Use on every non-trivial task. Adapted from multica-ai/andrej-karpathy-skills (MIT)."
+description: Enforce the four coding rules — think before acting, minimum viable change,
+  surgical edits, stay on the stated goal. Use on every non-trivial task.
 version: 0.1.0
 license: MIT
-provenance:
-  source: multica-ai/andrej-karpathy-skills
-  license: MIT
-  adapted: true
-  url: https://github.com/multica-ai/andrej-karpathy-skills
+author: Agent Foundry Contributors
 ---
 
 # Prompt Discipline

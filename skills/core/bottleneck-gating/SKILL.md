@@ -1,12 +1,13 @@
 ---
 name: bottleneck-gating
-description: Phase plans by measured bottleneck, not by requested order. Each phase has a gate condition (metric must move before proceeding). Never monetize or beautify a loop that doesn't complete.
+description: Phase plans by measured bottleneck, not by requested order. Each phase
+  has a gate condition (metric must move before proceeding). Never monetize or beautify
+  a loop that doesn't complete.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Bottleneck Gating

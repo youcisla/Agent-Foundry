@@ -1,15 +1,14 @@
 ---
 name: quality-protocol
-description: The unified maximum-quality protocol — restate → catalog constraints → plan → single-file subsystems → write-verify → self-verify → batch. Always on for every non-trivial task. Distilled from 50+ high-quality agent traces (Fable-5, Reasoning Corpus, UltraX, OpenThoughts).
+description: The unified maximum-quality protocol — restate → catalog constraints
+  → plan → single-file subsystems → write-verify → self-verify → batch. Always on
+  for every non-trivial task. Distilled from 50+ high-quality agent traces (Fable-5,
+  Reasoning Corpus, UltraX, OpenThoughts).
 version: 0.1.0
 license: MIT
 provenance:
-  source:
-    - Glint-Research/Fable-5-traces
-    - SupraLabs/reasoning-corpus-4K-5M-v1
-    - UltraX-Preview
-  license: CC-BY-4.0 (dataset metadata, not source code)
   inspired: true
+author: Agent Foundry Contributors
 ---
 
 # Quality Protocol — Maximum Quality Every Session

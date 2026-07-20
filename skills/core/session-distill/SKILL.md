@@ -1,12 +1,13 @@
 ---
 name: session-distill
-description: "At session end, auto-summarize what was learned into a structured artifact. Captures decisions made, files changed, open questions, and patterns. Use when wrapping up a work session — by hand or triggered by a hook."
+description: At session end, auto-summarize what was learned into a structured artifact.
+  Captures decisions made, files changed, open questions, and patterns. Use when wrapping
+  up a work session — by hand or triggered by a hook.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Session Distill

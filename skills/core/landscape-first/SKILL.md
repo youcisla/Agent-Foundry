@@ -1,12 +1,13 @@
 ---
 name: landscape-first
-description: Before building anything in a competitive space, research 5-10 competitors: pricing, UX patterns, positioning, weaknesses. Extract what to steal, adapt, or avoid. Every project should do this before the first feature commit.
+description: 'Before building anything in a competitive space, research 5-10 competitors:
+  pricing, UX patterns, positioning, weaknesses. Extract what to steal, adapt, or
+  avoid. Every project should do this before the first feature commit.'
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Landscape First

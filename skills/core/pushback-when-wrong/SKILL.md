@@ -1,12 +1,13 @@
 ---
 name: pushback-when-wrong
-description: When the brief contradicts verified reality, push back with evidence. Identify what the user is wrong about AND what they haven't thought of. Every plan must include a pushback section — silent execution of wrong premises wastes weeks.
+description: When the brief contradicts verified reality, push back with evidence.
+  Identify what the user is wrong about AND what they haven't thought of. Every plan
+  must include a pushback section — silent execution of wrong premises wastes weeks.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Pushback When Wrong

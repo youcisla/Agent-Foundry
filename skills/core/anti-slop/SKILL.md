@@ -1,15 +1,13 @@
 ---
 name: anti-slop
-description: "Kill generic AI patterns before they ship — filler prose, over-commenting, defensive over-engineering, unnecessary abstractions, emoji headers. Apply on any UI, copy, or code that will be read by a human. Inspired by Leonxlnx/taste-skill (MIT) and JuliusBrussee/caveman (MIT)."
+description: Kill generic AI patterns before they ship — filler prose, over-commenting,
+  defensive over-engineering, unnecessary abstractions, emoji headers. Apply on any
+  UI, copy, or code that will be read by a human.
 version: 0.1.0
 license: MIT
 provenance:
-  source:
-    - Leonxlnx/taste-skill
-    - JuliusBrussee/caveman
-  license: MIT
-  adapted: false
   inspired: true
+author: Agent Foundry Contributors
 ---
 
 # Anti-Slop

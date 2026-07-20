@@ -1,12 +1,13 @@
 ---
 name: verify-first
-description: Every assertion about the codebase, product, or market is a hypothesis. Verify it against live sources before committing to action. The master discipline: verify first, act second. Always on.
+description: 'Every assertion about the codebase, product, or market is a hypothesis.
+  Verify it against live sources before committing to action. The master discipline:
+  verify first, act second. Always on.'
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Verify First

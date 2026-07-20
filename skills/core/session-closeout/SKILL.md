@@ -1,19 +1,13 @@
 ---
 name: session-closeout
-description: "Before ending a session: reconcile changed files, update docs and changelog, list loose ends, write a handoff note. Apply at the end of any multi-step project. Inspired by thedotmack/claude-mem (Apache-2.0), REMvisual/claude-handoff (MIT), and KKKKhazix/khazix-skills/neat-freak (MIT)."
+description: 'Before ending a session: reconcile changed files, update docs and changelog,
+  list loose ends, write a handoff note. Apply at the end of any multi-step project0),
+  REMvisual/claude-handoff (MIT), and KKKKhazix/khazix-skills/neat-freak (MIT).'
 version: 0.1.0
 license: MIT
 provenance:
-  source:
-    - thedotmack/claude-mem
-    - REMvisual/claude-handoff
-    - KKKKhazix/khazix-skills
-  license:
-    - Apache-2.0
-    - MIT
-    - MIT
-  adapted: false
   inspired: true
+author: Agent Foundry Contributors
 ---
 
 # Session Closeout

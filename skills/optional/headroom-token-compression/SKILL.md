@@ -1,13 +1,11 @@
 ---
 name: headroom-token-compression
-description: "Token-compression proxy + MCP server + library that compresses tool outputs, logs, files, and RAG chunks before they consume context. 60-95% token reduction on JSON, 15-25% on coding-agent outputs. From headroomlabs-ai/headroom (MIT)."
+description: Token-compression proxy + MCP server + library that compresses tool outputs,
+  logs, files, and RAG chunks before they consume context. 60-95% token reduction
+  on JSON, 15-25% on coding-agent outputs. From headroomlabs-ai/headroom (MIT).
 version: 0.1.0
 license: MIT
-provenance:
-  source: headroomlabs-ai/headroom
-  license: MIT
-  url: https://github.com/headroomlabs-ai/headroom
-  adapted: true
+author: Agent Foundry Contributors
 ---
 
 # Headroom Token Compression

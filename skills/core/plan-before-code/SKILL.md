@@ -1,13 +1,11 @@
 ---
 name: plan-before-code
-description: "No implementation without an approved spec for non-trivial work. Brainstorm → write spec → get approval → then code. Use before any feature, component, behavior change, or refactor. Adapted from obra/superpowers (MIT)."
+description: No implementation without an approved spec for non-trivial work. Brainstorm
+  → write spec → get approval → then code. Use before any feature, component, behavior
+  change, or refactor.
 version: 0.1.0
 license: MIT
-provenance:
-  source: obra/superpowers
-  license: MIT
-  adapted: true
-  url: https://github.com/obra/superpowers
+author: Agent Foundry Contributors
 ---
 
 # Plan Before Code

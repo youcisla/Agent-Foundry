@@ -1,12 +1,13 @@
 ---
 name: knowledge-extract
-description: "Read a session, conversation, or document and identify reusable patterns. Draft a new skill (or update an existing one). Use when you notice a recurring behavior you want to formalize."
+description: Read a session, conversation, or document and identify reusable patterns.
+  Draft a new skill (or update an existing one). Use when you notice a recurring behavior
+  you want to formalize.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Knowledge Extract

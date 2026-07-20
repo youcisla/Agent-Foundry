@@ -26,6 +26,11 @@
       "type": "string",
       "enum": ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "CC-BY-4.0"]
     },
+    "author": {
+      "type": "string",
+      "default": "Agent Foundry Contributors",
+      "description": "Author of this skill. Required for catalog-wide attestation."
+    },
     "location": {
       "type": "string",
       "description": "Relative path to SKILL.md (e.g., skills/core/anti-slop/SKILL.md)"
@@ -69,11 +74,7 @@
       "type": "array",
       "items": { "type": "string" },
       "description": "Other skills this one calls."
-    },
-    "provenance": {
-      "type": "object",
-      "description": "Attribution / source. Replicated from SKILL.md frontmatter."
     }
   },
-  "required": ["id", "name", "description", "execution_type", "trigger_patterns", "estimated_token_cost", "estimated_time_seconds"]
+  "required": ["id", "name", "description", "author", "execution_type", "trigger_patterns", "estimated_token_cost", "estimated_time_seconds"]
 }

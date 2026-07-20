@@ -1,13 +1,13 @@
 {
   "name": "agent-foundry",
   "owner": {
-    "name": "Youcisla Contributors"
+    "name": "Agent Foundry Contributors"
   },
   "plugins": [
     {
       "name": "agent-foundry",
       "source": "./",
-      "description": "Curated agent skills — prompt discipline, context optimization, anti-slop, plan-before-code, session closeout, optional design language."
+      "description": "Curated agent skills for the local orchestrator. Original work, MIT-licensed, harness-agnostic."
     }
   ]
 }

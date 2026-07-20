@@ -1,12 +1,14 @@
 ---
 name: re-verify-findings
-description: Before executing any audit finding, claimed bug, or reported issue, re-verify it against LIVE sources (repo, DB, API, browser). Never accept stale assertions — a significant fraction of external claims are already fixed or wrong by the time you see them.
+description: Before executing any audit finding, claimed bug, or reported issue, re-verify
+  it against LIVE sources (repo, DB, API, browser). Never accept stale assertions
+  — a significant fraction of external claims are already fixed or wrong by the time
+  you see them.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Re-Verify Findings

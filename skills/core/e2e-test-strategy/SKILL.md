@@ -1,12 +1,13 @@
 ---
 name: e2e-test-strategy
-description: "Plan an end-to-end test pyramid: which flows to E2E, which to integration, which to unit. Seeding strategy, auth state handling, flake mitigation, parallel execution. Use when designing test coverage for a web app or API."
+description: 'Plan an end-to-end test pyramid: which flows to E2E, which to integration,
+  which to unit. Seeding strategy, auth state handling, flake mitigation, parallel
+  execution. Use when designing test coverage for a web app or API.'
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # E2E Test Strategy

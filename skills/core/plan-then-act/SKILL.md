@@ -1,13 +1,13 @@
 ---
 name: plan-then-act
-description: Plan first, then act. State the plan in one sentence BEFORE any tool call. Every Bash call must include a description field explaining WHY. Use on every non-trivial task. Inspired by Glint-Research/Fable-5-traces (4,667 agent sessions) and the structural patterns of high-quality agent tool-use.
+description: Plan first, then act. State the plan in one sentence BEFORE any tool
+  call. Every Bash call must include a description field explaining WHY. Use on every
+  non-trivial task.
 version: 0.1.0
 license: MIT
 provenance:
-  source: Glint-Research/Fable-5-traces
-  license: CC-BY-4.0 (dataset metadata, not source code)
   inspired: true
-  url: https://huggingface.co/datasets/Glint-Research/Fable-5-traces
+author: Agent Foundry Contributors
 ---
 
 # Plan Then Act

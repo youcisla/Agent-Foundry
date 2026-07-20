@@ -1,12 +1,13 @@
 ---
 name: feedback-loop
-description: "After shipping, set up the loop: instrument → measure → review weekly → adjust. Use when shipping a feature, launching a product, or noticing nobody acts on data."
+description: 'After shipping, set up the loop: instrument → measure → review weekly
+  → adjust. Use when shipping a feature, launching a product, or noticing nobody acts
+  on data.'
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Feedback Loop

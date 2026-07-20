@@ -1,12 +1,14 @@
 ---
 name: read-before-build
-description: A plan or design document is an aspiration, not a specification. Before writing any code, read the actual source files. A significant fraction of plan claims will be stale, already-fixed, or flat-out wrong. When the build breaks due to missing imports, find the actual symbol name in the source, don't create new ones.
+description: A plan or design document is an aspiration, not a specification. Before
+  writing any code, read the actual source files. A significant fraction of plan claims
+  will be stale, already-fixed, or flat-out wrong. When the build breaks due to missing
+  imports, find the actual symbol name in the source, don't create new ones.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Read Before Build

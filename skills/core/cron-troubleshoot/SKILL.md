@@ -1,12 +1,13 @@
 ---
 name: cron-troubleshoot
-description: "Debug a cron job that failed or didn't run: timezone, drift, overlap, missing logs, dependency failure. Use when a scheduled job is missing, late, or producing wrong results."
+description: 'Debug a cron job that failed or didn''t run: timezone, drift, overlap,
+  missing logs, dependency failure. Use when a scheduled job is missing, late, or
+  producing wrong results.'
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Cron Troubleshoot

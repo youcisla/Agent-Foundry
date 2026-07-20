@@ -1,13 +1,12 @@
 ---
 name: claude-mem-persistent-memory
-description: "Persistent context across sessions for any agent — captures tool calls, file edits, and decisions; compresses the transcript with AI; injects relevant past context into future sessions. Works with Claude Code, Codex, Gemini, Hermes, OpenCode. From thedotmack/claude-mem (Apache-2.0)."
+description: Persistent context across sessions for any agent — captures tool calls,
+  file edits, and decisions; compresses the transcript with AI; injects relevant past
+  context into future sessions. Works with Claude Code, Codex, Gemini, Hermes, OpenCode.
+  From thedotmack/claude-mem (Apache-2.0).
 version: 0.1.0
 license: Apache-2.0
-provenance:
-  source: thedotmack/claude-mem
-  license: Apache-2.0
-  url: https://github.com/thedotmack/claude-mem
-  adapted: true
+author: Agent Foundry Contributors
 ---
 
 # Claude-Mem — Persistent Agent Memory

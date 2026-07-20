@@ -1,13 +1,13 @@
 ---
 name: constraint-then-solve
-description: Before solving, restate the problem, list unknowns, and catalog every constraint. Verify the solution against every constraint at the end. Use on any non-trivial reasoning task. Inspired by SupraLabs/reasoning-corpus-4K-5M-v1 (3.67M thought traces from 50+ models).
+description: Before solving, restate the problem, list unknowns, and catalog every
+  constraint. Verify the solution against every constraint at the end. Use on any
+  non-trivial reasoning task67M thought traces from 50+ models).
 version: 0.1.0
 license: MIT
 provenance:
-  source: SupraLabs/reasoning-corpus-4K-5M-v1
-  license: CC-BY-4.0 (dataset metadata)
   inspired: true
-  url: https://huggingface.co/datasets/SupraLabs/reasoning-corpus-4K-5M-v1
+author: Agent Foundry Contributors
 ---
 
 # Constraint Then Solve

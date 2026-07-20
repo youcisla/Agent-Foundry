@@ -1,12 +1,13 @@
 ---
 name: sql-migration-trio
-description: "Every SQL migration = three files: up (forward DDL), down (reverse DDL), and schema.sql sync. Apply, drift-check, and rollback procedure. Use for any database migration in a Supabase or Postgres project."
+description: 'Every SQL migration = three files: up (forward DDL), down (reverse DDL),
+  and schema.sql sync. Apply, drift-check, and rollback procedure. Use for any database
+  migration in a Supabase or Postgres project.'
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # SQL Migration Trio

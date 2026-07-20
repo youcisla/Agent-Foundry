@@ -1,12 +1,13 @@
 ---
 name: measure-first
-description: Before planning any change, query live data (DB, API, analytics, logs) to find the actual bottleneck. Static analysis reveals structure; live data reveals truth. Plans must sequence by measured bottleneck, not by requested order.
+description: Before planning any change, query live data (DB, API, analytics, logs)
+  to find the actual bottleneck. Static analysis reveals structure; live data reveals
+  truth. Plans must sequence by measured bottleneck, not by requested order.
 version: 0.1.0
 license: MIT
 provenance:
-  author: Youcisla
-  source: operational methodology
   inspired: true
+author: Youcisla
 ---
 
 # Measure First

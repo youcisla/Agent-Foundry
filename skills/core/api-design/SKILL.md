@@ -1,11 +1,13 @@
 ---
 name: api-design
-description: "Design REST or GraphQL APIs: resource modeling, URL conventions, error contracts, versioning, pagination, idempotency keys, rate-limit headers. Use when creating a new API endpoint or reviewing API consistency."
+description: 'Design REST or GraphQL APIs: resource modeling, URL conventions, error
+  contracts, versioning, pagination, idempotency keys, rate-limit headers. Use when
+  creating a new API endpoint or reviewing API consistency.'
 version: 0.1.0
 license: MIT
 provenance:
-  source: [Stripe API docs, GitHub REST guidelines, Heroku HTTP API design]
   inspired: true
+author: Agent Foundry Contributors
 ---
 
 # API Design

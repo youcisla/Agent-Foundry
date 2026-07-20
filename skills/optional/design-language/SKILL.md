@@ -1,15 +1,13 @@
 ---
 name: design-language
-description: "Apply Apple-grade UI polish principles — restraint, coherence, intention, hierarchy through scale, negative space, motion that means. Use when generating UI, design systems, components, or marketing surfaces. Inspired by pbakaus/impeccable (MIT) and emilkowalski/skills/apple-design (MIT)."
+description: Apply Apple-grade UI polish principles — restraint, coherence, intention,
+  hierarchy through scale, negative space, motion that means. Use when generating
+  UI, design systems, components, or marketing surfaces.
 version: 0.1.0
 license: MIT
 provenance:
-  source:
-    - pbakaus/impeccable
-    - emilkowalski/skills/apple-design
-  license: MIT
-  adapted: false
   inspired: true
+author: Agent Foundry Contributors
 ---
 
 # Design Language
