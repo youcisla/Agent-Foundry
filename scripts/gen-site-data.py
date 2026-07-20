@@ -73,24 +73,33 @@ print(f"site-data.js: {len(skills)} skills, {len(agents)} agents")
 graph_path = REPO / "graphify-out" / "graph.json"
 analysis_path = REPO / "graphify-out" / ".graphify_analysis.json"
 
-def _empty_graph_files():
-    """Write empty graph assets so the web app doesn't 404 when graphify hasn't run yet."""
-    (WEB / "graph-data.js").write_text(
-        "// Empty graph (no graphify-out yet). Run python scripts/graphify-run.py to populate.\n\n"
-        "const GRAPH_NODES = [];\n\n"
-        "const GRAPH_EDGES = [];\n",
-        encoding="utf-8",
-    )
-    empty_stats = {
-        "node_count": 0, "edge_count": 0,
-        "skill_count": len(skills), "agent_count": len(agents),
-        "community_count": 0, "god_nodes": [], "surprising": [],
-    }
-    (WEB / "graph-stats.js").write_text(
-        "const GRAPH_STATS = " + json.dumps(empty_stats, indent=2) + ";\n",
-        encoding="utf-8",
-    )
-    print("graph-data.js + graph-stats.js: stub (no graphify-out yet)")
+def _preserve_committed_graph():
+    """Leave the committed graph-data.js / graph-stats.js alone.
+
+    The committed files already contain the knowledge graph (refreshed locally
+    via `python scripts/graphify-run.py`). Vercel's build worker has no
+    graphify-out/ — writing empty stubs would clobber real data. Better to
+    leave the committed graph in place and regenerate it on the next local run.
+    """
+    # Make sure the files at least exist so web/graph.html doesn't 404.
+    if not (WEB / "graph-data.js").exists():
+        (WEB / "graph-data.js").write_text(
+            "// Stub (will be populated by graphify-run.py + build-site-data.sh)\n\n"
+            "const GRAPH_NODES = [];\n\n"
+            "const GRAPH_EDGES = [];\n",
+            encoding="utf-8",
+        )
+    if not (WEB / "graph-stats.js").exists():
+        empty_stats = {
+            "node_count": 0, "edge_count": 0,
+            "skill_count": len(skills), "agent_count": len(agents),
+            "community_count": 0, "god_nodes": [], "surprising": [],
+        }
+        (WEB / "graph-stats.js").write_text(
+            "const GRAPH_STATS = " + __import__('json').dumps(empty_stats, indent=2) + ";\n",
+            encoding="utf-8",
+        )
+    print("graph-data.js + graph-stats.js: preserved (committed graph in use; graphify-out missing)")
 
 
 if graph_path.exists() and analysis_path.exists():
@@ -145,7 +154,7 @@ if graph_path.exists() and analysis_path.exists():
     )
     print(f"graph-stats.js: stats written")
 else:
-    _empty_graph_files()
+    _preserve_committed_graph()
 
 # 3. install-data.js
 install_data = {
