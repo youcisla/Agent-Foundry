@@ -1,0 +1,4 @@
+# This file keeps the plans/ directory tracked in git.
+# All other files in this directory are gitignored (see .gitignore).
+# Use this directory for private planning, drafts, and any content
+# that should NOT be published to the public repo.
