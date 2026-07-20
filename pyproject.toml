@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-foundry"
+version = "0.1.0"
+description = "Skill orchestrator for Claude Code — plan, execute, return."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Agent Foundry Contributors" }]
+dependencies = [
+    "pydantic>=2.5",
+    "click>=8.1",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "python-frontmatter>=1.0",
+    "litellm>=1.40",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.scripts]
+agent-foundry = "agent_foundry.cli:main"
+
+[tool.setuptools]
+packages = ["agent_foundry"]
+
+[tool.setuptools.package-data]
+agent_foundry = ["fallback_prompts/*.md"]

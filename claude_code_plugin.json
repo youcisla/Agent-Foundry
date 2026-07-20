@@ -1,0 +1,18 @@
+{
+  "name": "agent-foundry",
+  "version": "0.1.0",
+  "description": "Skill orchestrator: /plan recommends skills, /af plans and executes the best skill.",
+  "author": { "name": "Youcisla Contributors" },
+  "commands": [
+    {
+      "name": "plan",
+      "description": "Get a ranked list of skills for your prompt.",
+      "command": "agent-foundry plan \"$ARGS\""
+    },
+    {
+      "name": "af",
+      "description": "Run the orchestrator on a prompt (plan + execute top skill).",
+      "command": "agent-foundry run \"$ARGS\""
+    }
+  ]
+}

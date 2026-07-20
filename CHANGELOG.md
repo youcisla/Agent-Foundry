@@ -2,9 +2,41 @@
 
 ## 0.1.0 — 2026-07-20
 
-Initial release.
+**Public launch — Option C (plan → execute → return).**
 
-**Core skills (16 in `skills/core/`):**
+The repo delivers a working Python package that orchestrates 30+ skills via a FastAPI daemon. The thin Claude Code plugin (registered in `claude_code_plugin.json`) exposes `/plan` and `/af` slash commands that POST to the daemon.
+
+**What's new this release:**
+
+- **Python package** (`agent-foundry`, installable via `pip install -e .` from the repo):
+  - `init`, `index`, `cost-report`, `plan`, `execute`, `run`, `serve` (Click commands)
+  - `~/.config/agent-foundry/config.toml` with `[core]` + `[planner]` sections, weights tunable without code edits
+  - Pydantic data models; LiteLLM as the unified LLM client (any model)
+  - Pure-Python YAML frontmatter parser (no PyYAML needed)
+- **FastAPI daemon** with `/health`, `/index`, `/plan`, `/execute`, `/loop`
+  - Lazy-start by the CLI (no systemd/launchd requirement)
+  - In-memory index cache with TTL (default 60s, configurable)
+  - Token budget guard returns `requires_confirmation` → CLI prompts `y/n` → re-sends with `force=true`. Zero tokens spent on decline.
+- **Virtual `generic-reasoning` fallback skill** injected into the index by the indexer — runs when no skill matches. Has a configurable system prompt in `config.toml` (`fallback_system_prompt = "..."`).
+- **SQLite execution log** at `~/.config/agent-foundry/executions.db` with `planner_score` and `was_fallback` columns for later accuracy analysis (planning for v0.2 tuning).
+- **Claude Code plugin manifest** at `claude_code_plugin.json` (symlinked into `~/.claude/plugins/agent-foundry` by `install.sh`).
+- **Install script** (`install.sh`) — idempotent, macOS/Linux, creates venv + symlinks + runs `init`.
+
+**What's deferred to v0.2+:** judge agent, retry loop, knowledge graph, auto-trigger, SSE streaming, PyPI publication, system-level auto-start.
+
+---
+
+## 0.1.0-pre — 2026-07-20
+
+Initial development; superseded by 0.1.0 (Python implementation shipped).
+
+**Public launch — Option C (plan → execute → return).**
+
+**16 core skills + 1 optional (1 in `skills/optional/`):**
+
+(see previous v0.1.0 entries preserved below)
+
+---
 
 Adapted (from MIT/Apache-2.0):
 - `prompt-discipline` — adapted from multica-ai/andrej-karpathy-skills (MIT)
