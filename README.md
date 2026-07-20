@@ -12,7 +12,7 @@ The community has 2,000+ skills and 50+ MCPs across dozens of repos. Installing 
 
 ## What's in v0.1.0
 
-16 **core** skills (always-on for every project, in `skills/core/`):
+24 **core** skills (always-on for every project, in `skills/core/`):
 - `prompt-discipline` — think before acting, minimum viable change, surgical edits
 - `context-optimization` — small outputs, sandbox large files, reference not repeat
 - `anti-slop` — kill generic AI patterns before they ship
@@ -29,11 +29,31 @@ The community has 2,000+ skills and 50+ MCPs across dozens of repos. Installing 
 - `show-your-work` — output a thinking-trace after complex work
 - `landscape-first` — research 5-10 competitors before building
 - `session-closeout` — reconcile, document, hand off cleanly
+- `api-design` — REST/GraphQL resource modeling, error contracts, pagination, idempotency, versioning
+- `cron-troubleshoot` — 7-failure-mode diagnostic checklist for cron jobs
+- `e2e-test-strategy` — test pyramid, seeding, auth, flake mitigation
+- `feedback-loop` — instrument → measure → review weekly → adjust
+- `workflow-decompose` — universal DAG model for any orchestrator
+- `automation-pick` — decide whether to automate before automating
+- `session-distill` — auto-summarize what was learned at session end
+- `knowledge-extract` — read sessions, identify patterns, draft new skills
 
-1 **optional** skill bundle (in `skills/optional/`):
+6 **optional** skill bundles (in `skills/optional/`):
 - `design-language` — Apple-grade UI polish
+- `chrome-devtools-mcp-bridge` — Google's official browser automation via DevTools Protocol
+- `claude-mem-persistent-memory` — cross-session persistent memory
+- `headroom-token-compression` — token compression proxy + MCP server
+- `funnel-pr-guard` — front-door PR review discipline
+- `sql-migration-trio` — migration management with up/down/schema sync
 
-**Total: 17 skills.**
+**Total: 30 skills.**
+
+5 **workflow runbooks** (in `workflows/` — not skills, structured guides you copy):
+- `ci-cd-vercel.md` — Vercel preview + production deploy with smoke tests
+- `e2e-on-pr.md` — Playwright E2E on every PR
+- `release-train.md` — weekly release process
+- `skill-update.md` — weekly upstream skill scan
+- `session-to-skill.md` — session → skill extraction pipeline
 
 One hook (`session-closeout.sh`) that prompts the closeout at end of session.
 

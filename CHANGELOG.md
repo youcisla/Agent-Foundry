@@ -44,6 +44,30 @@ Original (authored from operational experience):
 
 **Total: 22 skills shipped.**
 
+**Layer 1 — additional core skills (8 in `skills/core/`):**
+
+Adapted/inspired:
+- `api-design` — inspired by Stripe + GitHub + Heroku API design docs (CC-BY-4.0)
+- `cron-troubleshoot` — original (synthesized from operational use)
+- `e2e-test-strategy` — original
+- `feedback-loop` — original
+- `workflow-decompose` — original
+- `automation-pick` — original
+- `session-distill` — original
+- `knowledge-extract` — original
+
+**Total core: 24. Total optional: 6. Total: 30 skills shipped.**
+
+**Layer 2 — workflow runbooks (5 in `workflows/`):**
+
+- `workflows/ci-cd-vercel.md` — Vercel preview + production deploy with smoke tests
+- `workflows/e2e-on-pr.md` — Playwright E2E on every PR
+- `workflows/release-train.md` — weekly release process (tag → changelog → deploy → smoke → notes)
+- `workflows/skill-update.md` — weekly scan for upstream skill updates
+- `workflows/session-to-skill.md` — distill a session into a new skill draft
+
+These are runbooks, not skills — they don't auto-trigger. They're structured guides you copy and adapt.
+
 **Hook:**
 - `session-closeout.sh` — Bash hook that prompts the closeout skill at session end
 

@@ -45,6 +45,29 @@ These eight skills were synthesized from repeated use across multiple projects. 
 - `funnel-pr-guard` — generalized from a specific project's funnel change review discipline. Generic enough for any web app with conversion tracking.
 - `sql-migration-trio` — generalized from a specific project's migration workflow. Generic enough for any Supabase/Postgres project.
 
+### Layer 1 core skills — original (authored from operational experience)
+
+These eight skills were synthesized from repeated use across multiple projects. They are released under this repo's MIT license with no upstream attribution required.
+
+- `api-design` — REST/GraphQL design discipline: resource modeling, error contracts, pagination, idempotency, versioning. Inspired by Stripe API + GitHub REST + Heroku HTTP API design docs (CC-BY-4.0).
+- `cron-troubleshoot` — 7-failure-mode diagnostic checklist for cron jobs that didn't run, ran twice, or produced wrong output.
+- `e2e-test-strategy` — test pyramid, which flows to E2E vs integration vs unit, seeding, auth, flake mitigation, parallel execution.
+- `feedback-loop` — instrument → measure → review weekly → adjust. Pre-launch metrics and weekly review template.
+- `workflow-decompose` — universal DAG model (trigger → condition → action → retry → observe) for any orchestrator.
+- `automation-pick` — decision tree for whether to automate a task (volume × frequency × error cost × reversibility).
+- `session-distill` — at session end, auto-summarize what was learned into a structured artifact.
+- `knowledge-extract` — read a session, identify patterns, draft a new skill.
+
+### Layer 2 — workflow runbooks
+
+Five runbooks in `workflows/` (not skills — structured guides you copy and adapt):
+
+- `ci-cd-vercel.md` — Vercel preview + production deploy with smoke tests, secrets setup, rollback.
+- `e2e-on-pr.md` — Playwright setup, GitHub Action, flake mitigation.
+- `release-train.md` — weekly release cadence: pre-release checklist → tag → changelog → deploy → smoke → metrics → notes.
+- `skill-update.md` — weekly scan for upstream skill updates via GitHub Actions + state tracking.
+- `session-to-skill.md` — session → capture → distill → validate → adopt pipeline.
+
 ## What we explicitly did NOT port
 
 - **anthropics/claude-code** (proprietary) — the harness itself, not a skill source. Tracked for reference only.
