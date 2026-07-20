@@ -2,10 +2,10 @@
 
 # Agent Foundry
 
-**A curated runtime orchestrator for AI coding assistants.**
+**Skill and agent runtime for AI coding assistants.**
 
-Plan → execute → verify. Skills, agents, and a local daemon —
-all MIT, all your data stays local.
+Plan → execute → verify. Skills, agents, a local daemon.
+MIT, local, no cloud. 30 original skills, 0 external references.
 
 <br>
 
@@ -29,10 +29,10 @@ all MIT, all your data stays local.
 ## Why Agent Foundry
 
 > Models hallucinate. They over-comment. They reach for `npm install` when
-> you asked for a one-line fix. Agent Foundry is a set of **disciplines**
-> that steer the model toward the work — not the noise.
+> you asked for a one-line fix. Agent Foundry steers the model toward the
+> work — not the noise.
 
-Three layers, each does one job:
+Three layers:
 
 | Layer | What | Lives in |
 |---|---|---|
@@ -304,7 +304,7 @@ bash scripts/nox.sh
 | `nox.sh` | **0 external references** ✅ |
 
 The `nox.sh` gate is the strongest guarantee: it scans every tracked file for
-vendor names (Claude, GitHub Copilot, etc.) so that the catalog stays original work.
+project-handle names so that the catalog stays original work.
 
 ---
 
