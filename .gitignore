@@ -33,5 +33,9 @@ __pycache__/
 dist/
 build/
 
+# Graphify (local outputs — generated, not source)
+graphify-out/
+.graphify-cache/
+
 # Generated (indexer rebuilds on demand)
 skills/index.json
