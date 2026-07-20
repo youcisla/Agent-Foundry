@@ -1,48 +1,47 @@
 #!/usr/bin/env bash
-# nox.sh — NO_EXTERNAL_REFS lint gate
-# Scans tracked files for known external-reference names. Fails the build if any reappear.
+# nox.sh — NO_EXTERNAL_REFS gate.
+# Fails the build if any known external-project name appears in a TRACKED file.
+# Rationale: the catalog is original work; nothing here credits or vendors other repos.
+set -euo pipefail
 
-set -e
-FAILED=0
-
+# Denylist of external project/handle names that must never appear in tracked files.
 NOX_TERMS=(
-  "multica-ai"
-  "Leonxlnx"
-  "JuliusBrussee"
-  "obra/superpowers"
-  "mksglu"
-  "thedotmack"
-  "pbakaus"
-  "headroomlabs"
-  "emilkowalski"
-  "fable-5-traces"
-  "reasoning-corpus"
-  "Glint-Research"
-  "SupraLabs"
-  "claude-mem-persistent"
-  "headroom-token-compression"
+  "multica-ai" "andrej-karpathy" "karpathy-skills"
+  "Leonxlnx" "taste-skill"
+  "JuliusBrussee" "caveman"
+  "obra/superpowers" "superpowers-v"
+  "mksglu" "context-mode"
+  "thedotmack" "claude-mem"
+  "REMvisual" "claude-handoff"
+  "KKKKhazix" "khazix"
+  "pbakaus" "impeccable"
+  "headroomlabs" "headroom-token-compression" "claude-mem-persistent"
+  "emilkowalski" "apple-design"
+  "Glint-Research" "fable-5-traces"
+  "SupraLabs" "reasoning-corpus"
+  "wshobson" "affaan-m" "affaan/" "ruvnet" "ruflo" "claude-flow"
+  "ATTRIBUTIONS.md"
 )
 
-# Only scan tracked files (excludes gitignored catalog/, generated index.json, etc.)
-# self-detect and exclude the script file itself and the planning doc
-SCRIPT_SELF="scripts/nox.sh"
-PLAN_DOC="docs/competitive-plan.md"
+# Files allowed to mention these terms (this gate itself only).
+ALLOW_REGEX='^scripts/nox\.sh$'
+
+FAILED=0
 for term in "${NOX_TERMS[@]}"; do
-  HITS=$(git ls-files | xargs grep -ali "$term" 2>/dev/null || true)
-  # Remove self-references
-  HITS=$(echo "$HITS" | grep -v "^$SCRIPT_SELF$" | grep -v "^$PLAN_DOC$" || true)
+  # -F fixed-string, -i case-insensitive, over tracked files only.
+  HITS="$(git ls-files -z | xargs -0 grep -Fil "$term" 2>/dev/null || true)"
+  HITS="$(printf '%s\n' "$HITS" | grep -vE "$ALLOW_REGEX" || true)"
+  HITS="$(printf '%s\n' "$HITS" | sed '/^$/d')"
   if [ -n "$HITS" ]; then
-    echo "FAIL: '$term' found in tracked files"
-    echo "$HITS"
+    echo "FAIL: '$term' found in tracked file(s):"
+    printf '  %s\n' $HITS
     FAILED=1
   fi
 done
 
 if [ "$FAILED" = "1" ]; then
   echo ""
-  echo "nox.sh: External references found in tracked files. Gate fails."
+  echo "nox.sh: external references found in tracked files. Gate FAILS."
   exit 1
-else
-  echo "nox.sh: 0 external references in tracked files. Gate passes."
-  exit 0
 fi
+echo "nox.sh: 0 external references in tracked files. Gate passes."
