@@ -2,9 +2,9 @@
 """
 graphify-run.py - Full graphify pipeline runner.
 
-Strips PYTHONPATH (set by Hermes' claude-mem MCP) so graphifyy uses its
-own site-packages. Runs detect, AST extraction, semantic extraction (via
-host agent), merge, build, cluster, label, and writes graph.json.
+Strips PYTHONPATH so graphifyy uses its own site-packages. Runs detect, AST
+extraction, semantic extraction (via host agent), merge, build, cluster,
+label, and writes graph.json.
 """
 import json
 import os

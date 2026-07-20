@@ -1,6 +1,7 @@
 """Agent Foundry CLI (Click)."""
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import sys
@@ -116,7 +117,10 @@ def cmd_init(ctx, force, skills_dir):
     """Create config.toml and build the initial skill index."""
     cfg = ctx.obj["cfg"]
     if skills_dir:
-        cfg.core.skills_dir = skills_dir
+        # Config is frozen — derive a new instance with the override
+        cfg = dataclasses.replace(
+            cfg, core=dataclasses.replace(cfg.core, skills_dir=skills_dir)
+        )
     if force or not cfg.config_path.exists():
         cfg.save()
         click.echo(f"Wrote config: {cfg.config_path}")
@@ -411,7 +415,10 @@ def cmd_serve(ctx, port, host, detach):
     if cfg is None:
         cfg = Config.load()
     if port:
-        cfg.core.daemon_port = port
+        # Config is frozen — derive a new instance with the override
+        cfg = dataclasses.replace(
+            cfg, core=dataclasses.replace(cfg.core, daemon_port=port)
+        )
 
     from .daemon import create_app
     app = create_app(cfg)

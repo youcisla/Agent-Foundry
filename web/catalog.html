@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalog — Agent Foundry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">AF</span>
+        Agent Foundry
+      </a>
+      <a href="catalog.html" class="nav-link active">Catalog</a>
+      <a href="graph.html" class="nav-link">Graph</a>
+      <a href="audit.html" class="nav-link">Audit</a>
+      <span class="spacer"></span>
+      <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+
+  <div style="padding: 60px 0 32px;">
+    <div class="container">
+      <h1 style="font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px;">Catalog</h1>
+      <p class="section-sub" style="margin: 0;">All <span id="cat-total">30</span> skills and <span id="cat-agents">2</span> agents. Click a card to see its source on GitHub.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-bottom: 60px;">
+    <div class="filter-bar">
+      <input type="search" id="search" placeholder="Filter by name, description, or trigger phrase…" autocomplete="off">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn" data-cat="core">Core (<span id="cat-core-count">0</span>)</button>
+      <button class="filter-btn" data-cat="optional">Optional (<span id="cat-opt-count">0</span>)</button>
+      <span class="filter-count" id="visible-count"></span>
+    </div>
+
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin: 32px 0 16px;">Agents</h2>
+    <div class="skill-grid" id="agents-grid"></div>
+
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin: 32px 0 16px;">Core skills</h2>
+    <div class="skill-grid" id="core-grid"></div>
+
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin: 32px 0 16px;">Optional skills</h2>
+    <div class="skill-grid" id="opt-grid"></div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div>Agent Foundry — MIT License · Built by <a href="https://github.com/youcisla">Youcisla</a></div>
+    </div>
+  </footer>
+
+  <script src="site-data.js"></script>
+  <script>
+    document.getElementById('cat-total').textContent = SKILL_COUNT;
+    document.getElementById('cat-agents').textContent = AGENT_COUNT;
+
+    const coreCount = SKILLS.filter(s => s.category === 'core').length;
+    const optCount = SKILLS.filter(s => s.category === 'optional').length;
+    document.getElementById('cat-core-count').textContent = coreCount;
+    document.getElementById('cat-opt-count').textContent = optCount;
+
+    function cardHTML(item, isAgent) {
+      const repoUrl = 'https://github.com/youcisla/Agent-Foundry';
+      const path = isAgent
+        ? `agents/${item.id}/AGENT.md`
+        : (item.category === 'core' ? `skills/core/${item.id}/SKILL.md` : `skills/optional/${item.id}/SKILL.md`);
+      return `<a href="${repoUrl}/blob/main/${path}" target="_blank" rel="noopener" class="skill-card" style="text-decoration:none; color:inherit; display:block">
+        <h3><span class="name">${item.name}</span><span class="id">${item.id}</span></h3>
+        <div class="desc">${item.description}</div>
+        <div class="meta">
+          <span class="tag ${isAgent ? 'tag-agent' : (item.category === 'core' ? 'tag-core' : 'tag-opt')}">${isAgent ? 'agent' : item.category}</span>
+          ${isAgent ? `<span>${item.model}</span>` : `<span>${item.lines} lines</span>`}
+          <span>${item.version}</span>
+        </div>
+      </a>`;
+    }
+
+    const coreGrid = document.getElementById('core-grid');
+    const optGrid = document.getElementById('opt-grid');
+    const agentsGrid = document.getElementById('agents-grid');
+
+    let currentCat = 'all';
+    const searchInput = document.getElementById('search');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+
+    function applyFilter() {
+      const q = searchInput.value.toLowerCase().trim();
+      const matches = (s) => {
+        if (currentCat !== 'all' && s.category !== currentCat) return false;
+        if (!q) return true;
+        return (s.name + ' ' + s.id + ' ' + s.description).toLowerCase().includes(q);
+      };
+      const filteredCore = SKILLS.filter(s => s.category === 'core' && matches(s));
+      const filteredOpt = SKILLS.filter(s => s.category === 'optional' && matches(s));
+      const filteredAgents = AGENTS.filter(a => {
+        if (currentCat !== 'all' && currentCat !== 'agents') return false;
+        if (!q) return true;
+        return (a.name + ' ' + a.id + ' ' + a.description).toLowerCase().includes(q);
+      });
+      coreGrid.innerHTML = filteredCore.map(s => cardHTML(s, false)).join('') || '<div style="color: var(--text-faint)">No matching skills.</div>';
+      optGrid.innerHTML = filteredOpt.map(s => cardHTML(s, false)).join('') || '<div style="color: var(--text-faint)">No matching skills.</div>';
+      agentsGrid.innerHTML = filteredAgents.map(a => cardHTML(a, true)).join('') || '<div style="color: var(--text-faint)">No matching agents.</div>';
+      const total = filteredCore.length + filteredOpt.length + filteredAgents.length;
+      document.getElementById('visible-count').textContent = `${total} of ${SKILL_COUNT + AGENT_COUNT}`;
+    }
+
+    filterBtns.forEach(b => b.addEventListener('click', () => {
+      filterBtns.forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      currentCat = b.dataset.cat;
+      applyFilter();
+    }));
+    searchInput.addEventListener('input', applyFilter);
+    applyFilter();
+  </script>
+</body>
+</html>

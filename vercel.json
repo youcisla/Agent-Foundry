@@ -1,8 +1,15 @@
 {
   "version": 2,
   "outputDirectory": "web",
-  "buildCommand": null,
+  "buildCommand": "python scripts/gen-site-data.py",
   "devCommand": null,
   "framework": null,
-  "cleanUrls": true
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/catalog", "destination": "/catalog.html" },
+    { "source": "/graph", "destination": "/graph.html" },
+    { "source": "/audit", "destination": "/audit.html" }
+  ]
 }

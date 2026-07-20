@@ -19,9 +19,9 @@ __pycache__/
 .vscode/
 *.log
 
-# Install scratch
-scratch/
-test-install/
+# Graphify (local outputs — generated, not source)
+graphify-out/
+.graphify-cache/
 
 # Python
 __pycache__/
@@ -32,10 +32,10 @@ __pycache__/
 .ruff_cache/
 dist/
 build/
+.venv/
 
-# Graphify (local outputs — generated, not source)
-graphify-out/
-.graphify-cache/
+# uv
+uv.lock
 
 # Generated (indexer rebuilds on demand)
 skills/index.json

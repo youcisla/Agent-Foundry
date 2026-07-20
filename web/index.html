@@ -6,284 +6,203 @@
   <title>Agent Foundry — Skill orchestrator for AI coding assistants</title>
   <meta name="description" content="A curated runtime orchestrator for Claude Code, Codex, Gemini, and more. 30 skills, 2 agents, local daemon. Plan → execute → verify.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0f0f0f;
-      --surface: #1a1a1a;
-      --border: #2a2a2a;
-      --text: #e8e8e8;
-      --dim: #888;
-      --accent: #f5a623;
-      --accent-dim: #b87d1a;
-      --green: #4ade80;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
-
-    /* Hero */
-    .hero { padding: 80px 0 60px; text-align: center; }
-    .hero h1 { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 16px; }
-    .hero h1 span { color: var(--accent); }
-    .hero p { font-size: 18px; color: var(--dim); max-width: 640px; margin: 0 auto 32px; }
-    .hero-code { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; text-align: left; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 14px; line-height: 1.8; max-width: 520px; margin: 0 auto; }
-    .hero-code .comment { color: #666; }
-    .hero-code .cmd { color: var(--accent); }
-    .badges { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 24px 0; }
-    .badge { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 6px 16px; font-size: 13px; color: var(--dim); }
-
-    /* Sections */
-    section { padding: 60px 0; border-top: 1px solid var(--border); }
-    h2 { font-size: 28px; font-weight: 700; margin-bottom: 24px; }
-    h2 span { color: var(--accent); }
-
-    /* Install */
-    .install-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .install-tab { padding: 8px 16px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--dim); cursor: pointer; font-size: 14px; }
-    .install-tab.active { background: var(--accent-dim); color: #fff; border-color: var(--accent); }
-    .install-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 14px; line-height: 1.8; overflow-x: auto; }
-
-    /* Grid */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-    .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
-    .card p { font-size: 13px; color: var(--dim); line-height: 1.5; }
-    .card .meta { font-size: 12px; color: #555; margin-top: 8px; }
-    .card .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; margin-right: 4px; }
-    .tag-core { background: rgba(245,166,35,0.15); color: var(--accent); }
-    .tag-opt { background: rgba(74,222,128,0.15); color: var(--green); }
-    .tag-agent { background: rgba(100,150,255,0.15); color: #6496ff; }
-
-    /* Commands table */
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--dim); font-weight: 500; }
-    td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
-    td:first-child { font-family: 'SF Mono', 'Fira Code', monospace; color: var(--accent); }
-    tr:last-child td { border-bottom: none; }
-
-    /* Footer */
-    footer { padding: 40px 0; text-align: center; color: var(--dim); font-size: 13px; border-top: 1px solid var(--border); }
-    footer a { color: var(--accent); }
-
-    .cmd-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 2; margin-bottom: 12px; }
-
-    .arch-diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.8; text-align: center; overflow-x: auto; white-space: pre; }
-    .arch-diagram .hl { color: var(--accent); }
-
-    @media (max-width: 640px) {
-      .grid-2, .grid-3 { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 32px; }
-      .install-tabs { flex-wrap: wrap; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Hero -->
+  <nav>
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">AF</span>
+        Agent Foundry
+      </a>
+      <a href="catalog.html" class="nav-link">Catalog</a>
+      <a href="graph.html" class="nav-link">Graph</a>
+      <a href="audit.html" class="nav-link">Audit</a>
+      <span class="spacer"></span>
+      <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        GitHub
+      </a>
+    </div>
+  </nav>
+
   <div class="hero">
     <div class="container">
-      <div class="badges">
-        <span class="badge">⚡ 30 skills</span>
-        <span class="badge">🤖 2 agents</span>
-        <span class="badge">🔧 CLI + Daemon</span>
-        <span class="badge">📜 MIT</span>
-        <span class="badge">🐍 Python 3.10+</span>
+      <div class="badges fade-in">
+        <span class="badge"><span class="dot pulse"></span> v0.2.0 live</span>
+        <span class="badge"><span class="dot"></span> <span id="stat-skills">30</span> skills</span>
+        <span class="badge"><span class="dot"></span> <span id="stat-agents">2</span> agents</span>
+        <span class="badge">MIT license</span>
+        <span class="badge">Python 3.10+</span>
       </div>
-      <h1>Agent <span>Foundry</span></h1>
-      <p>A curated runtime orchestrator for AI coding assistants. Plan → execute → verify. Skills, agents, and a local daemon — all MIT, all local.</p>
-      <div class="hero-code">
-        <span class="comment"># Install</span><br>
-        <span>$ </span><span class="cmd">curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash</span><br>
-        <span class="comment"># Use in Claude Code</span><br>
-        <span>$ </span><span class="cmd">/af "build a react component"</span><br>
-        <span>$ </span><span class="cmd">/plan "audit this API"</span><br>
-        <span class="comment"># Or use the CLI</span><br>
-        <span>$ </span><span class="cmd">agent-foundry plan "kill generic AI slop"</span>
+      <h1 class="fade-in">Skill orchestrator<br><span class="accent">for AI coding assistants</span></h1>
+      <p class="lead fade-in">Plan, execute, and verify with a curated set of <strong id="lead-skill-count">30</strong> skills and <strong id="lead-agent-count">2</strong> agents. Local daemon, no cloud lock-in, MIT licensed.</p>
+
+      <div class="install fade-in">
+        <div class="install-tabs">
+          <button class="install-tab active" data-tab="core">curl | bash</button>
+          <button class="install-tab" data-tab="full">profile: full</button>
+          <button class="install-tab" data-tab="minimal">profile: minimal</button>
+          <button class="install-tab" data-tab="git">git clone</button>
+          <button class="install-tab" data-tab="claude">Claude Code</button>
+        </div>
+        <div class="install-body">
+          <div class="install-cmd" id="install-cmd"></div>
+          <div class="install-actions">
+            <button class="btn" id="copy-btn">📋 Copy</button>
+            <button class="btn" id="copied-feedback" style="display:none; color: var(--green)">✓ Copied</button>
+            <a class="btn" href="catalog.html">View catalog →</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- What is it -->
   <section>
     <div class="container">
-      <h2>What it <span>is</span></h2>
-      <div class="grid-3">
-        <div class="card">
-          <h3>🧠 Skills</h3>
-          <p>Disciplines the model applies to its own work. How to <em>think</em>, not what to <em>know</em>. Each skill ≤150 lines, ≤8 KB.</p>
+      <h2>What it is</h2>
+      <p class="section-sub">Three layers. Each does one job well. The daemon stitches them.</p>
+      <div class="skill-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="skill-card fade-in">
+          <h3><span class="name">🧠 Skills</span></h3>
+          <div class="desc">Disciplines the model applies to its own work. <em>How to think</em>, not what to know. Each ≤150 lines, ≤8 KB.</div>
+          <div class="meta"><span class="tag tag-core">24 core</span><span class="tag tag-opt">6 opt</span></div>
         </div>
-        <div class="card">
-          <h3>🤖 Agents</h3>
-          <p>Roles the orchestrator can dispatch — critic, planner, verifier. Each with a model tier and tool allowlist.</p>
+        <div class="skill-card fade-in" style="animation-delay: 60ms">
+          <h3><span class="name">🤖 Agents</span></h3>
+          <div class="desc">Roles the orchestrator can dispatch. Critic, planner — each with a model tier and tool allowlist.</div>
+          <div class="meta"><span class="tag tag-agent">2 agents</span></div>
         </div>
-        <div class="card">
-          <h3>⚙️ Orchestrator</h3>
-          <p>Local daemon that ranks, dispatches, executes, logs, and judges every run. FastAPI, SQLite, lazy-started.</p>
+        <div class="skill-card fade-in" style="animation-delay: 120ms">
+          <h3><span class="name">⚙️ Orchestrator</span></h3>
+          <div class="desc">Local daemon that ranks, dispatches, executes, logs, and judges every run. FastAPI, SQLite, lazy-started.</div>
+          <div class="meta"><span class="tag tag-core">FastAPI</span><span class="tag tag-opt">SQLite</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Install -->
   <section>
     <div class="container">
-      <h2>Install in <span>30 seconds</span></h2>
-      <div class="install-tabs">
-        <span class="install-tab active" onclick="switchInstall('curl')">curl | bash</span>
-        <span class="install-tab" onclick="switchInstall('git')">git clone</span>
-        <span class="install-tab" onclick="switchInstall('profile')">profiles</span>
+      <h2>By the numbers</h2>
+      <p class="section-sub">As of the latest commit. Run the audit for live numbers.</p>
+      <div class="stats">
+        <div class="stat fade-in"><div class="num" id="stat-num-skills">30</div><div class="label">Skills</div></div>
+        <div class="stat fade-in" style="animation-delay: 40ms"><div class="num" id="stat-num-agents">2</div><div class="label">Agents</div></div>
+        <div class="stat fade-in" style="animation-delay: 80ms"><div class="num">10</div><div class="label">CLI commands</div></div>
+        <div class="stat fade-in" style="animation-delay: 120ms"><div class="num">5</div><div class="label">HTTP endpoints</div></div>
+        <div class="stat fade-in" style="animation-delay: 160ms"><div class="num" id="stat-num-graph">287</div><div class="label">Graph nodes</div></div>
+        <div class="stat fade-in" style="animation-delay: 200ms"><div class="num" id="stat-num-edges">467</div><div class="label">Graph edges</div></div>
+        <div class="stat fade-in" style="animation-delay: 240ms"><div class="num" id="stat-num-communities">27</div><div class="label">Communities</div></div>
+        <div class="stat fade-in" style="animation-delay: 280ms"><div class="num">0</div><div class="label">External refs</div></div>
       </div>
-      <div id="install-curl" class="install-block">
-        <span class="comment"># One-line install (macOS / Linux)</span><br>
-        curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash<br><br>
-        <span class="comment"># Set your API key</span><br>
-        export ANTHROPIC_API_KEY=sk-...
-      </div>
-      <div id="install-git" class="install-block" style="display:none">
-        <span class="comment"># Clone and install in editable mode</span><br>
-        git clone https://github.com/youcisla/Agent-Foundry.git ~/.agent-foundry<br>
-        cd ~/.agent-foundry<br>
-        pip install -e .<br>
-        agent-foundry init<br><br>
-        <span class="comment"># Symlink Claude Code plugin</span><br>
-        ln -s "$PWD" ~/.claude/plugins/agent-foundry
-      </div>
-      <div id="install-profile" class="install-block" style="display:none">
-        <span class="comment"># Minimal — skills only, no daemon</span><br>
-        AF_PROFILE=minimal curl -fsSL ... | bash<br><br>
-        <span class="comment"># Core — skills + daemon (default)</span><br>
-        AF_PROFILE=core curl -fsSL ... | bash<br><br>
-        <span class="comment"># Full — skills + daemon + hooks</span><br>
-        AF_PROFILE=full curl -fsSL ... | bash
-      </div>
-      <p style="margin-top:12px; font-size:14px; color:var(--dim)">Requires Python 3.10+ and an Anthropic or OpenAI API key.</p>
     </div>
   </section>
 
-  <!-- Skills -->
   <section>
     <div class="container">
-      <h2>Skill <span>catalog</span> <span style="font-size:16px; color:var(--dim); font-weight:400">(30 total)</span></h2>
-      <div class="grid-2" id="skills-grid"></div>
+      <h2>How it works</h2>
+      <p class="section-sub">From prompt to result, in three layers.</p>
+      <pre><code>You:  /af "build a react component"
+      │
+      ▼
+┌─────────────────────────────────────┐
+│  Agent Foundry daemon                │
+│  ┌──────────┐   ┌──────────────┐    │
+│  │ planner  │ → │   executor   │ →  │  LLM call
+│  └──────────┘   └──────────────┘    │  (Claude, OpenAI, etc.)
+│        ↓               ↓             │
+│   SkillIndex      SQLite log         │
+└─────────────────────────────────────┘
+      │
+      ▼
+Skill body (plan-before-code) → your prompt
+→ LLM response, persisted in executions.db</code></pre>
     </div>
   </section>
 
-  <!-- Agents -->
   <section>
     <div class="container">
-      <h2>Agents</h2>
-      <div class="grid-2" id="agents-grid"></div>
-    </div>
-  </section>
-
-  <!-- Commands -->
-  <section>
-    <div class="container">
-      <h2>Commands</h2>
-      <table>
-        <tr><th>Command</th><th>What it does</th></tr>
-        <tr><td>agent-foundry plan "..."</td><td>Rank skills for a prompt</td></tr>
-        <tr><td>agent-foundry run "..."</td><td>Plan + execute the top-ranked skill</td></tr>
-        <tr><td>agent-foundry execute &lt;id&gt; "..."</td><td>Run a specific skill</td></tr>
-        <tr><td>agent-foundry doctor</td><td>Health-check config, index, daemon, API key</td></tr>
-        <tr><td>agent-foundry status</td><td>Routing accuracy, fallback rate, average cost</td></tr>
-        <tr><td>agent-foundry consult "..."</td><td>Recommend skills for a need</td></tr>
-        <tr><td>agent-foundry cost-report</td><td>Token and time estimates per skill</td></tr>
-        <tr><td>agent-foundry index</td><td>Rebuild the skill index</td></tr>
-        <tr><td>agent-foundry serve</td><td>Start the daemon (lazy-started on first command)</td></tr>
-      </table>
-    </div>
-  </section>
-
-  <!-- Architecture -->
-  <section>
-    <div class="container">
-      <h2>Architecture</h2>
-      <div class="arch-diagram">
-<span class="hl">/af &lt;prompt&gt;</span>          <span class="hl">/plan &lt;prompt&gt;</span>
-    │                      │
-    ▼                      ▼
-<span class="hl">┌──────────────────────────────────┐</span>
-<span class="hl">│       Agent Foundry daemon       │</span>
-│  FastAPI  · planner  · judge    │
-│  executor  · budget guard       │
-│  SQLite log  · indexer          │
-<span class="hl">└──────────────────┬───────────────┘</span>
-                   │
-                   ▼
-<span class="hl">┌──────────────────────────────────┐</span>
-│  Skill catalog  +  Agent catalog │
-│  references/  ·  scripts/  ·    │
-│  hooks/  ·  executions.db       │
-<span class="hl">└──────────────────────────────────┘</span></div>
-      <p style="margin-top:16px; font-size:14px; color:var(--dim)">The daemon is lazy-started by the CLI. Everything runs locally. Your data stays in <code style="background:var(--surface); padding:2px 6px; border-radius:4px">~/.config/agent-foundry/executions.db</code>.</p>
-    </div>
-  </section>
-
-  <!-- GitHub -->
-  <section>
-    <div class="container" style="text-align:center">
-      <h2>Open source</h2>
-      <p style="font-size:16px; color:var(--dim); max-width:500px; margin:0 auto 24px">
-        MIT-licensed. All skills and agents are original work by the Agent Foundry Contributors.
-      </p>
-      <a href="https://github.com/youcisla/Agent-Foundry" style="display:inline-block; background:var(--accent-dim); color:#fff; padding:12px 32px; border-radius:12px; text-decoration:none; font-weight:600; font-size:16px">
-        View on GitHub →
-      </a>
+      <h2>Featured skills</h2>
+      <p class="section-sub">A taste of the catalog. <a href="catalog.html">See all 30 →</a></p>
+      <div class="skill-grid" id="featured-grid"></div>
     </div>
   </section>
 
   <footer>
     <div class="container">
-      <p>Agent Foundry — MIT License · Built by <a href="https://github.com/youcisla">Youcisla</a></p>
-      <p style="margin-top:4px"><a href="https://github.com/youcisla/Agent-Foundry">GitHub</a> · <a href="https://github.com/youcisla/Agent-Foundry/blob/main/docs/launch-plan.md">Launch plan</a></p>
+      <div>Agent Foundry — MIT License · Built by <a href="https://github.com/youcisla">Youcisla</a></div>
+      <div class="links">
+        <a href="https://github.com/youcisla/Agent-Foundry">GitHub</a>
+        <a href="https://github.com/youcisla/Agent-Foundry/blob/main/docs/launch-plan.md">Launch plan</a>
+        <a href="https://github.com/youcisla/Agent-Foundry/blob/main/docs/improvement-plan.md">Roadmap</a>
+        <a href="catalog.html">Catalog</a>
+        <a href="graph.html">Graph</a>
+      </div>
     </div>
   </footer>
 
   <script src="site-data.js"></script>
+  <script src="install-data.js"></script>
+  <script src="graph-stats.js"></script>
   <script>
-    // Skill cards
-    const grid = document.getElementById('skills-grid');
-    SKILLS.forEach(s => {
-      const cat = s.category === 'core' ? 'tag-core' : 'tag-opt';
-      const catLabel = s.category === 'core' ? 'core' : 'optional';
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <h3>${s.name}</h3>
-        <p>${s.description}</p>
-        <div class="meta">
-          <span class="tag ${cat}">${catLabel}</span>
-          ${s.lines} lines
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-
-    // Agent cards
-    const ag = document.getElementById('agents-grid');
-    AGENTS.forEach(a => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <h3>${a.name}</h3>
-        <p>${a.description}</p>
-        <div class="meta">
-          <span class="tag tag-agent">agent</span>
-          model: ${a.model}
-        </div>
-      `;
-      ag.appendChild(card);
-    });
+    // Wire up live counters
+    document.getElementById('stat-skills').textContent = SKILL_COUNT;
+    document.getElementById('stat-agents').textContent = AGENT_COUNT;
+    document.getElementById('lead-skill-count').textContent = SKILL_COUNT;
+    document.getElementById('lead-agent-count').textContent = AGENT_COUNT;
+    document.getElementById('stat-num-skills').textContent = SKILL_COUNT;
+    document.getElementById('stat-num-agents').textContent = AGENT_COUNT;
+    if (typeof GRAPH_STATS !== 'undefined') {
+      document.getElementById('stat-num-graph').textContent = GRAPH_STATS.node_count;
+      document.getElementById('stat-num-edges').textContent = GRAPH_STATS.edge_count;
+      document.getElementById('stat-num-communities').textContent = GRAPH_STATS.community_count;
+    }
 
     // Install tabs
-    function switchInstall(id) {
-      document.querySelectorAll('.install-block').forEach(b => b.style.display = 'none');
-      document.getElementById('install-' + id).style.display = 'block';
-      document.querySelectorAll('.install-tab').forEach(t => t.classList.remove('active'));
-      event.target.classList.add('active');
+    const installCmds = {
+      core: INSTALL_COMMANDS.core,
+      full: INSTALL_COMMANDS.fullProfile,
+      minimal: INSTALL_COMMANDS.minimalProfile,
+      git: INSTALL_COMMANDS.gitClone,
+      claude: INSTALL_COMMANDS.claudeCode,
+    };
+    const installCmdEl = document.getElementById('install-cmd');
+    const installTabs = document.querySelectorAll('.install-tab');
+    function setTab(key) {
+      installTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === key));
+      installCmdEl.textContent = installCmds[key];
     }
+    installTabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
+    setTab('core');
+
+    // Copy
+    document.getElementById('copy-btn').addEventListener('click', () => {
+      const text = installCmdEl.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        document.getElementById('copy-btn').style.display = 'none';
+        document.getElementById('copied-feedback').style.display = 'inline-flex';
+        setTimeout(() => {
+          document.getElementById('copy-btn').style.display = 'inline-flex';
+          document.getElementById('copied-feedback').style.display = 'none';
+        }, 1500);
+      });
+    });
+
+    // Featured skills (4 random or top 4)
+    const featured = SKILLS.slice(0, 4);
+    const featuredGrid = document.getElementById('featured-grid');
+    featuredGrid.innerHTML = featured.map((s, i) => `
+      <a href="catalog.html#${s.id}" class="skill-card fade-in" style="text-decoration:none; color:inherit; display:block; animation-delay: ${i*60}ms">
+        <h3><span class="name">${s.name}</span><span class="id">${s.id}</span></h3>
+        <div class="desc">${s.description}</div>
+        <div class="meta">
+          <span class="tag ${s.category === 'core' ? 'tag-core' : 'tag-opt'}">${s.category}</span>
+          <span>${s.lines} lines</span>
+        </div>
+      </a>
+    `).join('');
   </script>
 </body>
 </html>
