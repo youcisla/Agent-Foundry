@@ -4,51 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Knowledge Graph — Agent Foundry</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script src="icons.js"></script>
   <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
-  <style>
-    .graph-layout { display: grid; grid-template-columns: 260px 1fr; gap: 14px; min-height: 70vh; }
-    @media (max-width: 900px) { .graph-layout { grid-template-columns: 1fr; } }
-    .graph-sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; overflow-y: auto; max-height: 80vh; }
-    .graph-sidebar h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-    .graph-sidebar input { width: 100%; padding: 8px 10px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; margin-bottom: 10px; }
-    .graph-sidebar input::placeholder { color: var(--text-faint); }
-    .file-tree { font-size: 12px; color: var(--text-dim); }
-    .file-tree details { margin-left: 12px; margin-top: 2px; }
-    .file-tree summary { cursor: pointer; font-weight: 500; color: var(--text); padding: 2px 0; }
-    .file-tree summary:hover { color: var(--accent); }
-    .file-tree .fentry { display: block; padding: 2px 0 2px 16px; cursor: pointer; border-radius: 3px; font-size: 11px; color: var(--text-dim); }
-    .file-tree .fentry:hover { color: var(--accent); background: var(--accent-soft); }
-    .graph-canvas { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); position: relative; min-height: 70vh; }
-    .graph-canvas #network { width: 100%; height: 70vh; }
-    .graph-controls { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 2; }
-    .graph-info { position: absolute; bottom: 10px; left: 10px; background: rgba(26,26,31,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 11px; max-width: 240px; z-index: 2; color: var(--text-dim); }
-    .graph-info h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-faint); margin-bottom: 4px; }
-
-    /* Node detail panel */
-    .node-panel { position: absolute; bottom: 10px; right: 10px; width: 380px; max-height: 60vh; background: rgba(26,26,31,0.95); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; overflow-y: auto; z-index: 3; display: none; backdrop-filter: blur(4px); }
-    .node-panel.open { display: block; }
-    .node-panel .close { float: right; background: none; border: none; color: var(--text-faint); font-size: 18px; cursor: pointer; }
-    .node-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-    .node-panel .detail-row { display: flex; gap: 8px; font-size: 12px; margin-bottom: 4px; color: var(--text-dim); }
-    .node-panel .detail-row .dt { color: var(--text-faint); width: 80px; flex-shrink: 0; }
-    .node-panel .btn { font-size: 11px; padding: 4px 10px; }
-    .node-panel .md-preview { margin-top: 12px; border-top: 1px solid var(--border-soft); padding-top: 12px; font-size: 13px; line-height: 1.6; color: var(--text-dim); }
-    .node-panel .md-preview h1, .node-panel .md-preview h2 { font-size: 15px; color: var(--text); margin-top: 12px; }
-    .node-panel .md-preview h3 { font-size: 13px; margin-top: 8px; }
-    .node-panel .md-preview code { font-size: 11px; }
-  </style>
 </head>
 <body>
   <nav>
     <div class="container">
       <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
-      <a href="why.html" class="nav-link">Why</a>
-      <a href="catalog.html" class="nav-link">Catalog</a>
-      <a href="graph.html" class="nav-link" style="color:var(--text)">Graph</a>
-      <a href="audit.html" class="nav-link">Audit</a>
+      <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+      <div class="nav-links">
+        <a href="why.html" class="nav-link">Why</a>
+        <a href="catalog.html" class="nav-link">Catalog</a>
+        <a href="graph.html" class="nav-link" style="color:var(--text)">Graph</a>
+        <a href="audit.html" class="nav-link">Audit</a>
+      </div>
       <span class="spacer"></span>
       <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" target="_blank" rel="noopener">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg> GitHub</a>
@@ -64,15 +38,21 @@
 
   <div class="container">
     <div class="graph-layout">
-      <!-- Sidebar: search + file tree -->
+      <!-- Sidebar: search + file tree + jump buttons -->
       <div class="graph-sidebar">
-        <input type="text" id="graph-search" placeholder="Search nodes…" />
-        <div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">
-          <button class="btn" onclick="focusNode('create_app()')" style="font-size:10px">create_app</button>
-          <button class="btn" onclick="focusNode('Config')" style="font-size:10px">Config</button>
-          <button class="btn" onclick="focusNode('rank_skills()')" style="font-size:10px">rank_skills</button>
+        <div class="search-wrap" style="margin-bottom:10px;position:relative">
+          <span class="icon" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-faint)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input type="text" id="graph-search" placeholder="Search nodes…" style="padding-left:32px" />
         </div>
-        <h3>📁 Files</h3>
+        <div style="display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="focusNode('create_app()')">create_app</button>
+          <button class="btn btn-sm" onclick="focusNode('Config')">Config</button>
+          <button class="btn btn-sm" onclick="focusNode('rank_skills()')">rank_skills</button>
+          <button class="btn btn-sm" onclick="focusNode('plan()')">plan</button>
+        </div>
+        <div style="margin-bottom:8px;font-size:12px;color:var(--text-dim);display:flex;gap:6px;align-items:center">
+          <span class="icon-svg">folder</span> <span>Files</span>
+        </div>
         <div class="file-tree" id="file-tree-root"></div>
       </div>
 
@@ -80,19 +60,19 @@
       <div class="graph-canvas">
         <div id="network"></div>
         <div class="graph-controls">
-          <button class="btn" onclick="network.fit()" style="font-size:11px">⊞ Fit</button>
-          <button class="btn" onclick="network.setOptions({physics:{enabled:!network.physics.options.enabled}});this.textContent=network.physics.options.enabled?'⏸ Pause':'▶ Resume'" style="font-size:11px">⏸ Pause</button>
-          <button class="btn" onclick="exportPNG()" style="font-size:11px">⬇ PNG</button>
+          <button class="btn btn-sm" onclick="network.fit()">⊞ Fit</button>
+          <button class="btn btn-sm" onclick="var p=network.physics.options.enabled;network.setOptions({physics:{enabled:!p}});this.textContent=p?'▶ Resume':'⏸ Pause'">⏸ Pause</button>
+          <button class="btn btn-sm" onclick="exportPNG()">⬇ PNG</button>
         </div>
         <div class="graph-info">
-          <h4>LEGEND</h4>
+          <h4>Legend</h4>
           <div>🟠 Node = code symbol</div>
           <div>🔗 Edge = call/import/reference</div>
           <div style="margin-top:4px;color:var(--text-faint);font-size:10px">Click a node → details + file</div>
         </div>
         <!-- Node detail panel -->
         <div class="node-panel" id="node-panel">
-          <button class="close" onclick="closeNodePanel()">✕</button>
+          <button class="close" onclick="closeNodePanel()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
           <h3 id="np-title"></h3>
           <div id="np-details"></div>
           <div id="np-connections" style="margin:8px 0;font-size:12px;color:var(--text-dim)"></div>
@@ -151,38 +131,33 @@
       panel.classList.add("open");
       document.getElementById("np-title").textContent = node.label;
 
-      // Find this node in graph data for connections
       const connectedEdges = GRAPH_EDGES.filter(e => e.from === nid || e.to === nid);
       const connections = connectedEdges.map(e => {
         const other = e.from === nid ? e.to : e.from;
         return `${other} (${e.label})`;
       }).join("<br>");
 
-      let details = `<div class="detail-row"><span class="dt">Symbol:</span> ${node.label}</div>`;
-      if (node.file) details += `<div class="detail-row"><span class="dt">File:</span> <a href="${repoUrl}${node.file}" target="_blank">${node.file}</a></div>`;
-      details += `<div class="detail-row"><span class="dt">Group:</span> ${node.group}</div>`;
-      details += `<div class="detail-row"><span class="dt">Degree:</span> ${connectedEdges.length}</div>`;
+      let details = '<div class="detail-row"><span class="dt">Symbol:</span> ' + node.label + '</div>';
+      if (node.file) details += '<div class="detail-row"><span class="dt">File:</span> <a href="' + repoUrl + node.file + '" target="_blank">' + node.file + '</a></div>';
+      details += '<div class="detail-row"><span class="dt">Group:</span> ' + node.group + '</div>';
+      details += '<div class="detail-row"><span class="dt">Degree:</span> ' + connectedEdges.length + '</div>';
       document.getElementById("np-details").innerHTML = details;
-      document.getElementById("np-connections").innerHTML = connections ? `<strong>Connections:</strong><br>${connections}` : "<em>No connections</em>";
+      document.getElementById("np-connections").innerHTML = connections ? '<strong>Connections:</strong><br>' + connections : '<em>No connections</em>';
 
-      // Try to find a matching skill or agent for markdown preview
       const matchSkill = SKILLS.find(s => node.label.toLowerCase().includes(s.id));
       const matchAgent = AGENTS.find(a => node.label.toLowerCase().includes(a.id));
       let mdHtml = "";
       if (matchSkill) {
-        const md = atob(matchSkill.body_md);
-        mdHtml = "<h4>Skill preview</h4>" + marked.parse(md);
+        mdHtml = "<h4>Skill preview</h4>" + marked.parse(atob(matchSkill.body_md));
       } else if (matchAgent) {
-        const md = atob(matchAgent.body_md);
-        mdHtml = "<h4>Agent preview</h4>" + marked.parse(md);
+        mdHtml = "<h4>Agent preview</h4>" + marked.parse(atob(matchAgent.body_md));
       }
       document.getElementById("np-md-preview").innerHTML = mdHtml;
 
-      // Highlight connected nodes
       const connectedIds = new Set(connectedEdges.flatMap(e => [e.from, e.to]));
       nodes.forEach(n => {
-        const match = n.id === nid || connectedIds.has(n.id);
-        nodes.update({ id: n.id, opacity: match ? 1 : 0.12 });
+        const m = n.id === nid || connectedIds.has(n.id);
+        nodes.update({ id: n.id, opacity: m ? 1 : 0.12 });
       });
     });
 
@@ -199,8 +174,8 @@
     window.focusNode = focusNode;
 
     function exportPNG() {
-      const canvas = document.querySelector("#network canvas");
-      if (canvas) { const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = "agent-foundry-graph.png"; a.click(); }
+      const c = document.querySelector("#network canvas");
+      if (c) { const a = document.createElement("a"); a.href = c.toDataURL("image/png"); a.download = "agent-foundry-graph.png"; a.click(); }
     }
     window.exportPNG = exportPNG;
 
@@ -209,19 +184,19 @@
       for (const [key, val] of Object.entries(obj)) {
         if (key === "__files") continue;
         if (val.__files) {
-          const details = document.createElement("details");
-          const summary = document.createElement("summary");
-          summary.textContent = key + "/";
-          details.appendChild(summary);
+          const d = document.createElement("details");
+          const s = document.createElement("summary");
+          s.innerHTML = '<span class="icon-svg">folder</span> ' + key + '/';
+          d.appendChild(s);
           const inner = document.createElement("div");
           renderTree(val.__files, inner);
-          details.appendChild(inner);
-          parentEl.appendChild(details);
+          d.appendChild(inner);
+          parentEl.appendChild(d);
         } else if (val.path) {
           const a = document.createElement("a");
           a.className = "fentry";
-          a.textContent = key;
-          a.href = `${repoUrl}${val.path}`;
+          a.innerHTML = '<span class="icon-svg">file</span> ' + key;
+          a.href = repoUrl + val.path;
           a.target = "_blank";
           parentEl.appendChild(a);
         }
@@ -232,8 +207,27 @@
     // Stats
     if (typeof GRAPH_STATS !== 'undefined') {
       document.getElementById("graph-header-stats").textContent =
-        `${GRAPH_STATS.node_count} nodes · ${GRAPH_STATS.edge_count} edges · ${GRAPH_STATS.community_count} communities`;
+        GRAPH_STATS.node_count + ' nodes · ' + GRAPH_STATS.edge_count + ' edges · ' + GRAPH_STATS.community_count + ' communities';
     }
   </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.icon-svg').forEach(function(el) {
+      var name = el.textContent.trim();
+      if (window.ICONS && ICONS[name]) el.innerHTML = ICONS[name];
+    });
+  });
+  </script>
+<div id="af-context-menu" onclick="this.style.display='none'">
+  <div class="cm-item" onclick="window.history.back()">← Back</div>
+  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
+  <div class="cm-sep"></div>
+  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
+  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
+</div>
+<script>
+document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
+document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
+</script>
 </body>
 </html>

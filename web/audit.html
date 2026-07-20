@@ -6,6 +6,9 @@
   <title>Audit — Agent Foundry</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script src="icons.js"></script>
 </head>
 <body>
   <nav>
@@ -14,10 +17,13 @@
         <span class="logo-icon">AF</span>
         Agent Foundry
       </a>
-      <a href="why.html" class="nav-link">Why</a>
-      <a href="catalog.html" class="nav-link">Catalog</a>
-      <a href="graph.html" class="nav-link">Graph</a>
-      <a href="audit.html" class="nav-link active">Audit</a>
+      <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="nav-links">
+        <a href="why.html" class="nav-link">Why</a>
+        <a href="catalog.html" class="nav-link">Catalog</a>
+        <a href="graph.html" class="nav-link">Graph</a>
+        <a href="audit.html" class="nav-link" style="color:var(--text)">Audit</a>
+      </div>
       <span class="spacer"></span>
       <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" target="_blank" rel="noopener">GitHub</a>
     </div>
@@ -214,5 +220,27 @@ flowchart LR
       </div>
     `).join('');
   </script>
+<div id="af-context-menu" onclick="this.style.display='none'">
+  <div class="cm-item" onclick="window.history.back()">← Back</div>
+  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
+  <div class="cm-sep"></div>
+  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
+  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
+</div>
+<script>
+document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
+document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.icon-svg').forEach(function(el) {
+    var name = el.textContent.trim();
+    if (window.ICONS && ICONS[name]) {
+      el.innerHTML = ICONS[name];
+    }
+  });
+});
+</script>
 </body>
 </html>

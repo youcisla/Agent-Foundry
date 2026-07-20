@@ -7,6 +7,12 @@
 #   - author is present (original authorship attestation)
 set -e
 
+# Auto-regenerate site data if skills/ or agents/ changed
+if [ -n "$(git diff --name-only --cached -- skills/ agents/ 2>/dev/null)" ] || [ -n "$(git diff --name-only -- skills/ agents/ 2>/dev/null)" ]; then
+  echo "[validate] skills/ or agents/ changed — regenerating site data..."
+  python scripts/gen-site-data.py 2>/dev/null || echo "[validate] gen-site-data skipped (no graphify-out?)"
+fi
+
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SKILL_COUNT=0
 FAIL=0
