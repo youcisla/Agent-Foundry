@@ -346,7 +346,7 @@ const FILE_TREE = {
       },
       "gen-site-data.py": {
         "path": "scripts/gen-site-data.py",
-        "size": 13669,
+        "size": 19842,
         "ext": ".py"
       },
       "graphify-run.py": {
@@ -797,27 +797,106 @@ const FILE_TREE = {
       },
       "file-content.js": {
         "path": "web/file-content.js",
-        "size": 662261,
+        "size": 985618,
         "ext": ".js"
       },
       "file-tree.js": {
         "path": "web/file-tree.js",
-        "size": 21468,
+        "size": 21922,
         "ext": ".js"
+      },
+      "graph-app": {
+        "__files": {
+          "adapters.js": {
+            "path": "web/graph-app/adapters.js",
+            "size": 3283,
+            "ext": ".js"
+          },
+          "app.js": {
+            "path": "web/graph-app/app.js",
+            "size": 6311,
+            "ext": ".js"
+          },
+          "canvas.js": {
+            "path": "web/graph-app/canvas.js",
+            "size": 1742,
+            "ext": ".js"
+          },
+          "deps.js": {
+            "path": "web/graph-app/deps.js",
+            "size": 1414,
+            "ext": ".js"
+          },
+          "edges.js": {
+            "path": "web/graph-app/edges.js",
+            "size": 2519,
+            "ext": ".js"
+          },
+          "graph.css": {
+            "path": "web/graph-app/graph.css",
+            "size": 10722,
+            "ext": ".css"
+          },
+          "liveSync.js": {
+            "path": "web/graph-app/liveSync.js",
+            "size": 1611,
+            "ext": ".js"
+          },
+          "main.js": {
+            "path": "web/graph-app/main.js",
+            "size": 1240,
+            "ext": ".js"
+          },
+          "nodes.js": {
+            "path": "web/graph-app/nodes.js",
+            "size": 4051,
+            "ext": ".js"
+          },
+          "palette.js": {
+            "path": "web/graph-app/palette.js",
+            "size": 1040,
+            "ext": ".js"
+          },
+          "panels.js": {
+            "path": "web/graph-app/panels.js",
+            "size": 7296,
+            "ext": ".js"
+          },
+          "schema.js": {
+            "path": "web/graph-app/schema.js",
+            "size": 2428,
+            "ext": ".js"
+          },
+          "simulation.js": {
+            "path": "web/graph-app/simulation.js",
+            "size": 2038,
+            "ext": ".js"
+          },
+          "store.js": {
+            "path": "web/graph-app/store.js",
+            "size": 4320,
+            "ext": ".js"
+          }
+        }
       },
       "graph-data.js": {
         "path": "web/graph-data.js",
-        "size": 129355,
+        "size": 129350,
         "ext": ".js"
+      },
+      "graph-rf.json": {
+        "path": "web/graph-rf.json",
+        "size": 193844,
+        "ext": ".json"
       },
       "graph-stats.js": {
         "path": "web/graph-stats.js",
-        "size": 1426,
+        "size": 1350,
         "ext": ".js"
       },
       "graph.html": {
         "path": "web/graph.html",
-        "size": 15832,
+        "size": 8267,
         "ext": ".html"
       },
       "icons.js": {
@@ -832,7 +911,7 @@ const FILE_TREE = {
       },
       "install-data.js": {
         "path": "web/install-data.js",
-        "size": 794,
+        "size": 785,
         "ext": ".js"
       },
       "site-data.js": {
@@ -842,7 +921,7 @@ const FILE_TREE = {
       },
       "skill-deps.js": {
         "path": "web/skill-deps.js",
-        "size": 1446,
+        "size": 1381,
         "ext": ".js"
       },
       "store.js": {

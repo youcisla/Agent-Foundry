@@ -8,6 +8,7 @@ from __future__ import annotations
 import base64
 import json
 import re
+import time
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -266,6 +267,135 @@ if graph_path.exists() and analysis_path.exists():
     print(f"graph-stats.js: stats written")
 else:
     _preserve_committed_graph()
+
+
+# ── 3b. graph-rf.json — React Flow (XYFlow) data contract ──
+def build_graph_rf():
+    """Emit React-Flow-ready graph data: semantic nodes/edges + a deterministic
+    community-clustered layout + community meta + the orchestration pipeline."""
+    import math
+
+    gpath = REPO / "graphify-out" / "graph.json"
+    if not gpath.exists():
+        return None
+    g = json.loads(gpath.read_text(encoding="utf-8"))
+    raw_nodes = g.get("nodes", [])
+    raw_links = g.get("links", g.get("edges", []))
+
+    god, surprising = set(), set()
+    gs = WEB / "graph-stats.js"
+    if gs.exists():
+        t = gs.read_text(encoding="utf-8")
+        a, b = t.find("{"), t.rfind("}")
+        try:
+            st = json.loads(t[a:b + 1])
+            god = {x["label"] for x in st.get("god_nodes", [])}
+            surprising = {(x.get("source", ""), x.get("target", "")) for x in st.get("surprising", [])}
+        except json.JSONDecodeError:
+            pass
+
+    # Collapse duplicate edges (source,target,relation) and accumulate weight.
+    agg = {}
+    for e in raw_links:
+        s, tg, rel = e.get("source", ""), e.get("target", ""), e.get("relation", e.get("type", ""))
+        if not s or not tg:
+            continue
+        k = (s, tg, rel)
+        w = float(e.get("weight", 1) or 1)
+        if k in agg:
+            agg[k]["weight"] += w
+        else:
+            agg[k] = {"source": s, "target": tg, "relation": rel, "weight": w}
+    rf_edges = list(agg.values())
+    for e in rf_edges:
+        e["weight"] = round(e["weight"], 2)
+        e["surprising"] = (e["source"], e["target"]) in surprising or (e["target"], e["source"]) in surprising
+
+    deg = {}
+    for e in rf_edges:
+        deg[e["source"]] = deg.get(e["source"], 0) + 1
+        deg[e["target"]] = deg.get(e["target"], 0) + 1
+
+    def kind_of(n):
+        lbl = n.get("label", "")
+        if lbl.endswith("()"):
+            return "function"
+        if re.match(r"^[A-Z][A-Za-z0-9_]*$", lbl):
+            return "class"
+        if "." in lbl and "/" not in lbl and " " not in lbl:
+            return "file"
+        return "symbol"
+
+    rf_nodes = []
+    for n in raw_nodes:
+        nid = n["id"]
+        rf_nodes.append({
+            "id": nid, "label": n.get("label", nid),
+            "title": n.get("norm_label", n.get("label", nid)),
+            "file": n.get("source_file", ""), "loc": n.get("source_location", ""),
+            "community": int(n.get("community", 0)), "degree": deg.get(nid, 0),
+            "kind": kind_of(n), "isGod": n.get("label", "") in god,
+        })
+
+    # Deterministic community-clustered phyllotaxis layout (no runtime force sim needed).
+    comms = {}
+    for n in rf_nodes:
+        comms.setdefault(n["community"], []).append(n)
+    GA = math.pi * (3 - math.sqrt(5))
+    layout, communities = {}, []
+    for ci, cid in enumerate(sorted(comms, key=lambda c: -len(comms[c]))):
+        cr = 1500 * math.sqrt(ci + 0.6)
+        ca = (ci + 0.6) * GA
+        cx, cy = cr * math.cos(ca), cr * math.sin(ca)
+        members = sorted(comms[cid], key=lambda n: -n["degree"])
+        for jj, n in enumerate(members):
+            mr = 36 * math.sqrt(jj + 0.5)
+            ma = (jj + 0.5) * GA
+            layout[n["id"]] = [round(cx + mr * math.cos(ma), 1), round(cy + mr * math.sin(ma), 1)]
+        communities.append({"id": cid, "label": members[0]["label"] if members else f"Community {cid}",
+                            "size": len(members), "colorIndex": cid, "center": [round(cx, 1), round(cy, 1)]})
+    communities.sort(key=lambda c: c["id"])
+
+    pipeline = {
+        "nodes": [
+            {"id": "prompt", "kind": "input", "label": "Your prompt", "role": None},
+            {"id": "af-orchestrator", "kind": "agent", "label": "af-orchestrator", "role": "orchestrator"},
+            {"id": "af-planner", "kind": "agent", "label": "af-planner", "role": "planner"},
+            {"id": "executor", "kind": "symbol", "label": "executor (LiteLLM)", "role": None},
+            {"id": "provider", "kind": "provider", "label": "LLM provider", "role": None},
+            {"id": "af-critic", "kind": "agent", "label": "af-critic", "role": "critic"},
+            {"id": "db", "kind": "store", "label": "SQLite executions.db", "role": None},
+            {"id": "response", "kind": "output", "label": "Response", "role": None},
+        ],
+        "edges": [
+            {"source": "prompt", "target": "af-orchestrator", "relation": "dispatches", "step": 1},
+            {"source": "af-orchestrator", "target": "af-planner", "relation": "dispatches", "step": 2},
+            {"source": "af-planner", "target": "executor", "relation": "returns", "step": 3},
+            {"source": "executor", "target": "provider", "relation": "calls", "step": 4},
+            {"source": "provider", "target": "executor", "relation": "returns", "step": 5},
+            {"source": "executor", "target": "af-critic", "relation": "dispatches", "step": 6},
+            {"source": "af-critic", "target": "db", "relation": "logs", "step": 7},
+            {"source": "db", "target": "response", "relation": "returns", "step": 8},
+        ],
+    }
+    return {
+        "nodes": rf_nodes, "edges": rf_edges, "layout": layout,
+        "communities": communities, "pipeline": pipeline,
+        "stats": {"node_count": len(rf_nodes), "edge_count": len(rf_edges),
+                  "raw_edge_count": len(raw_links), "community_count": len(communities),
+                  "god_count": sum(1 for n in rf_nodes if n["isGod"]),
+                  "surprising_count": sum(1 for e in rf_edges if e["surprising"])},
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+
+
+_rf = build_graph_rf()
+if _rf is not None:
+    (WEB / "graph-rf.json").write_text(json.dumps(_rf, separators=(",", ":")), encoding="utf-8")
+    print(f"graph-rf.json: {_rf['stats']['node_count']} nodes, {_rf['stats']['edge_count']} edges, "
+          f"{_rf['stats']['community_count']} communities")
+else:
+    print("graph-rf.json: graph.json absent — preserving committed file")
 
 # ── 4. install-data.js ──
 install_data = {
