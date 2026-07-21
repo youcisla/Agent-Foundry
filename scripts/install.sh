@@ -28,6 +28,61 @@ if [[ -z "${HOME:-}" ]]; then
   if [[ -n "${USERPROFILE:-}" ]]; then export HOME="$USERPROFILE"; fi
 fi
 
+# Detect OS once
+case "$(uname -s 2>/dev/null || echo Windows)" in
+  MINGW*|CYGWIN*|MSYS*) OS=windows ;;
+  Darwin)               OS=macos ;;
+  Linux|*BSD)           OS=linux ;;
+  *)                    OS=unknown ;;
+esac
+export AGENT_FOUNDRY_OS="$OS"
+
+# Convert MSYS/Git Bash POSIX paths to native Windows paths (mirrors ECC).
+# Used when invoking native Windows tools (cmd.exe, mklink, PowerShell).
+cygpath_w() {
+  if command -v cygpath >/dev/null 2>&1; then
+    cygpath -w "$1"
+  else
+    echo "$1"
+  fi
+}
+
+# link_or_copy: prefer symlinks; fall back to Windows junction/copy when symlink fails.
+# Mirrors ECC's behavior — file copy is the universal fallback that works everywhere.
+link_or_copy() {
+  local src="$1" dst="$2"
+  # Remove existing target if present
+  [ -e "$dst" ] || [ -L "$dst" ] && rm -rf "$dst" 2>/dev/null || true
+
+  # Try symlink first (works on macOS/Linux, and Windows with admin/dev mode)
+  if ln -sfn "$src" "$dst" 2>/dev/null; then
+    echo "  → linked $dst -> $src"
+    return 0
+  fi
+
+  # Fallback 1: Windows junction (no admin needed)
+  if [[ "$OS" == "windows" ]] && command -v cmd >/dev/null 2>&1; then
+    local win_src win_dst
+    win_src=$(cygpath_w "$src")
+    win_dst=$(cygpath_w "$dst")
+    if cmd //c "mklink /J \"$win_dst\" \"$win_src\"" >/dev/null 2>&1; then
+      echo "  → junction $dst -> $src (Windows)"
+      return 0
+    fi
+  fi
+
+  # Fallback 2: recursive copy (universal fallback)
+  if command -v cp >/dev/null 2>&1; then
+    if cp -r "$src" "$dst" 2>/dev/null; then
+      echo "  → copied $dst <- $src"
+      return 0
+    fi
+  fi
+
+  echo "  → ERROR: failed to link or copy $dst" >&2
+  return 1
+}
+
 HARNESS=""
 MANUAL=false
 DRY_RUN=false
@@ -61,31 +116,29 @@ install_for_harness() {
   case "$harness" in
     claude-code)
       local dst="$HOME/.claude/skills/agent-foundry"
-      if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
+      if $DRY_RUN; then echo "Would link: $REPO_ROOT/skills -> $dst"
       else mkdir -p "$(dirname "$dst")"
-           ln -sfn "$REPO_ROOT/skills" "$dst"
-           echo "Installed: $dst -> $REPO_ROOT/skills"
+           link_or_copy "$REPO_ROOT/skills" "$dst"
+           echo "Installed: $dst"
       fi
       ;;
     codex)
           local skills_dst="$HOME/.codex/skills/agent-foundry"
           local codex_dst="$HOME/.codex"
           if $DRY_RUN; then
-            echo "Would symlink: $REPO_ROOT/skills -> $skills_dst"
-            echo "Would symlink: $REPO_ROOT/.codex -> $codex_dst/agent-foundry-config"
+            echo "Would link: $REPO_ROOT/skills -> $skills_dst"
+            echo "Would link: $REPO_ROOT/.codex -> $codex_dst/agent-foundry-config"
           else
             mkdir -p "$(dirname "$skills_dst")"
-            ln -sfn "$REPO_ROOT/skills" "$skills_dst"
-            echo "Installed: $skills_dst -> $REPO_ROOT/skills"
+            link_or_copy "$REPO_ROOT/skills" "$skills_dst"
+            echo "Installed: $skills_dst"
 
             # Codex auto-loads AGENTS.md from the project root and config.toml
-            # from ~/.codex/. Symlink the whole .codex/ directory so Codex picks
+            # from ~/.codex/. Link the whole .codex/ directory so Codex picks
             # up AGENTS.md, config.toml, and per-agent configs at once.
             mkdir -p "$codex_dst"
-            # Don't overwrite an existing ~/.codex — place Agent Foundry at a
-            # sibling location and instruct the user to merge.
             if [ ! -e "$codex_dst/agent-foundry-config" ]; then
-              ln -sfn "$REPO_ROOT/.codex" "$codex_dst/agent-foundry-config"
+              link_or_copy "$REPO_ROOT/.codex" "$codex_dst/agent-foundry-config"
               echo "Installed: $codex_dst/agent-foundry-config -> $REPO_ROOT/.codex"
               echo ""
               echo "To activate, copy or merge into ~/.codex/:"
@@ -108,20 +161,22 @@ install_for_harness() {
       ;;
     hermes)
       local dst="$HOME/AppData/Local/hermes/skills/agent-foundry"
-      if $DRY_RUN; then echo "Would symlink: $REPO_ROOT/skills -> $dst"
+      if $DRY_RUN; then echo "Would link: $REPO_ROOT/skills -> $dst"
       else mkdir -p "$(dirname "$dst")"
-           ln -sfn "$REPO_ROOT/skills" "$dst"
-           echo "Installed: $dst -> $REPO_ROOT/skills"
+           link_or_copy "$REPO_ROOT/skills" "$dst"
+           echo "Installed: $dst"
       fi
       ;;
     gemini-cli)
       local d="$HOME/.gemini"
       if $DRY_RUN; then
-        echo "Would symlink: $REPO_ROOT/.gemini -> $d/agent-foundry-config"
+        echo "Would link: $REPO_ROOT/.gemini -> $d/agent-foundry-config"
       else
         mkdir -p "$d"
-        [ ! -e "$d/agent-foundry-config" ] && ln -sfn "$REPO_ROOT/.gemini" "$d/agent-foundry-config"
-        echo "Installed: $d/agent-foundry-config -> $REPO_ROOT/.gemini"
+        if [ ! -e "$d/agent-foundry-config" ]; then
+          link_or_copy "$REPO_ROOT/.gemini" "$d/agent-foundry-config"
+          echo "Installed: $d/agent-foundry-config -> $REPO_ROOT/.gemini"
+        fi
         echo "Gemini CLI has no plugin system. Reference: $d/agent-foundry-config/AGENTS.md"
       fi
       ;;
@@ -129,13 +184,13 @@ install_for_harness() {
       local d="$HOME/.config/opencode"
       if $DRY_RUN; then
         echo "Would copy: $REPO_ROOT/.opencode/ -> $d/agent-foundry-config"
-        echo "Would symlink: $REPO_ROOT/skills -> $d/skills/agent-foundry"
+        echo "Would link: $REPO_ROOT/skills -> $d/skills/agent-foundry"
       else
         mkdir -p "$d"
         cp -r "$REPO_ROOT/.opencode" "$d/agent-foundry-config" 2>/dev/null
         echo "Installed: $d/agent-foundry-config/ -> $REPO_ROOT/.opencode"
         mkdir -p "$d/skills"
-        ln -sfn "$REPO_ROOT/skills" "$d/skills/agent-foundry"
+        link_or_copy "$REPO_ROOT/skills" "$d/skills/agent-foundry"
         echo "Installed: $d/skills/agent-foundry -> $REPO_ROOT/skills"
         echo "Merge config: jq -s '.[0] * .[1]' $d/opencode.json $d/agent-foundry-config/opencode.json > merge.json"
       fi
