@@ -38,6 +38,10 @@ build/
 # HyperFrames demo (regenerate via web/demo/af-demo + hyperframes render)
 web/demo/*/renders/
 
+# ffmpeg inspection frames
+web/assets/preview-*.png
+web/demo/*/snapshots/
+
 # uv
 uv.lock
 

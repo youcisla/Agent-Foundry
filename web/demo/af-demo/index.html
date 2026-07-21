@@ -4,58 +4,107 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body { width: 1920px; height: 1080px; overflow: hidden;
-        background: radial-gradient(ellipse at top, #2a1810 0%, #0a0a0a 70%); }
-      body { font-family: "Inter", sans-serif; color: #fff; }
-      .mono { font-family: "JetBrains Mono", monospace; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        font-family: "Inter", -apple-system, sans-serif;
+        background: radial-gradient(ellipse at top, #2a1810 0%, #0a0a0a 70%);
+        color: #fff;
+      }
+      code, .mono { font-family: "JetBrains Mono", monospace; }
 
       .bg-grid {
-        position: absolute; inset: 0;
+        position: absolute; inset: 0; pointer-events: none;
         background-image:
           linear-gradient(rgba(245, 166, 35, 0.05) 1px, transparent 1px),
           linear-gradient(90deg, rgba(245, 166, 35, 0.05) 1px, transparent 1px);
         background-size: 80px 80px;
         mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+        -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
       }
       .glow {
         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        width: 1200px; height: 1200px;
-        background: radial-gradient(circle, rgba(245, 166, 35, 0.15) 0%, transparent 50%);
-        pointer-events: none;
+        width: 1000px; height: 1000px; pointer-events: none;
+        background: radial-gradient(circle, rgba(245, 166, 35, 0.18) 0%, transparent 50%);
       }
 
-      .hero { position: absolute; left: 50%; top: 220px; transform: translateX(-50%); text-align: center; }
-      .logo { font-size: 28px; font-weight: 600; letter-spacing: 0.3em; color: #f5a623;
-        margin-bottom: 30px; text-transform: uppercase; }
-      .title { font-size: 140px; font-weight: 900; line-height: 1.05;
+      /* CORNERS — small, monospace, fixed offsets */
+      .corner {
+        position: absolute;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 16px; color: rgba(255, 255, 255, 0.65);
+        letter-spacing: 0.05em;
+      }
+      .corner.tl { top: 36px; left: 48px; }
+      .corner.tr { top: 36px; right: 48px; }
+      .corner.bl { bottom: 36px; left: 48px; }
+      .corner.br { bottom: 36px; right: 48px; }
+
+      /* LOGO — centered, narrow band at top of hero */
+      .logo {
+        position: absolute;
+        top: 140px; left: 50%; transform: translateX(-50%);
+        font-size: 26px; font-weight: 600;
+        letter-spacing: 0.4em; color: #f5a623;
+        text-transform: uppercase;
+        text-align: center; white-space: nowrap;
+      }
+
+      /* TITLE — single line, fits in 1920px width */
+      .title {
+        position: absolute;
+        top: 220px; left: 50%; transform: translateX(-50%);
+        font-size: 88px; font-weight: 900; line-height: 1.1;
+        text-align: center; white-space: nowrap;
         background: linear-gradient(135deg, #fff 0%, #f5a623 100%);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        background-clip: text; }
-      .subtitle { font-size: 36px; font-weight: 400; color: rgba(255, 255, 255, 0.7);
-        margin-top: 30px; letter-spacing: 0.05em; }
+        background-clip: text;
+        letter-spacing: -0.02em;
+      }
 
-      .stats { position: absolute; left: 50%; bottom: 220px; transform: translateX(-50%);
-        display: flex; gap: 80px; }
-      .stat { text-align: center; min-width: 200px; }
-      .stat-num { font-size: 96px; font-weight: 900; color: #f5a623; line-height: 1; }
-      .stat-label { font-size: 22px; color: rgba(255, 255, 255, 0.6); margin-top: 12px;
-        text-transform: uppercase; letter-spacing: 0.1em; }
+      /* SUBTITLE — single line, comfortably below title */
+      .subtitle {
+        position: absolute;
+        top: 360px; left: 50%; transform: translateX(-50%);
+        font-size: 28px; font-weight: 400;
+        color: rgba(255, 255, 255, 0.85);
+        text-align: center; white-space: nowrap;
+        letter-spacing: 0.02em;
+      }
 
-      .pills { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
-        display: flex; gap: 16px; }
-      .pill { padding: 12px 28px; border-radius: 999px;
-        background: rgba(245, 166, 35, 0.12); border: 1px solid rgba(245, 166, 35, 0.3);
-        color: #f5a623; font-size: 18px; font-weight: 600; letter-spacing: 0.05em; }
+      /* STATS — 5 in a row, centered, fixed Y to clear title+subtitle */
+      .stats {
+        position: absolute;
+        top: 530px; left: 50%; transform: translateX(-50%);
+        display: flex; gap: 72px;
+        align-items: baseline;
+      }
+      .stat { text-align: center; min-width: 140px; }
+      .stat-num {
+        font-size: 72px; font-weight: 900;
+        color: #f5a623; line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .stat-label {
+        font-size: 16px; color: rgba(255, 255, 255, 0.7);
+        margin-top: 14px; text-transform: uppercase;
+        letter-spacing: 0.15em; font-weight: 600;
+      }
 
-      .corner { position: absolute; font-family: "JetBrains Mono", monospace;
-        font-size: 16px; color: rgba(255, 255, 255, 0.4); }
-      .corner-tl { top: 40px; left: 40px; }
-      .corner-tr { top: 40px; right: 40px; }
-      .corner-bl { bottom: 40px; left: 40px; }
-      .corner-br { bottom: 40px; right: 40px; }
+      /* PILLS — bottom band, comfortable spacing */
+      .pills {
+        position: absolute;
+        bottom: 120px; left: 50%; transform: translateX(-50%);
+        display: flex; gap: 14px;
+      }
+      .pill {
+        padding: 14px 26px; border-radius: 999px;
+        background: rgba(245, 166, 35, 0.18);
+        border: 1px solid rgba(245, 166, 35, 0.4);
+        color: #ffb84d; font-size: 17px; font-weight: 600;
+        letter-spacing: 0.04em; white-space: nowrap;
+      }
     </style>
   </head>
   <body>
@@ -70,16 +119,16 @@
     <div class="bg-grid"></div>
     <div class="glow"></div>
 
-    <div class="corner corner-tl mono">AGENT_FOUNDRY/</div>
-    <div class="corner corner-tr mono">v0.3.0 · MIT</div>
-    <div class="corner corner-bl mono">31 SKILLS · 3 AGENTS · 14 HARNESSES</div>
-    <div class="corner corner-br mono">youcisla-agents.vercel.app</div>
+    <div class="corner tl mono">AGENT_FOUNDRY/</div>
+    <div class="corner tr mono">v0.3.0 · MIT</div>
+    <div class="corner bl mono">31 SKILLS · 3 AGENTS · 14 HARNESSES</div>
+    <div class="corner br mono">youcisla-agents.vercel.app</div>
 
-    <div class="hero">
-      <div class="logo">▌AGENT FOUNDRY</div>
-      <div class="title">Skill orchestrator<br/>for AI coding agents.</div>
-      <div class="subtitle">31 original skills. Engram routing. Zero external dependencies.</div>
-    </div>
+    <div class="logo">▌ AGENT&nbsp;FOUNDRY</div>
+
+    <h1 class="title">Skill orchestrator for AI coding agents.</h1>
+
+    <p class="subtitle">31 original skills. Engram routing. Zero external dependencies.</p>
 
     <div class="stats">
       <div class="stat">
@@ -106,8 +155,8 @@
 
     <div class="pills">
       <div class="pill">✓ Claude Code</div>
-      <div class="pill">✓ Codex</div>
       <div class="pill">✓ Hermes</div>
+      <div class="pill">✓ Codex</div>
       <div class="pill">+ 11 more</div>
     </div>
     </div>
@@ -116,42 +165,40 @@
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
 
-      // Hero entrance
-      tl.from(".logo", { opacity: 0, y: -30, duration: 0.8, ease: "power2.out" }, 0);
-      tl.from(".title", { opacity: 0, y: 40, duration: 1.0, ease: "power3.out" }, 0.3);
-      tl.from(".subtitle", { opacity: 0, y: 20, duration: 0.8, ease: "power2.out" }, 0.8);
+      // Logo + title + subtitle stack
+      tl.from(".logo",     { opacity: 0, y: -20, duration: 0.7, ease: "power2.out" }, 0.1);
+      tl.from(".title",    { opacity: 0, y: 30,  duration: 0.9, ease: "power3.out" }, 0.3);
+      tl.from(".subtitle", { opacity: 0, y: 20,  duration: 0.7, ease: "power2.out" }, 0.7);
 
-      // Corner brackets fade in
-      tl.from(".corner", { opacity: 0, duration: 0.6 }, 1.4);
+      // Corner brackets fade in (subtle)
+      tl.from(".corner",   { opacity: 0, duration: 0.5 }, 1.3);
 
-      // Stats count up at 2s
+      // Stats count up
       tl.add(() => {
         const targets = {
           "num-skills": 31,
           "num-agents": 3,
-          "num-nodes": 555,
-          "num-edges": 898,
-          "num-gates": 3,
+          "num-nodes":  555,
+          "num-edges":  898,
+          "num-gates":  3,
         };
         Object.entries(targets).forEach(([id, target]) => {
           const obj = { v: 0 };
           gsap.to(obj, {
-            v: target, duration: 1.5, ease: "power2.out",
-            onUpdate: () => {
-              document.getElementById(id).textContent = Math.round(obj.v);
-            },
+            v: target, duration: 1.6, ease: "power2.out",
+            onUpdate: () => { document.getElementById(id).textContent = Math.round(obj.v); },
           });
         });
-      }, 2.0);
+      }, 1.8);
 
       // Pills entrance
       tl.from(".pills .pill", {
-        opacity: 0, scale: 0.8, stagger: 0.1, duration: 0.5, ease: "back.out(1.7)"
-      }, 4.0);
+        opacity: 0, scale: 0.85, stagger: 0.08, duration: 0.45, ease: "back.out(1.7)"
+      }, 3.8);
 
-      // Subtle pulse on glow (finite repeat, fits in 9s composition)
+      // Background glow pulse (finite, fits in 9s)
       tl.to(".glow", {
-        scale: 1.1, duration: 4, ease: "sine.inOut", yoyo: true,
+        scale: 1.08, duration: 4, ease: "sine.inOut", yoyo: true,
         repeat: Math.max(0, Math.floor(9 / 4) - 1)
       }, 0);
 
