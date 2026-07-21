@@ -1,0 +1,34 @@
+{
+  "name": "agent-foundry",
+  "version": "0.3.0",
+  "description": "Skill orchestrator for AI coding assistants. MIT-licensed, zero external dependencies, 30 original skills quality-gated on every commit.",
+  "type": "module",
+  "main": "scripts/install.js",
+  "bin": {
+    "agent-foundry": "scripts/install.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "install": "node scripts/install.js",
+    "validate": "bash scripts/validate.sh",
+    "eval": "python scripts/foundry-eval.py"
+  },
+  "files": [
+    "agent_foundry/",
+    "skills/",
+    "agents/",
+    ".codex/",
+    ".cursor/",
+    ".gemini/",
+    ".opencode/",
+    "hooks/",
+    "scripts/install.js",
+    "scripts/install.sh",
+    "scripts/install.bat",
+    "scripts/install.ps1"
+  ],
+  "keywords": ["skills", "agents", "orchestrator", "claude-code", "codex", "cursor"],
+  "license": "MIT"
+}
