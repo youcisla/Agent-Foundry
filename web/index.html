@@ -61,7 +61,7 @@
           <div class="install-widget" style="max-width:560px;margin-top:28px">
             <div class="install-tabs" id="hero-tabs">
               <button class="install-tab active" data-tab="bash">curl | bash</button>
-              <button class="install-tab" data-tab="pip">pip install</button>
+              <button class="install-tab" data-tab="node">npm</button>
               <button class="install-tab" data-tab="git">git clone</button>
               <button class="install-tab" data-tab="claude">Claude Code</button>
             </div>
@@ -395,9 +395,9 @@
     });
     // Install tabs
     const cmds = {
-      bash: "curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash",
-      pip: "pip install -e .\n# pip install agent-foundry (once published)",
-      git: "git clone https://github.com/youcisla/Agent-Foundry.git\ncd Agent-Foundry && pip install -e .",
+      bash: "# macOS / Linux / Git Bash\ncurl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash\n\n# Windows PowerShell\niwr -useb https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.ps1 | iex\n\n# Windows CMD\ncurl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.bat -o install.bat && install.bat",
+      node: "# Run the installer directly via npx (no install required)\nnpx --yes https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/scripts/install.js --list\n\n# Or install globally from the repo\ngit clone https://github.com/youcisla/Agent-Foundry\ncd Agent-Foundry\nnpm install -g .\nagent-foundry --list\n\n# (npm package coming soon — installs the same scripts/install.js as a global `agent-foundry` bin)",
+      git: "git clone https://github.com/youcisla/Agent-Foundry.git\ncd Agent-Foundry\nnode scripts/install.js --harness=claude-code",
       claude: "/plugin marketplace add youcisla/Agent-Foundry\n/plugin install agent-foundry"
     };
     const tabs = document.querySelectorAll('#hero-tabs .install-tab');

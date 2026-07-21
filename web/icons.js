@@ -54,3 +54,28 @@ function icon(name) {
 // graph app) depends on this. Without it, icons silently render as raw text.
 window.ICONS = ICONS;
 window.icon = icon;
+
+
+// Auto-replace <span class="icon-svg">name</span> placeholders with real SVG markup.
+// Runs once on DOMContentLoaded. Idempotent: skips already-replaced nodes.
+function applyIcons(root) {
+  root = root || document;
+  root.querySelectorAll('.icon-svg').forEach(el => {
+    if (el.dataset.iconApplied) return;
+    const name = el.textContent.trim();
+    const svg = ICONS[name];
+    if (svg) {
+      el.innerHTML = svg;
+      el.style.display = 'inline-flex';
+      el.style.alignItems = 'center';
+      el.style.verticalAlign = 'middle';
+    }
+    el.dataset.iconApplied = '1';
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => applyIcons());
+} else {
+  applyIcons();
+}
+window.applyIcons = applyIcons;
