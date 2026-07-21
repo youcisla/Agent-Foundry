@@ -357,10 +357,10 @@
     if (typeof ADAPTERS !== 'undefined') {
       const stripEl = document.getElementById('adapter-strip-tags');
       const titleEl = document.getElementById('adapter-strip-title');
+      const counts = { tested: 0, beta: 0, 'coming-soon': 0 };
+      const iconName = { tested: 'check', beta: 'half', 'coming-soon': 'circle' };
+      const cls = { tested: 'badge-green', beta: 'badge-accent', 'coming-soon': 'badge-red' };
       if (stripEl) {
-        const counts = { tested: 0, beta: 0, 'coming-soon': 0 };
-        const iconName = { tested: 'check', beta: 'half', 'coming-soon': 'circle' };
-        const cls = { tested: 'badge-green', beta: 'badge-accent', 'coming-soon': 'badge-red' };
         stripEl.innerHTML = ADAPTERS.map(a => {
           counts[a.status] = (counts[a.status] || 0) + 1;
           return `<span class="badge ${cls[a.status] || 'badge-accent'}"><span class="icon-svg">${iconName[a.status] || 'half'}</span> ${a.name}</span>`;
@@ -370,10 +370,8 @@
           titleEl.textContent = `Adapters (${total} total: ${counts.tested} ✓ · ${counts.beta} ◐ · ${counts['coming-soon']} ○)`;
         }
       }
-      // Update hs5 (tested adapters count)
       setNum('hs5', counts.tested || 0);
-    // hs4 = skills validated (matches the 31/31 in gates output)
-    setNum('hs4', SKILL_COUNT);
+      setNum('hs4', typeof SKILL_COUNT !== 'undefined' ? SKILL_COUNT : 0);
     }
     // Count-up animation (eased), triggered once per grid on scroll-in
     function animateCount(el) {
