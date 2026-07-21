@@ -46,6 +46,7 @@ from .logging_db import (
     list_instincts,
     approve_instinct,
     get_stats as db_stats,
+    engram_lookup,
 )
 from .loop import run_loop
 from .models import (
@@ -129,8 +130,22 @@ def create_app(cfg: Config | None = None) -> FastAPI:
         if idx is None:
             raise HTTPException(status_code=409,
                                 detail="No index. POST /index first.")
+        # Engram fast-path: if we have a high-confidence cached routing for this
+        # prompt's N-gram fingerprint, use it directly. Falls through to planner
+        # otherwise.
+        eg = engram_lookup(db_path, req.prompt, min_confidence=0.6)
+        if eg:
+            from .planner import plan as planner_run
+            full = planner_run(req, idx, cfg.planner)
+            return {**full.model_dump(), "engram_cache_hit": eg}
         from .planner import plan as planner_run
         return planner_run(req, idx, cfg.planner)
+
+    @app.get("/engram")
+    def do_engram_lookup(prompt: str):
+        """Engram-style O(1) instinct lookup for a prompt."""
+        hit = engram_lookup(db_path, prompt, min_confidence=0.5)
+        return {"hit": hit}
 
     @app.post("/execute")
     def do_execute(req: ExecuteRequest):
