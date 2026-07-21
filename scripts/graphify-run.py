@@ -15,6 +15,38 @@ from pathlib import Path
 env = os.environ.copy()
 env.pop("PYTHONPATH", None)
 
+PY = r"C:\Users\Y.CHEHBOUB\AppData\Roaming\uv\tools\graphifyy\Scripts\python.exe"
+REPO = Path(".").resolve()
+OUT = REPO / "graphify-out"
+OUT.mkdir(exist_ok=True)
+(OUT / ".graphify_root").write_text(str(REPO), encoding="utf-8")
+
+# Cross-platform Python discovery — used if `uv tool install` is unavailable.
+#   1. AGENT_FOUNDRY_PY env var (preferred override)
+#   2. .venv in the repo (created by 'uv venv' or 'python -m venv')
+#   3. system python / python3 on PATH
+def _discover_python() -> str:
+    import shutil
+    venv = REPO / ".venv"
+    candidates = [
+        os.environ.get("AGENT_FOUNDRY_PY"),
+        str(venv / ("Scripts" if os.name == "nt" else "bin") / ("python.exe" if os.name == "nt" else "python")),
+        shutil.which("python3"),
+        shutil.which("python"),
+    ]
+    for c in candidates:
+        if c and Path(c).exists():
+            return c
+    raise SystemExit("No python interpreter found. Set AGENT_FOUNDRY_PY or install Python 3.11+.")
+
+# Validate the hardcoded Windows path; fall back to discovery if missing.
+if not Path(PY).exists():
+    print(f"Default python ({PY}) not found; running cross-platform discovery...")
+    PY = _discover_python()
+
+(OUT / ".graphify_python").write_text(PY, encoding="utf-8")
+print(f"Using Python: {PY}")
+
 # Load gitignore patterns to filter out untracked files
 _GITIGNORE_PATTERNS: list[str] | None = None
 def _load_gitignore() -> list[str]:

@@ -1,9 +1,9 @@
 const GRAPH_STATS = {
-  "node_count": 499,
-  "edge_count": 831,
+  "node_count": 504,
+  "edge_count": 835,
   "skill_count": 30,
   "agent_count": 3,
-  "community_count": 49,
+  "community_count": 51,
   "god_nodes": [
     {
       "label": "create_app()",
@@ -49,12 +49,12 @@ const GRAPH_STATS = {
   "surprising": [
     {
       "source": "load_indexer()",
-      "target": "SkillManifest",
+      "target": "build_index()",
       "relation": "indirect_call"
     },
     {
       "source": "load_indexer()",
-      "target": "build_index()",
+      "target": "SkillManifest",
       "relation": "indirect_call"
     },
     {
@@ -68,9 +68,9 @@ const GRAPH_STATS = {
       "relation": "calls"
     },
     {
-      "source": "_ensure_daemon()",
-      "target": "Config",
-      "relation": "references"
+      "source": "cmd_consult()",
+      "target": "read_index()",
+      "relation": "calls"
     }
   ]
 };

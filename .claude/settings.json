@@ -1,11 +1,22 @@
 {
+  "_comment": "Agent Foundry Claude Code config — cross-platform venv activation.",
+  "_windows": "Git Bash uses bash; PowerShell uses pwsh (respects parent policy).",
+  "_unix": "macOS and Linux use bash directly. Source scripts/activate.sh.",
   "python": {
-    "venvPath": "C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv",
-    "venv": "C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv",
-    "pythonPath": "C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv\\Scripts\\python.exe",
-    "activateCommand": "\"C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv\\Scripts\\activate.bat\"",
-    "activateScript": "C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv\\Scripts\\Activate.ps1",
-    "skipActivate": true,
-    "useShell": "cmd"
+    "venvPath": ".venv",
+    "pythonPath": ".venv/Scripts/python.exe",
+    "pythonPathUnix": ".venv/bin/python",
+    "_detectionNote": "On Windows the pythonPath is .venv/Scripts/python.exe; on macOS/Linux it's .venv/bin/python. The bash script (scripts/activate.sh) handles this automatically.",
+    "skipActivate": false,
+    "useShell": "bash",
+    "activateCommand": "bash scripts/activate.sh",
+    "fallback": ".venv/bin/activate"
+  },
+  "shell": {
+    "_comment": "Use bash for cross-platform shell commands. On Windows, Git Bash or WSL provides bash.",
+    "default": "bash",
+    "macos": "bash",
+    "linux": "bash",
+    "windows": "bash"
   }
 }

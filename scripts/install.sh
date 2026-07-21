@@ -8,6 +8,26 @@
 set -e
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Cross-platform Python discovery (Windows + Unix)
+detect_python() {
+  if [[ -n "${AGENT_FOUNDRY_PY:-}" ]] && [[ -x "$AGENT_FOUNDRY_PY" ]]; then
+    echo "$AGENT_FOUNDRY_PY"; return 0
+  fi
+  if command -v python3 >/dev/null 2>&1; then echo "python3"; return 0; fi
+  if command -v python >/dev/null 2>&1; then echo "python"; return 0; fi
+  # Windows .venv fallback
+  if [[ -x "$REPO_ROOT/.venv/Scripts/python.exe" ]]; then
+    echo "$REPO_ROOT/.venv/Scripts/python.exe"; return 0
+  fi
+  return 1
+}
+
+# Cross-platform HOME detection
+if [[ -z "${HOME:-}" ]]; then
+  if [[ -n "${USERPROFILE:-}" ]]; then export HOME="$USERPROFILE"; fi
+fi
+
 HARNESS=""
 MANUAL=false
 DRY_RUN=false
@@ -152,12 +172,11 @@ install_for_harness "$HARNESS"
 echo ""
 echo "Done. Restart your harness so it picks up the new skills."
 # Auto-run smoke test on the harness we just installed
-if command -v python3 >/dev/null 2>&1; then
-  PYTHON=python3
-elif command -v python >/dev/null 2>&1; then
-  PYTHON=python
-else
-  PYTHON=""
+PYTHON=""
+if command -v python3 >/dev/null 2>&1; then PYTHON=python3
+elif command -v python >/dev/null 2>&1; then PYTHON=python
+elif [[ -x "$REPO_ROOT/.venv/Scripts/python.exe" ]]; then PYTHON="$REPO_ROOT/.venv/Scripts/python.exe"
+elif [[ -x "$REPO_ROOT/.venv/bin/python" ]]; then PYTHON="$REPO_ROOT/.venv/bin/python"
 fi
 
 if [[ -n "$PYTHON" && -n "$HARNESS" && "$HARNESS" != "" ]]; then
