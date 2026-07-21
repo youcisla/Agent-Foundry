@@ -984,7 +984,7 @@ const FILE_TREE = {
   },
   "vercel.json": {
     "path": "vercel.json",
-    "size": 642,
+    "size": 582,
     "ext": ".json"
   },
   "web": {
@@ -1016,7 +1016,7 @@ const FILE_TREE = {
       },
       "file-content.js": {
         "path": "web/file-content.js",
-        "size": 1282057,
+        "size": 1290381,
         "ext": ".js"
       },
       "file-tree.js": {
