@@ -67,3 +67,16 @@ export const {
   createElement,
   Fragment,
 } = React;
+
+/**
+ * Icon — renders a brand SVG from the global ICONS map (icons.js) directly into
+ * the React tree. This replaces the old .icon-svg text-placeholder + DOM-mutation
+ * approach, which fought with React's rendering.
+ */
+export function Icon({ name, className }) {
+  const svg = (typeof window !== "undefined" && window.ICONS && window.ICONS[name]) || "";
+  return React.createElement("span", {
+    className: "icon-svg" + (className ? " " + className : ""),
+    dangerouslySetInnerHTML: { __html: svg },
+  });
+}

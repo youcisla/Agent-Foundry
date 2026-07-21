@@ -10,7 +10,7 @@ import {
 import { toAstGraph, toPipeline } from "./adapters.js";
 import { GraphCanvas } from "./canvas.js";
 import {
-  ModeToggle, FilterPanel, LegendPanel, SimulationControls, NodeInspectorPanel,
+  CanvasControls, FilterPanel, LegendPanel, SimulationControls, NodeInspectorPanel,
 } from "./panels.js";
 import { useStore, graphStore, nodeMatchesFilters } from "./store.js";
 import { startGraphLive } from "./liveSync.js";
@@ -130,7 +130,7 @@ export function GraphApp() {
         onNodeMouseEnter=${onNodeMouseEnter}
         onNodeMouseLeave=${onNodeMouseLeave}
         fitKey=${mode + ":" + (rf.generated_at || "")}>
-        <${ModeToggle} />
+        <${CanvasControls} />
         <${FilterPanel} availableKinds=${availableKinds} />
         ${mode === GRAPH_MODES.AST ? html`<${LegendPanel} communities=${communities} />` : null}
         ${mode === GRAPH_MODES.PIPELINE ? html`<${SimulationControls} controller=${controller} steps=${stepLabels} />` : null}

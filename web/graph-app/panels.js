@@ -3,20 +3,60 @@
  * app store through useStore and dispatch via store actions; they hold no graph
  * geometry themselves.
  */
-import { html, Panel, useState, useRef } from "./deps.js";
+import { html, Panel, useState, useRef, Icon, useReactFlow } from "./deps.js";
+import { toPng } from "html-to-image";
 import { useStore, shallow, graphStore } from "./store.js";
 import { GRAPH_MODES } from "./schema.js";
 
-/* ── Mode toggle (AST ↔ Pipeline) ── */
-export function ModeToggle() {
+/* ── Mode toggle + canvas toolbar (single top-left panel — no overlap) ── */
+export function CanvasControls() {
   const mode = useStore((s) => s.mode);
+  const showMinimap = useStore((s) => s.showMinimap);
+  const rf = useReactFlow();
   const set = (m) => graphStore.getState().setMode(m);
+
+  const exportPng = async () => {
+    const wrap = document.querySelector("#graph-root .react-flow");
+    if (!wrap) return;
+    try {
+      const url = await toPng(wrap, {
+        backgroundColor: "#0a0a0b",
+        pixelRatio: 2,
+        filter: (n) => !(n.classList && (
+          n.classList.contains("gp-panel") ||
+          n.classList.contains("react-flow__minimap") ||
+          n.classList.contains("react-flow__attribution") ||
+          n.classList.contains("gp-inspector")
+        )),
+      });
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "agent-foundry-graph.png";
+      a.click();
+    } catch (e) { console.error("export failed", e); }
+  };
+
+  const Tool = (icon, title, onClick, active) => html`
+    <button className=${"gp-tool" + (active ? " active" : "")} title=${title} aria-label=${title} onClick=${onClick}>
+      <${Icon} name=${icon} />
+    </button>`;
+
   return html`
-    <${Panel} position="top-left" className="gp-panel gp-modes">
-      <button className=${"gp-seg" + (mode === GRAPH_MODES.AST ? " active" : "")}
-              onClick=${() => set(GRAPH_MODES.AST)}>Knowledge graph</button>
-      <button className=${"gp-seg" + (mode === GRAPH_MODES.PIPELINE ? " active" : "")}
-              onClick=${() => set(GRAPH_MODES.PIPELINE)}>Orchestration</button>
+    <${Panel} position="top-left" className="gp-panel gp-controls">
+      <div className="gp-modes">
+        <button className=${"gp-seg" + (mode === GRAPH_MODES.AST ? " active" : "")}
+                onClick=${() => set(GRAPH_MODES.AST)}>Knowledge graph</button>
+        <button className=${"gp-seg" + (mode === GRAPH_MODES.PIPELINE ? " active" : "")}
+                onClick=${() => set(GRAPH_MODES.PIPELINE)}>Orchestration</button>
+      </div>
+      <div className="gp-toolbar">
+        ${Tool("fit", "Fit to view", () => rf.fitView({ padding: 0.2, duration: 400 }))}
+        ${Tool("plus", "Zoom in", () => rf.zoomIn({ duration: 200 }))}
+        ${Tool("minus", "Zoom out", () => rf.zoomOut({ duration: 200 }))}
+        ${Tool("refresh", "Reset filters", () => graphStore.getState().resetFilters())}
+        ${Tool("map", "Toggle minimap", () => graphStore.getState().toggleMinimap(), showMinimap)}
+        ${Tool("download", "Export PNG", exportPng)}
+      </div>
     <//>`;
 }
 
@@ -39,7 +79,7 @@ export function FilterPanel({ availableKinds = [] }) {
   return html`
     <${Panel} position="top-right" className="gp-panel gp-filter">
       <div className="gp-search">
-        <span className="gp-search-ic"><span className="icon-svg">search</span></span>
+        <span className="gp-search-ic"><${Icon} name="search" /></span>
         <input type="search" placeholder="Search nodes…" value=${q} onInput=${onSearch} />
       </div>
       <div className="gp-chiprow">
@@ -98,7 +138,7 @@ export function SimulationControls({ controller, steps = [] }) {
   return html`
     <${Panel} position="bottom-center" className="gp-panel gp-sim">
       <button className="gp-btn" onClick=${() => (sim.running ? controller.pause() : controller.play())}>
-        <span className="icon-svg">${sim.running ? "pause" : "play"}</span>
+        <${Icon} name=${sim.running ? "pause" : "play"} />
         ${sim.running ? "Pause" : sim.done ? "Replay" : "Simulate dispatch"}
       </button>
       <button className="gp-btn ghost" onClick=${() => controller.stepOnce()}>Step</button>
@@ -122,7 +162,7 @@ export function NodeInspectorPanel({ node, neighbors = [], onSelect, onViewSourc
         <span className="gp-insp-kind" style=${{ "--c": swatch }}>${d.role || d.kind}</span>
         <button className="gp-insp-close" aria-label="Close"
                 onClick=${() => graphStore.getState().clearSelection()}>
-          <span className="icon-svg">close</span>
+          <${Icon} name="close" />
         </button>
       </div>
       <h3 className="gp-insp-title">${d.full || d.label}</h3>
@@ -152,7 +192,7 @@ export function NodeInspectorPanel({ node, neighbors = [], onSelect, onViewSourc
       </div>
       ${d.file
         ? html`<a className="gp-insp-src" href=${"https://github.com/youcisla/Agent-Foundry/blob/main/" + d.file}
-             target="_blank" rel="noopener"><span className="icon-svg">github</span> Open on GitHub</a>`
+             target="_blank" rel="noopener"><${Icon} name="github" /> Open on GitHub</a>`
         : null}
     </div>`;
 }

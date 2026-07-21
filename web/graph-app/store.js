@@ -23,11 +23,13 @@ export const graphStore = createStore((set, get) => ({
   highlightSet: null, // Set<id> of the selected node + neighbors, or null
   filters: emptyFilters(),
   sidePanelOpen: false,
+  showMinimap: true,
   stats: null,
   simulation: { running: false, step: -1, speed: 1, activeEdgeId: null, activeNodeId: null, done: false },
 
   setMode: (mode) =>
     set({ mode, selectedId: null, hoverId: null, highlightSet: null, sidePanelOpen: false }),
+  toggleMinimap: () => set((s) => ({ showMinimap: !s.showMinimap })),
 
   selectNode: (id, neighbors) =>
     set({

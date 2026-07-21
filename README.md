@@ -16,7 +16,7 @@ MIT, local, no cloud. 30 original skills, 0 external references.
 [![Agents](https://img.shields.io/badge/agents-2-4ade80.svg)](#catalog)
 [![Gates](https://img.shields.io/badge/quality%20gates-3%20green-4ade80.svg)](#quality-gates)
 [![External refs](https://img.shields.io/badge/external%20refs-0-4ade80.svg)](https://github.com/youcisla/Agent-Foundry/blob/main/scripts/nox.sh)
-[![Web](https://img.shields.io/badge/web-youcisla-agents.vercel.app-f5a623.svg)](https://youcisla-agents.vercel.app)
+[![Web](https://img.shields.io/badge/live%20demo-youcisla--agents.vercel.app-f5a623)](https://youcisla-agents.vercel.app)
 
 <br>
 
@@ -81,62 +81,27 @@ full catalog, an interactive knowledge graph, and one-click install.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-  A(["Your prompt<br/>/af build a react component"]) --> B{Agent Foundry<br/>daemon}
-  B --> C[planner<br/>rank_skills]
-  C --> D[executor<br/>LiteLLM]
-  D --> E((LLM<br/>Claude, OpenAI, etc.))
-  E --> D
-  D --> F[(SQLite<br/>executions.db)]
-  F --> G[Response to user]
-  style A fill:#f5a623,color:#000,stroke:#f5a623
-  style B fill:#22222a,color:#e8e8ea,stroke:#f5a623
-  style C fill:#22222a,color:#e8e8ea,stroke:#6496ff
-  style D fill:#22222a,color:#e8e8ea,stroke:#6496ff
-  style E fill:#22222a,color:#e8e8ea,stroke:#4ade80
-  style F fill:#22222a,color:#8b8b95,stroke:#8b8b95
-  style G fill:#f5a623,color:#000,stroke:#f5a623
+```text
+Your prompt  (/af build a react component)
+   └─▶ Agent Foundry daemon
+         └─▶ planner · rank_skills
+               └─▶ executor · LiteLLM  ⇄  LLM provider (Claude, OpenAI, …)
+                     └─▶ SQLite · executions.db
+                           └─▶ Response to user
 ```
+
+> Interactive versions of every diagram live on the site:
+> **[/graph](https://youcisla-agents.vercel.app/graph)** (knowledge graph + orchestration) and **[/audit](https://youcisla-agents.vercel.app/audit)**.
 
 ### What's in the box
 
-```mermaid
-flowchart TB
-  subgraph Skills["skills/ - 30 disciplines"]
-    SC["24 core"]
-    SO["6 optional"]
-  end
-  subgraph Agents["agents/ - 2 roles"]
-    AP["af-planner"]
-    AC["af-critic"]
-  end
-  subgraph Orchestrator["agent_foundry/ - Python daemon"]
-    DA["daemon.py FastAPI"]
-    PL["planner.py"]
-    EX["executor.py"]
-    LO["loop.py"]
-    JG["judge.py"]
-    IDX["indexer.py"]
-    LOG["logging_db.py"]
-    CFG["config.py"]
-  end
-  CFG --> DA
-  CFG --> PL
-  CFG --> LO
-  IDX --> PL
-  PL --> LO
-  LO --> EX
-  EX --> LO
-  LO --> JG
-  LO --> LOG
-  DA --> LO
-  AP -. uses .-> PL
-  AC -. used by .-> JG
-  Skills --> IDX
-  style Skills fill:#22222a,stroke:#f5a623,color:#e8e8ea
-  style Agents fill:#22222a,stroke:#6496ff,color:#e8e8ea
-  style Orchestrator fill:#22222a,stroke:#4ade80,color:#e8e8ea
+```text
+skills/         30 disciplines — 24 core + 6 optional   ─┐ feed
+agents/         af-planner · af-critic · af-orchestrator  │ the
+                                                          ▼ indexer
+agent_foundry/  config.py ─▶ daemon.py (FastAPI)
+                indexer.py ─▶ planner.py ─▶ loop.py  ⇄  executor.py
+                loop.py ─▶ judge.py (af-critic) ─▶ logging_db.py
 ```
 
 The daemon is lazy-started by the CLI — no systemd/launchd requirement.
@@ -144,37 +109,25 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 
 ### The loop, end to end
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as User prompt
-    participant L as run_loop
-    participant P as planner.rank_skills
-    participant E as executor
-    participant M as LiteLLM (any model)
-    participant J as judge (af-critic)
-    participant DB as SQLite executions.db
-    U->>L: /af "kill generic AI slop"
-    L->>P: rank_skills(prompt, index)
-    P-->>L: top match (e.g. anti-slop, 0.24)
-    L->>L: budget guard
-    L->>E: build_messages(prompt, body)
-    E->>M: POST /v1/messages
-    M-->>E: response text
-    E-->>L: response + cost
-    opt judge=true
-      L->>J: score output
-      J-->>L: {corr, slop, scope, verdict}
-    end
-    L->>DB: log_execution(...)
-    L-->>U: LoopResponse {output, plan, judge_score?}
+```text
+ 1.  user      → run_loop   : /af "kill generic AI slop"
+ 2.  run_loop  → planner    : rank_skills(prompt, index)
+ 3.  planner   → run_loop   : top match (e.g. anti-slop, 0.24)
+ 4.  run_loop  → run_loop   : budget guard
+ 5.  run_loop  → executor   : build_messages(prompt, body)
+ 6.  executor  → LiteLLM    : POST /v1/messages
+ 7.  LiteLLM   → executor   : response text
+ 8.  executor  → run_loop   : response + cost
+ 9.  (judge=true) run_loop → af-critic : score → {corr, slop, scope, verdict}
+10.  run_loop  → SQLite     : log_execution(...)
+11.  run_loop  → user       : LoopResponse {output, plan, judge_score?}
 ```
 
 ---
 
 ## Catalog
 
-**30 skills, 2 agents.** All original work under MIT. Each skill:
+**30 skills, 3 agents.** All original work under MIT. Each skill:
 
 - 📏 **≤150 lines / ≤8 KB** — Codex cap, no exceptions
 - 🎯 **Exactly one trigger phrase** — `Use when...` so the model knows when to fire
@@ -315,9 +268,9 @@ Browse the catalog, the knowledge graph, and the audit at
 
 | Page | What |
 |---|---|
-| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 30 skills + 2 agents with live search |
-| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive knowledge graph (287 nodes, 467 edges) |
-| [Audit](https://youcisla-agents.vercel.app/audit) | God nodes, surprising connections, Mermaid diagrams |
+| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 30 skills + 3 agents with live search |
+| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (396 nodes, 626 edges, 44 communities) |
+| [Audit](https://youcisla-agents.vercel.app/audit) | God nodes, surprising connections, interactive React Flow diagrams |
 
 The site regenerates from live repo state on every commit via
 `scripts/gen-site-data.py` → Vercel build → deploy.
@@ -329,7 +282,7 @@ The site regenerates from live repo state on every commit via
 | Status | Item |
 |---|---|
 | ✅ v0.1 | Python package + FastAPI daemon + Claude Code plugin |
-| ✅ v0.2 | Foundational audit, frozen Config, multi-page web app, knowledge graph, Mermaid diagrams |
+| ✅ v0.2 | Foundational audit, frozen Config, multi-page web app, knowledge graph, interactive React Flow diagrams |
 | 📋 v0.3 | Multi-harness adapters (Codex, Gemini, OpenCode, Hermes) |
 | 📋 v0.4 | `af verify` signed-manifest integrity |
 

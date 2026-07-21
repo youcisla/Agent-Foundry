@@ -143,34 +143,8 @@ file_content = build_file_content(REPO)
 print(f"file-content.js: {len(file_content)} files embedded")
 
 
-# ── 2c. diagrams: compile D2 sources → brand-themed SVG (fallback: keep committed) ──
-import shutil
-import subprocess
-
-_D2_COLOR_MAP = {
-    "1E1E2E": "131316", "313244": "1a1a1f", "45475A": "22222a", "585B70": "2a2a33",
-    "6C7086": "8b8b95", "A6ADC8": "8b8b95", "BAC2DE": "c9c9d0", "CDD6F4": "e8e8ea",
-    "CBA6F7": "f5a623", "F38BA8": "f5a623", "F5C2E7": "ff6b35", "89B4FA": "6496ff",
-    "94E2D5": "4ade80", "A6E3A1": "4ade80",
-}
-_d2 = shutil.which("d2")
-_dg = WEB / "diagrams"
-if _d2 and _dg.exists():
-    n = 0
-    for src in sorted(_dg.glob("*.d2")):
-        out = src.with_suffix(".svg")
-        try:
-            subprocess.run([_d2, "--theme", "200", "--pad", "8", str(src), str(out)], check=True, capture_output=True)
-            svg = out.read_text(encoding="utf-8")
-            for a, b in _D2_COLOR_MAP.items():
-                svg = re.sub("#" + a, "#" + b, svg, flags=re.IGNORECASE)
-            out.write_text(svg, encoding="utf-8")
-            n += 1
-        except Exception as exc:  # noqa: BLE001
-            print(f"diagram: skipped {src.name} ({exc})")
-    print(f"diagrams: recompiled {n} D2 source(s) via d2")
-else:
-    print("diagrams: d2 not on PATH — using committed SVGs")
+# (Diagrams are now interactive React Flow canvases rendered client-side from
+#  graph-app/diagram-specs.js — no D2/Mermaid build step.)
 
 
 # ── 3. graph-data.js + graph-stats.js ──

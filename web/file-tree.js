@@ -93,7 +93,7 @@ const FILE_TREE = {
   },
   "README.md": {
     "path": "README.md",
-    "size": 13359,
+    "size": 12771,
     "ext": ".md"
   },
   "agent_foundry": {
@@ -264,7 +264,7 @@ const FILE_TREE = {
       },
       "architecture.md": {
         "path": "docs/architecture.md",
-        "size": 6698,
+        "size": 6053,
         "ext": ".md"
       },
       "authoring.md": {
@@ -346,7 +346,7 @@ const FILE_TREE = {
       },
       "gen-site-data.py": {
         "path": "scripts/gen-site-data.py",
-        "size": 19842,
+        "size": 18741,
         "ext": ".py"
       },
       "graphify-run.py": {
@@ -777,7 +777,7 @@ const FILE_TREE = {
       },
       "audit.html": {
         "path": "web/audit.html",
-        "size": 5417,
+        "size": 6293,
         "ext": ".html"
       },
       "catalog.html": {
@@ -797,12 +797,12 @@ const FILE_TREE = {
       },
       "file-content.js": {
         "path": "web/file-content.js",
-        "size": 985618,
+        "size": 1213873,
         "ext": ".js"
       },
       "file-tree.js": {
         "path": "web/file-tree.js",
-        "size": 21922,
+        "size": 24003,
         "ext": ".js"
       },
       "graph-app": {
@@ -814,17 +814,27 @@ const FILE_TREE = {
           },
           "app.js": {
             "path": "web/graph-app/app.js",
-            "size": 6311,
+            "size": 6319,
             "ext": ".js"
           },
           "canvas.js": {
             "path": "web/graph-app/canvas.js",
-            "size": 1742,
+            "size": 1824,
             "ext": ".js"
           },
           "deps.js": {
             "path": "web/graph-app/deps.js",
-            "size": 1414,
+            "size": 1931,
+            "ext": ".js"
+          },
+          "diagram-specs.js": {
+            "path": "web/graph-app/diagram-specs.js",
+            "size": 7339,
+            "ext": ".js"
+          },
+          "diagram.js": {
+            "path": "web/graph-app/diagram.js",
+            "size": 3836,
             "ext": ".js"
           },
           "edges.js": {
@@ -834,7 +844,7 @@ const FILE_TREE = {
           },
           "graph.css": {
             "path": "web/graph-app/graph.css",
-            "size": 10722,
+            "size": 13143,
             "ext": ".css"
           },
           "liveSync.js": {
@@ -844,7 +854,7 @@ const FILE_TREE = {
           },
           "main.js": {
             "path": "web/graph-app/main.js",
-            "size": 1240,
+            "size": 769,
             "ext": ".js"
           },
           "nodes.js": {
@@ -859,7 +869,7 @@ const FILE_TREE = {
           },
           "panels.js": {
             "path": "web/graph-app/panels.js",
-            "size": 7296,
+            "size": 8914,
             "ext": ".js"
           },
           "schema.js": {
@@ -874,7 +884,7 @@ const FILE_TREE = {
           },
           "store.js": {
             "path": "web/graph-app/store.js",
-            "size": 4320,
+            "size": 4411,
             "ext": ".js"
           }
         }
@@ -896,17 +906,17 @@ const FILE_TREE = {
       },
       "graph.html": {
         "path": "web/graph.html",
-        "size": 8267,
+        "size": 8330,
         "ext": ".html"
       },
       "icons.js": {
         "path": "web/icons.js",
-        "size": 11261,
+        "size": 12139,
         "ext": ".js"
       },
       "index.html": {
         "path": "web/index.html",
-        "size": 31460,
+        "size": 32210,
         "ext": ".html"
       },
       "install-data.js": {
@@ -931,7 +941,7 @@ const FILE_TREE = {
       },
       "styles.css": {
         "path": "web/styles.css",
-        "size": 31634,
+        "size": 31447,
         "ext": ".css"
       },
       "why.html": {

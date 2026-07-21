@@ -5,11 +5,12 @@
  * attribution intact (MIT-core requirement).
  */
 import {
-  html, ReactFlow, Background, BackgroundVariant, MiniMap, Controls,
+  html, ReactFlow, Background, BackgroundVariant, MiniMap,
   useEffect, useReactFlow,
 } from "./deps.js";
 import { nodeTypes } from "./nodes.js";
 import { edgeTypes } from "./edges.js";
+import { useStore } from "./store.js";
 
 const minimapColor = (n) => (n.data && n.data.color) || "#8b8b95";
 
@@ -18,6 +19,7 @@ export function GraphCanvas({
   onNodeMouseEnter, onNodeMouseLeave, fitKey, children,
 }) {
   const rf = useReactFlow();
+  const showMinimap = useStore((s) => s.showMinimap);
   useEffect(() => {
     const t = setTimeout(() => rf.fitView({ padding: 0.2, duration: 400 }), 80);
     return () => clearTimeout(t);
@@ -41,9 +43,10 @@ export function GraphCanvas({
       elevateNodesOnSelect=${true}
       fitView>
       <${Background} variant=${BackgroundVariant.Dots} gap=${28} size=${1} color="#2a2a33" />
-      <${MiniMap} pannable=${true} zoomable=${true} nodeColor=${minimapColor}
-                  maskColor="rgba(10,10,11,0.72)" style=${{ background: "#131316", border: "1px solid #2a2a33" }} />
-      <${Controls} showInteractive=${false} />
+      ${showMinimap
+        ? html`<${MiniMap} pannable=${true} zoomable=${true} nodeColor=${minimapColor}
+                  maskColor="rgba(10,10,11,0.72)" style=${{ background: "#131316", border: "1px solid #2a2a33" }} />`
+        : null}
       ${children}
     <//>`;
 }

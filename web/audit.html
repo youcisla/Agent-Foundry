@@ -9,6 +9,21 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="https://unpkg.com/@xyflow/react@12/dist/style.css">
+  <link rel="stylesheet" href="graph-app/graph.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@18.3.1",
+      "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+      "react-dom": "https://esm.sh/react-dom@18.3.1",
+      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+      "@xyflow/react": "https://esm.sh/@xyflow/react@12?external=react,react-dom",
+      "htm": "https://esm.sh/htm@3.1.1",
+      "zustand/vanilla": "https://esm.sh/zustand@4.5.5/vanilla"
+    }
+  }
+  </script>
   <script src="icons.js"></script>
 </head>
 <body>
@@ -41,9 +56,9 @@
     <div class="container">
       <h2>Community cohesion</h2>
       <p class="section-sub">Low cohesion doesn't always mean &ldquo;split it.&rdquo; Most low-cohesion clusters are cross-cutting infrastructure.</p>
-      <figure class="diagram">
-        <img src="diagrams/cohesion.svg" alt="Community cohesion clusters — tight, medium, and low-cohesion (cross-cutting) modules" loading="lazy">
-      </figure>
+      <div class="rf-diagram" data-rf-diagram="cohesion" role="img" aria-label="Community cohesion clusters — tight, medium, and low-cohesion (cross-cutting) modules">
+        <div class="gp-loading">Loading diagram…</div>
+      </div>
     </div>
   </section>
 
@@ -51,12 +66,12 @@
     <div class="container">
       <h2>God nodes</h2>
       <p class="section-sub">Top 10 most-connected symbols. Refactor with care.</p>
-      <figure class="diagram">
-        <img src="diagrams/sequence.svg" alt="Request sequence — user prompt through run_loop, planner, executor, LiteLLM, judge, and SQLite" loading="lazy">
-      </figure>
-      <figure class="diagram">
-        <img src="diagrams/godnodes.svg" alt="God nodes — most-connected symbols and their dependency edges" loading="lazy">
-      </figure>
+      <div class="rf-diagram" data-rf-diagram="sequence" role="img" aria-label="Request lifecycle — user prompt through run_loop, rank_skills, executor, LiteLLM, af-critic, and executions.db">
+        <div class="gp-loading">Loading diagram…</div>
+      </div>
+      <div class="rf-diagram" data-rf-diagram="godnodes" role="img" aria-label="God nodes — most-connected symbols and their dependency edges">
+        <div class="gp-loading">Loading diagram…</div>
+      </div>
       <div class="audit-grid" id="god-grid"></div>
     </div>
   </section>
@@ -73,9 +88,9 @@
     <div class="container">
       <h2>How to read this page</h2>
       <p class="section-sub">Numbers come from the static knowledge graph. Run <code>python scripts/graphify-run.py</code> to refresh.</p>
-      <figure class="diagram">
-        <img src="diagrams/architecture.svg" alt="Repository architecture map — Agent Foundry package modules and repo-root directories" loading="lazy">
-      </figure>
+      <div class="rf-diagram" data-rf-diagram="architecture" role="img" aria-label="Repository architecture map — Agent Foundry package modules and repo-root directories">
+        <div class="gp-loading">Loading diagram…</div>
+      </div>
     </div>
   </section>
 
@@ -108,6 +123,7 @@
       </div>
     `).join('');
   </script>
+<script type="module" src="graph-app/diagram.js"></script>
 <script src="context-menu.js"></script>
 
 <script>

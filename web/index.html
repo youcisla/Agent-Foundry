@@ -11,6 +11,21 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="https://unpkg.com/@xyflow/react@12/dist/style.css">
+  <link rel="stylesheet" href="graph-app/graph.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@18.3.1",
+      "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+      "react-dom": "https://esm.sh/react-dom@18.3.1",
+      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+      "@xyflow/react": "https://esm.sh/@xyflow/react@12?external=react,react-dom",
+      "htm": "https://esm.sh/htm@3.1.1",
+      "zustand/vanilla": "https://esm.sh/zustand@4.5.5/vanilla"
+    }
+  }
+  </script>
   <script src="icons.js"></script>
 </head>
 <body>
@@ -127,7 +142,7 @@
           </div>
           <div class="feature-card" style="padding:18px 20px">
             <h3><span class="icon-svg">graph</span> Graph-aware planning</h3>
-            <p>287 nodes, 467 edges. The knowledge graph feeds back into the planner — boosting related skills 15% higher in the ranking.</p>
+            <p>396 nodes, 626 edges, 44 communities. The knowledge graph feeds back into the planner — boosting related skills 15% higher in the ranking.</p>
           </div>
           <div class="feature-card" style="padding:18px 20px">
             <h3><span class="icon-svg">refresh</span> Self-improvement loop</h3>
@@ -217,9 +232,9 @@
     <div class="container">
       <h2>How it works</h2>
       <p class="section-sub">From prompt to result in one orchestrator pass.</p>
-      <figure class="diagram">
-        <img src="diagrams/orchestrator.svg" alt="Orchestrator flow — prompt to skill matcher to planner to executor to LLM provider to SQLite log to response" loading="lazy">
-      </figure>
+      <div class="rf-diagram" data-rf-diagram="orchestrator" role="img" aria-label="Orchestrator flow — prompt to skill matcher to planner to executor to LLM provider to SQLite log to response">
+        <div class="gp-loading">Loading diagram…</div>
+      </div>
       <div class="cta-inline">
         <a href="why.html" class="btn btn-primary">Learn more →</a>
       </div>
@@ -415,6 +430,7 @@
     }
     window.showSkillPreview = showSkillPreview;
   </script>
+<script type="module" src="graph-app/diagram.js"></script>
 <script src="context-menu.js"></script>
 
 <script>

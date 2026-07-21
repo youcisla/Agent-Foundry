@@ -10,28 +10,18 @@ Agent Foundry is a **runtime orchestrator** for AI coding assistants. It has thr
 2. **Agents** — roles the orchestrator can dispatch to or the model can delegate to (who acts).
 3. **Orchestrator** — the local daemon that ranks, dispatches, executes, logs, and judges.
 
-```mermaid
-flowchart LR
-    subgraph Shell["`**YOUR SHELL / IDE**`"]
-        direction LR
-        CC[claude-code] --- CX[codex] --- GM[gemini] --- OC[opencode] --- HM[hermes]
-    end
-    Shell -->|/af \<prompt\>| DAEMON
-    Shell -->|/plan \<prompt\>| DAEMON
-    subgraph DAEMON["`**Agent Foundry daemon (localhost)**`"]
-        direction TB
-        FA[FastAPI] --- PL[planner] --- BG[budget guard] --- JD[judge]
-    end
-    DAEMON --> CAT
-    subgraph CAT["`**Repo layers**`"]
-        direction TB
-        SK[Skill catalog] --- AG[Agent catalog] --- RF[references/]
-        SQ[SQLite log] --- SC[scripts/] --- HK[hooks/]
-    end
-    style Shell fill:#1a1a1f,stroke:#f5a623,color:#e8e8ea
-    style DAEMON fill:#1a1a1f,stroke:#6496ff,color:#e8e8ea
-    style CAT fill:#1a1a1f,stroke:#8b8b95,color:#8b8b95
+```text
+YOUR SHELL / IDE   claude-code · codex · gemini · opencode · hermes
+        │  /af <prompt>   /plan <prompt>
+        ▼
+Agent Foundry daemon (localhost)   FastAPI · planner · budget guard · judge
+        │
+        ▼
+Repo layers   Skill catalog · Agent catalog · references/
+              SQLite log · scripts/ · hooks/
 ```
+
+> Rendered interactively at **[youcisla-agents.vercel.app/graph](https://youcisla-agents.vercel.app/graph)**.
 
 ## Skill vs Agent — the load-bearing distinction
 
@@ -73,33 +63,15 @@ Ask:
 
 The v0.1 daemon does the minimum: **plan → execute → return**. v0.2 layers in:
 
-```mermaid
-flowchart TB
-    P((prompt)) --> PLANNER
-    subgraph PLANNER[Planner - rank skills]
-        direction LR
-        RP[pattern match] --> RC[cost check]
-    end
-    PLANNER --> BG[Budget guard]
-    BG -->|requires_confirmation| EX
-    BG -->|OK| EX
-    subgraph EX[Executor - LiteLLM]
-        direction LR
-        LLM[LLM call] --> OUT[output]
-    end
-    EX --> JD{Judge enabled?}
-    JD -->|yes| JDGE[Judge - scores 0-1]
-    JDGE --> RESP
-    JD -->|no| RESP((response))
-    RESP --> LOG[(SQLite log)]
-    style P fill:#f5a623,color:#000
-    style PLANNER fill:#1a1a1f,stroke:#6496ff
-    style BG fill:#1a1a1f,stroke:#f5a623
-    style EX fill:#1a1a1f,stroke:#6496ff
-    style JD fill:#1a1a1f,stroke:#4ade80
-    style JDGE fill:#1a1a1f,stroke:#4ade80
-    style RESP fill:#f5a623,color:#000
-    style LOG fill:#1a1a1f,stroke:#8b8b95
+```text
+prompt
+   └─▶ Planner · rank skills        (pattern match → cost check)
+         └─▶ Budget guard           (OK | requires_confirmation)
+               └─▶ Executor · LiteLLM   (LLM call → output)
+                     └─▶ Judge enabled?
+                           ├─ yes ─▶ Judge · scores 0–1 ─┐
+                           └─ no ──────────────────────▶ response
+                                                          └─▶ SQLite log
 ```
 Each layer is **independently testable**. Each layer's inputs/outputs are Pydantic models. The orchestrator has no implicit state outside of SQLite.
 

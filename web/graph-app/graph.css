@@ -1,5 +1,19 @@
 /* React Flow graph app — brand-themed. Assumes styles.css variables are loaded. */
 
+/* ── Embedded static diagrams (index/audit) ── */
+.rf-diagram { position: relative; height: 380px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev); overflow: hidden; margin: 20px 0; box-shadow: var(--shadow); }
+.rf-diagram .gp-loading, .rf-diagram .dg-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-faint); font-size: 13px; }
+.dg-box { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 7px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--c, var(--border)); border-left: 3px solid var(--c, var(--accent)); color: var(--text); font-family: var(--font); white-space: nowrap; }
+.dg-box .dg-box-label { font-family: var(--font-mono); font-size: 12px; color: var(--text); }
+.dg-box .dg-box-sub { font-size: 9.5px; color: var(--text-faint); }
+.dg-box.dg-io { border-radius: 20px; background: color-mix(in srgb, var(--c, var(--accent)) 16%, var(--surface)); border-left-width: 1px; }
+.dg-box.dg-accent { box-shadow: inset 2px 0 0 var(--c); }
+.dg-h { opacity: 0; width: 1px; height: 1px; min-width: 0; min-height: 0; border: 0; }
+.dg-group { border: 1px dashed var(--c, var(--border)); border-radius: 12px; background: color-mix(in srgb, var(--c, var(--accent)) 5%, transparent); }
+.dg-group-label { position: absolute; top: 7px; left: 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--c, var(--text-dim)); font-weight: 600; }
+.rf-diagram .react-flow__attribution { background: transparent; font-size: 9px; }
+
+
 #graph-root { position: relative; width: 100%; height: 74vh; min-height: 520px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--bg-elev); }
 .gp-wrap { position: absolute; inset: 0; }
 
@@ -50,9 +64,16 @@
 
 /* ── Overlay panels ── */
 .gp-panel { background: rgba(26,26,31,0.92); border: 1px solid var(--border); border-radius: var(--radius-sm); backdrop-filter: blur(6px); box-shadow: var(--shadow-lg); font-size: 12px; color: var(--text-dim); }
-.gp-modes { display: flex; padding: 3px; gap: 2px; }
+.gp-controls { display: flex; flex-direction: column; gap: 6px; padding: 5px; }
+.gp-modes { display: flex; gap: 2px; }
 .gp-seg { padding: 6px 12px; border: none; background: transparent; color: var(--text-dim); border-radius: 6px; font-size: 12px; font-weight: 500; }
 .gp-seg.active { background: var(--accent-grad); color: #000; font-weight: 600; }
+.gp-toolbar { display: flex; gap: 3px; border-top: 1px solid var(--border-soft); padding-top: 6px; }
+.gp-tool { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; color: var(--text-dim); cursor: pointer; transition: background var(--transition), color var(--transition), border-color var(--transition); }
+.gp-tool:hover { background: var(--surface-2); color: var(--text); border-color: var(--accent); }
+.gp-tool.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.gp-tool .icon-svg { display: inline-flex; }
+.gp-tool .icon-svg svg { width: 15px; height: 15px; }
 .gp-filter { display: flex; flex-direction: column; gap: 8px; padding: 10px; width: 234px; }
 .gp-search { position: relative; display: flex; align-items: center; }
 .gp-search-ic { position: absolute; left: 9px; display: inline-flex; color: var(--text-faint); }

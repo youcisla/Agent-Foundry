@@ -331,9 +331,8 @@ section.alt-dark { background: var(--surface); }
 .doc-body.markdown pre code { background: none; border: none; padding: 0; color: var(--text-dim); }
 .doc-body .code-view { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.65; color: var(--text-dim); overflow-x: auto; margin: 0; }
 
-/* ── Diagrams (D2-rendered SVG) ── */
-.diagram { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; margin: 20px 0; text-align: center; overflow-x: auto; box-shadow: var(--shadow); }
-.diagram img { max-width: 100%; height: auto; display: inline-block; }
+/* Interactive diagrams now render via React Flow (graph-app/diagram.js);
+   their styles live in graph-app/graph.css (.rf-diagram). */
 
 /* ── Hero page (why.html etc) ── */
 .hero-page { padding: 60px 0 40px; }
