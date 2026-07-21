@@ -35,6 +35,9 @@ build/
 .venv/
 .venv
 
+# HyperFrames demo (regenerate via web/demo/af-demo + hyperframes render)
+web/demo/*/renders/
+
 # uv
 uv.lock
 

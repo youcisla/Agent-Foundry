@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden;
+        background: radial-gradient(ellipse at top, #2a1810 0%, #0a0a0a 70%); }
+      body { font-family: "Inter", sans-serif; color: #fff; }
+      .mono { font-family: "JetBrains Mono", monospace; }
+
+      .bg-grid {
+        position: absolute; inset: 0;
+        background-image:
+          linear-gradient(rgba(245, 166, 35, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(245, 166, 35, 0.05) 1px, transparent 1px);
+        background-size: 80px 80px;
+        mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+      }
+      .glow {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 1200px; height: 1200px;
+        background: radial-gradient(circle, rgba(245, 166, 35, 0.15) 0%, transparent 50%);
+        pointer-events: none;
+      }
+
+      .hero { position: absolute; left: 50%; top: 220px; transform: translateX(-50%); text-align: center; }
+      .logo { font-size: 28px; font-weight: 600; letter-spacing: 0.3em; color: #f5a623;
+        margin-bottom: 30px; text-transform: uppercase; }
+      .title { font-size: 140px; font-weight: 900; line-height: 1.05;
+        background: linear-gradient(135deg, #fff 0%, #f5a623 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text; }
+      .subtitle { font-size: 36px; font-weight: 400; color: rgba(255, 255, 255, 0.7);
+        margin-top: 30px; letter-spacing: 0.05em; }
+
+      .stats { position: absolute; left: 50%; bottom: 220px; transform: translateX(-50%);
+        display: flex; gap: 80px; }
+      .stat { text-align: center; min-width: 200px; }
+      .stat-num { font-size: 96px; font-weight: 900; color: #f5a623; line-height: 1; }
+      .stat-label { font-size: 22px; color: rgba(255, 255, 255, 0.6); margin-top: 12px;
+        text-transform: uppercase; letter-spacing: 0.1em; }
+
+      .pills { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+        display: flex; gap: 16px; }
+      .pill { padding: 12px 28px; border-radius: 999px;
+        background: rgba(245, 166, 35, 0.12); border: 1px solid rgba(245, 166, 35, 0.3);
+        color: #f5a623; font-size: 18px; font-weight: 600; letter-spacing: 0.05em; }
+
+      .corner { position: absolute; font-family: "JetBrains Mono", monospace;
+        font-size: 16px; color: rgba(255, 255, 255, 0.4); }
+      .corner-tl { top: 40px; left: 40px; }
+      .corner-tr { top: 40px; right: 40px; }
+      .corner-bl { bottom: 40px; left: 40px; }
+      .corner-br { bottom: 40px; right: 40px; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="9"
+      data-width="1920"
+      data-height="1080"
+    >
+    <div class="bg-grid"></div>
+    <div class="glow"></div>
+
+    <div class="corner corner-tl mono">AGENT_FOUNDRY/</div>
+    <div class="corner corner-tr mono">v0.3.0 · MIT</div>
+    <div class="corner corner-bl mono">31 SKILLS · 3 AGENTS · 14 HARNESSES</div>
+    <div class="corner corner-br mono">youcisla-agents.vercel.app</div>
+
+    <div class="hero">
+      <div class="logo">▌AGENT FOUNDRY</div>
+      <div class="title">Skill orchestrator<br/>for AI coding agents.</div>
+      <div class="subtitle">31 original skills. Engram routing. Zero external dependencies.</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num" id="num-skills">0</div>
+        <div class="stat-label">Skills</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="num-agents">0</div>
+        <div class="stat-label">Agents</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="num-nodes">0</div>
+        <div class="stat-label">Graph nodes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="num-edges">0</div>
+        <div class="stat-label">Edges</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="num-gates">0</div>
+        <div class="stat-label">Gates</div>
+      </div>
+    </div>
+
+    <div class="pills">
+      <div class="pill">✓ Claude Code</div>
+      <div class="pill">✓ Codex</div>
+      <div class="pill">✓ Hermes</div>
+      <div class="pill">+ 11 more</div>
+    </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // Hero entrance
+      tl.from(".logo", { opacity: 0, y: -30, duration: 0.8, ease: "power2.out" }, 0);
+      tl.from(".title", { opacity: 0, y: 40, duration: 1.0, ease: "power3.out" }, 0.3);
+      tl.from(".subtitle", { opacity: 0, y: 20, duration: 0.8, ease: "power2.out" }, 0.8);
+
+      // Corner brackets fade in
+      tl.from(".corner", { opacity: 0, duration: 0.6 }, 1.4);
+
+      // Stats count up at 2s
+      tl.add(() => {
+        const targets = {
+          "num-skills": 31,
+          "num-agents": 3,
+          "num-nodes": 555,
+          "num-edges": 898,
+          "num-gates": 3,
+        };
+        Object.entries(targets).forEach(([id, target]) => {
+          const obj = { v: 0 };
+          gsap.to(obj, {
+            v: target, duration: 1.5, ease: "power2.out",
+            onUpdate: () => {
+              document.getElementById(id).textContent = Math.round(obj.v);
+            },
+          });
+        });
+      }, 2.0);
+
+      // Pills entrance
+      tl.from(".pills .pill", {
+        opacity: 0, scale: 0.8, stagger: 0.1, duration: 0.5, ease: "back.out(1.7)"
+      }, 4.0);
+
+      // Subtle pulse on glow (finite repeat, fits in 9s composition)
+      tl.to(".glow", {
+        scale: 1.1, duration: 4, ease: "sine.inOut", yoyo: true,
+        repeat: Math.max(0, Math.floor(9 / 4) - 1)
+      }, 0);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
