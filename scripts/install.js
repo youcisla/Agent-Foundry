@@ -62,6 +62,14 @@ function detectHarness() {
     { name: 'cursor',       path: join(h, '.cursor') },
     { name: 'hermes',       path: join(h, 'AppData', 'Local', 'hermes') },
     { name: 'opencode',     path: join(h, '.config', 'opencode') },
+    { name: 'antigravity',  path: join(h, '.agent') },
+    { name: 'codebuddy',    path: join(h, '.codebuddy') },
+    { name: 'joycode',      path: join(h, '.joycode') },
+    { name: 'qwen',         path: join(h, '.qwen') },
+    { name: 'kimi',         path: join(h, '.kimi') },
+    { name: 'openclaw',     path: join(h, '.openclaw') },
+    { name: 'zed',          path: join(h, '.zed') },
+    { name: 'gemini-cli',   path: join(h, '.gemini') },
   ];
   for (const c of candidates) {
     if (existsSync(c.path)) return c.name;
@@ -123,9 +131,14 @@ function rmIfExists(p) {
 }
 
 // ---------- harness installers ----------
+// Status values:
+//   'tested'      — installed and verified on this machine
+//   'beta'        — adapter structure defined, install runs but end-to-end not yet tested
+//   'coming-soon' — adapter not yet implemented (refuses to install, prints note)
 const HARNESSES = {
   'claude-code': {
     label: 'Claude Code',
+    status: 'tested',
     install: (dry) => {
       const dst = join(home(), '.claude', 'skills', 'agent-foundry');
       if (dry) { log(`Would link: ${REPO}/skills -> ${dst}`); return true; }
@@ -133,8 +146,19 @@ const HARNESSES = {
       return linkOrCopy(join(REPO, 'skills'), dst);
     },
   },
+  'claude-project': {
+    label: 'Claude Code (project-local)',
+    status: 'coming-soon',
+    install: (dry) => {
+      const dst = join(process.cwd(), '.claude', 'skills', 'agent-foundry');
+      if (dry) { log(`Would link (project-local): ${REPO}/skills -> ${dst}`); return true; }
+      ensureDir(dirname(dst));
+      return linkOrCopy(join(REPO, 'skills'), dst);
+    },
+  },
   'codex': {
     label: 'Codex CLI',
+    status: 'tested',
     install: (dry) => {
       const skillsDst   = join(home(), '.codex', 'skills', 'agent-foundry');
       const codexCfgDir = join(home(), '.codex');
@@ -159,6 +183,7 @@ const HARNESSES = {
   },
   'cursor': {
     label: 'Cursor',
+    status: 'beta',
     install: (dry) => {
       const rulesDst = join(home(), '.cursor', 'rules');
       const hooksDst = join(home(), '.cursor', 'hooks.json');
@@ -184,6 +209,7 @@ const HARNESSES = {
   },
   'hermes': {
     label: 'Hermes',
+    status: 'tested',
     install: (dry) => {
       const dst = join(home(), 'AppData', 'Local', 'hermes', 'skills', 'agent-foundry');
       if (dry) { log(`Would link: ${REPO}/skills -> ${dst}`); return true; }
@@ -193,6 +219,7 @@ const HARNESSES = {
   },
   'gemini-cli': {
     label: 'Gemini CLI',
+    status: 'beta',
     install: (dry) => {
       const cfg = join(home(), '.gemini');
       const dst = join(cfg, 'agent-foundry-config');
@@ -207,6 +234,7 @@ const HARNESSES = {
   },
   'opencode': {
     label: 'OpenCode',
+    status: 'beta',
     install: (dry) => {
       const cfg = join(home(), '.config', 'opencode');
       const configDst = join(cfg, 'agent-foundry-config');
@@ -222,6 +250,118 @@ const HARNESSES = {
       linkOrCopy(join(REPO, 'skills'), skillsDst);
       log('Merge config if needed: jq -s \".[0] * .[1]\" ' + join(cfg, 'opencode.json') + ' ' + join(configDst, 'opencode.json') + ' > merge.json');
       return true;
+    },
+  },
+  'antigravity': {
+    label: 'Antigravity',
+    status: 'beta',
+    install: (dry) => {
+      const cfg = join(home(), '.agent');
+      const rulesDst = join(cfg, 'rules');
+      const skillsDst = join(cfg, 'skills', 'agent-foundry');
+      if (dry) {
+        log(`Would copy: ${REPO}/.antigravity/rules/*.md -> ${rulesDst}`);
+        log(`Would copy: ${REPO}/.antigravity/skills/agent-foundry/ -> ${skillsDst}`);
+        log(`Would copy: ${REPO}/.antigravity/workflows/*.md -> ${cfg}/workflows/`);
+        return true;
+      }
+      ensureDir(rulesDst);
+      cpSync(join(REPO, '.antigravity', 'rules'), rulesDst, { recursive: true });
+      cpSync(join(REPO, '.antigravity', 'skills'), cfg, { recursive: true });
+      ensureDir(join(cfg, 'workflows'));
+      cpSync(join(REPO, '.antigravity', 'workflows'), join(cfg, 'workflows'), { recursive: true });
+      return true;
+    },
+  },
+  'codebuddy': {
+    label: 'Codebuddy',
+    status: 'beta',
+    install: (dry) => {
+      const cfg = join(home(), '.codebuddy');
+      if (dry) {
+        log(`Would copy: ${REPO}/.codebuddy/skills/agent-foundry/ -> ${cfg}/skills/`);
+        log(`Would copy: ${REPO}/.codebuddy/commands/af.md -> ${cfg}/commands/`);
+        return true;
+      }
+      ensureDir(join(cfg, 'skills'));
+      ensureDir(join(cfg, 'commands'));
+      cpSync(join(REPO, '.codebuddy', 'skills'), join(cfg, 'skills'), { recursive: true });
+      cpSync(join(REPO, '.codebuddy', 'commands'), join(cfg, 'commands'), { recursive: true });
+      return true;
+    },
+  },
+  'joycode': {
+    label: 'JoyCode',
+    status: 'beta',
+    install: (dry) => {
+      const cfg = join(home(), '.joycode');
+      if (dry) {
+        log(`Would copy: ${REPO}/.joycode/skills/agent-foundry/ -> ${cfg}/skills/`);
+        log(`Would copy: ${REPO}/.joycode/commands/af.md -> ${cfg}/commands/`);
+        return true;
+      }
+      ensureDir(join(cfg, 'skills'));
+      ensureDir(join(cfg, 'commands'));
+      cpSync(join(REPO, '.joycode', 'skills'), join(cfg, 'skills'), { recursive: true });
+      cpSync(join(REPO, '.joycode', 'commands'), join(cfg, 'commands'), { recursive: true });
+      return true;
+    },
+  },
+  'qwen': {
+    label: 'Qwen CLI',
+    status: 'beta',
+    install: (dry) => {
+      const cfg = join(home(), '.qwen');
+      const skillsDst = join(cfg, 'skills', 'agent-foundry');
+      if (dry) {
+        log(`Would copy: ${REPO}/.qwen/skills/agent-foundry/ -> ${cfg}/skills/`);
+        return true;
+      }
+      ensureDir(join(cfg, 'skills'));
+      cpSync(join(REPO, '.qwen', 'skills'), join(cfg, 'skills'), { recursive: true });
+      return true;
+    },
+  },
+  'kimi': {
+    label: 'Kimi',
+    status: 'beta',
+    install: (dry) => {
+      const cfg = join(home(), '.kimi');
+      const skillsDst = join(cfg, 'skills', 'agent-foundry');
+      if (dry) {
+        log(`Would copy: ${REPO}/.kimi/skills/agent-foundry/ -> ${cfg}/skills/`);
+        return true;
+      }
+      ensureDir(join(cfg, 'skills'));
+      cpSync(join(REPO, '.kimi', 'skills'), join(cfg, 'skills'), { recursive: true });
+      return true;
+    },
+  },
+  'openclaw': {
+    label: 'OpenClaw',
+    status: 'beta',
+    install: (dry) => {
+      const cfg = join(home(), '.openclaw');
+      const skillsDst = join(cfg, 'skills', 'agent-foundry');
+      if (dry) {
+        log(`Would copy: ${REPO}/.openclaw/skills/agent-foundry/ -> ${cfg}/skills/`);
+        return true;
+      }
+      ensureDir(join(cfg, 'skills'));
+      cpSync(join(REPO, '.openclaw', 'skills'), join(cfg, 'skills'), { recursive: true });
+      return true;
+    },
+  },
+  'zed': {
+    label: 'Zed (zquire)',
+    status: 'coming-soon',
+    install: (dry) => {
+      log('');
+      log(`  ⚠ zed is marked 'coming-soon'.`);
+      log(`    Zed's agent client (zquire) is in beta and lacks a stable plugin API.`);
+      log(`    We document the expected layout in .zed/README.md but won't ship a tested`);
+      log(`    adapter until upstream stabilizes.`);
+      return false;
     },
   },
 };
@@ -249,8 +389,9 @@ for (const a of args) {
 
 // ---------- main ----------
 function printHelp() {
+  const STATUS_BADGE = { 'tested': '✓', 'beta': '◐', 'coming-soon': '○' };
   const list = Object.entries(HARNESSES)
-    .map(([k, v]) => `  ${k.padEnd(14)} ${v.label}`)
+    .map(([k, v]) => `  ${k.padEnd(16)} ${STATUS_BADGE[v.status] || ' '} ${v.label}`)
     .join('\n');
   console.log(`Agent Foundry installer
 
@@ -270,7 +411,7 @@ Options:
   --verbose, -v       Verbose output
   --help, -h          Show this help
 
-Targets:
+Targets (✓ tested · ◐ beta · ○ coming-soon):
 ${list}
 `);
 }
