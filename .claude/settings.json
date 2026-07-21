@@ -1,0 +1,11 @@
+{
+  "python": {
+    "venvPath": "C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv",
+    "venv": "C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv",
+    "pythonPath": "C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv\\Scripts\\python.exe",
+    "activateCommand": "\"C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv\\Scripts\\activate.bat\"",
+    "activateScript": "C:\\Users\\Y.CHEHBOUB\\PERSONAL__DO_NOT_TOUCH\\Agent-Foundry\\.venv\\Scripts\\Activate.ps1",
+    "skipActivate": true,
+    "useShell": "cmd"
+  }
+}

@@ -33,6 +33,7 @@ __pycache__/
 dist/
 build/
 .venv/
+.venv
 
 # uv
 uv.lock
@@ -44,3 +45,6 @@ uv.lock
 
 # Generated (indexer rebuilds on demand)
 skills/index.json
+
+# Claude Code local overrides (keep settings.json tracked)
+.claude/settings.local.json
