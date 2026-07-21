@@ -1,16 +1,24 @@
 const GRAPH_STATS = {
-  "node_count": 396,
-  "edge_count": 626,
+  "node_count": 495,
+  "edge_count": 826,
   "skill_count": 30,
   "agent_count": 3,
-  "community_count": 44,
+  "community_count": 49,
   "god_nodes": [
     {
       "label": "create_app()",
       "degree": 20
     },
     {
+      "label": "html",
+      "degree": 20
+    },
+    {
       "label": "build_index()",
+      "degree": 16
+    },
+    {
+      "label": "useStore()",
       "degree": 16
     },
     {
@@ -36,14 +44,6 @@ const GRAPH_STATS = {
     {
       "label": "TokenEstimate",
       "degree": 12
-    },
-    {
-      "label": "SkillIndex",
-      "degree": 11
-    },
-    {
-      "label": "plan()",
-      "degree": 11
     }
   ],
   "surprising": [
@@ -68,9 +68,9 @@ const GRAPH_STATS = {
       "relation": "calls"
     },
     {
-      "source": "_ensure_daemon()",
-      "target": "Config",
-      "relation": "references"
+      "source": "cmd_consult()",
+      "target": "read_index()",
+      "relation": "calls"
     }
   ]
 };

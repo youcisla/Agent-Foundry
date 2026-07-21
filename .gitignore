@@ -37,5 +37,10 @@ build/
 # uv
 uv.lock
 
+# Environment files (secrets, API keys)
+.env
+.env.*
+!.env.example
+
 # Generated (indexer rebuilds on demand)
 skills/index.json
