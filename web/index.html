@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agent Foundry — Skill runtime for AI coding assistants</title>
-  <meta name="description" content="The only MIT-licensed, graph-native skill runtime with zero external dependencies. 30 skills, 3 agents, quality-gated on every commit.">
+  <meta name="description" content="The only MIT-licensed, graph-native skill runtime with zero external dependencies. 31 skills, 3 agents, quality-gated on every commit.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -52,7 +52,7 @@
       <div class="hero-badges fade-in">
         <span class="badge-pill"><span class="dot green"></span> v0.3.0 — all gates pass</span>
         <span class="badge-pill"><span class="dot green"></span> 0 external references</span>
-        <span class="badge-pill"><span class="dot green"></span> 30 original skills</span>
+        <span class="badge-pill"><span class="dot green"></span> 31 original skills</span>
       </div>
       <div class="hero-grid">
         <div class="fade-in" style="min-width:0">
@@ -78,7 +78,7 @@
         </div>
         <div class="fade-in" style="align-self:start">
           <div class="stat-cards">
-            <div class="stat-card"><span class="icon-svg">layers</span><div class="num" id="hs1">30</div><div class="label">Skills</div></div>
+            <div class="stat-card"><span class="icon-svg">layers</span><div class="num" id="hs1">--</div><div class="label">Skills</div></div>
             <div class="stat-card"><span class="icon-svg">agents</span><div class="num" id="hs2">3</div><div class="label">Agents</div></div>
             <div class="stat-card"><span class="icon-svg">eye</span><div class="num" id="hs3">396</div><div class="label">Graph nodes</div></div>
             <div class="stat-card"><span class="icon-svg">shield</span><div class="num" id="hs4"><span class="acc">3</span>/3</div><div class="label">Gates passing</div></div>
@@ -219,9 +219,10 @@
         <div class="feature-card fade-in"><span class="icon-svg">brain</span><h3>Skills</h3><p>Disciplines the model applies to its own work — how to think, not what to know. Each ≤150 lines with trigger phrase, anti-patterns, and verification. 24 core + 6 optional.</p></div>
         <div class="feature-card fade-in" style="animation-delay:50ms"><span class="icon-svg">agents</span><h3>Agents</h3><p>Roles the orchestrator dispatches. af-planner, af-critic, and the new af-orchestrator which decomposes → dispatches → merges subtasks across skills and agents.</p></div>
         <div class="feature-card fade-in" style="animation-delay:100ms"><span class="icon-svg">gears</span><h3>Orchestrator</h3><p>Local daemon: ranks, dispatches, executes, logs, judges. FastAPI, SQLite, lazy-started. HTTP endpoints for everything: /plan, /execute, /loop, /health.</p></div>
-        <div class="feature-card fade-in" style="animation-delay:150ms"><span class="icon-svg">refresh</span><h3>Self-improvement</h3><p>Rate executions, run <code>agent-foundry learn</code>, and the system suggests new trigger patterns from successful runs. Instincts stored in SQLite, user-approvable, MIT.</p></div>
+        <div class="feature-card fade-in" style="animation-delay:180ms"><span class="icon-svg">bolt</span><h3>Engram routing</h3><p>Adopted from DeepSeek's Engram paper. O(1) N-gram hash → SQLite lookup for hot prompts. Plan + execute the same task in microseconds when the pattern is recognized.</p></div>
+        <div class="feature-card fade-in" style="animation-delay:240ms"><span class="icon-svg">refresh</span><h3>Self-improvement</h3><p>Rate executions, run <code>agent-foundry learn</code>, and the system suggests new trigger patterns from successful runs. Instincts stored in SQLite, user-approvable, MIT.</p></div>
         <div class="feature-card fade-in" style="animation-delay:200ms"><span class="icon-svg">eye</span><h3>Knowledge graph</h3><p>396 nodes, 626 edges, 44 communities. Tree-sitter AST extraction, community detection, god nodes, surprising connections. Graph-aware planning boosts related skills 15%.</p></div>
-        <div class="feature-card fade-in" style="animation-delay:250ms"><span class="icon-svg">shield</span><h3>Quality gates</h3><p>Three gates on every commit: 33/33 eval, 30/30 validate, 0 external references. Every skill is original, verified, and MIT-licensed.</p></div>
+        <div class="feature-card fade-in" style="animation-delay:250ms"><span class="icon-svg">shield</span><h3>Quality gates</h3><p>Three gates on every commit: 34/34 eval, 31/31 validate, 0 external references. Every skill is original, verified, and MIT-licensed.</p></div>
         <div class="feature-card fade-in" style="animation-delay:300ms"><span class="icon-svg">box</span><h3>6 harness adapters</h3><p>Install targets for Claude Code, Hermes, Codex, Cursor, OpenCode, Gemini. 3 tested end-to-end on this machine. Smoke tests verify every install path.</p></div>
       </div>
     </div>
@@ -442,6 +443,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+</script>
+<div id="af-context-menu" onclick="this.style.display='none'">
+  <div class="cm-item" onclick="window.history.back()">← Back</div>
+  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
+  <div class="cm-sep"></div>
+  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
+  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
+</div>
+<script>
+document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
+document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
 </script>
 </body>
 </html>

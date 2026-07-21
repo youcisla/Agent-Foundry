@@ -50,7 +50,7 @@
   <div style="padding:32px 0 16px">
     <div class="container">
       <h1>Knowledge Graph</h1>
-      <p style="color:var(--text-dim);font-size:14px" id="graph-header-stats">396 nodes · 626 edges · 44 communities · interactive canvas</p>
+      <p style="color:var(--text-dim);font-size:14px" id="graph-header-stats">— nodes · — edges · — communities · interactive canvas</p>
     </div>
   </div>
 
@@ -143,5 +143,16 @@
     });
   </script>
   <script src="context-menu.js"></script>
+<div id="af-context-menu" onclick="this.style.display='none'">
+  <div class="cm-item" onclick="window.history.back()">← Back</div>
+  <div class="cm-item" onclick="location.reload()">↻ Reload</div>
+  <div class="cm-sep"></div>
+  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
+  <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
+</div>
+<script>
+document.addEventListener('contextmenu',function(e){e.preventDefault();var m=document.getElementById('af-context-menu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px'});
+document.addEventListener('click',function(){var m=document.getElementById('af-context-menu');if(m)m.style.display='none'});
+</script>
 </body>
 </html>

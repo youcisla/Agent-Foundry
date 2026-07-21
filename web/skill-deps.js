@@ -11,6 +11,7 @@ const SKILL_DEPS = {
   "context-optimization": [],
   "cron-troubleshoot": [],
   "e2e-test-strategy": [],
+  "engram-routing": [],
   "feedback-loop": [],
   "knowledge-extract": [],
   "landscape-first": [

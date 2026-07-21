@@ -5,7 +5,7 @@
 **Skill and agent runtime for AI coding assistants.**
 
 Plan → execute → verify. Skills, agents, a local daemon.
-MIT, local, no cloud. 30 original skills, 0 external references.
+MIT, local, no cloud. 31 original skills, 0 external references.
 
 <br>
 
@@ -96,7 +96,7 @@ Your prompt  (/af build a react component)
 ### What's in the box
 
 ```text
-skills/         30 disciplines — 24 core + 6 optional   ─┐ feed
+skills/         31 disciplines — 25 core + 6 optional   ─┐ feed
 agents/         af-planner · af-critic · af-orchestrator  │ the
                                                           ▼ indexer
 agent_foundry/  config.py ─▶ daemon.py (FastAPI)
@@ -127,7 +127,7 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 
 ## Catalog
 
-**30 skills, 3 agents.** All original work under MIT. Each skill:
+**31 skills, 3 agents.** All original work under MIT. Each skill:
 
 - 📏 **≤150 lines / ≤8 KB** — Codex cap, no exceptions
 - 🎯 **Exactly one trigger phrase** — `Use when...` so the model knows when to fire
@@ -253,7 +253,7 @@ bash scripts/nox.sh
 | Gate | Result |
 |---|---|
 | `foundry-eval.py` | **32 passed, 0 failed** ✅ |
-| `validate.sh` | **30 skills, 0 failed** ✅ |
+| `validate.sh` | **31 skills, 0 failed** ✅ |
 | `nox.sh` | **0 external references** ✅ |
 
 The `nox.sh` gate is the strongest guarantee: it scans every tracked file for
@@ -268,7 +268,7 @@ Browse the catalog, the knowledge graph, and the audit at
 
 | Page | What |
 |---|---|
-| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 30 skills + 3 agents with live search |
+| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 31 skills + 3 agents with live search |
 | [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (396 nodes, 626 edges, 44 communities) |
 | [Audit](https://youcisla-agents.vercel.app/audit) | God nodes, surprising connections, interactive React Flow diagrams |
 
