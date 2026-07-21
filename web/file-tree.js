@@ -500,7 +500,7 @@ const FILE_TREE = {
   },
   "package.json": {
     "path": "package.json",
-    "size": 868,
+    "size": 854,
     "ext": ".json"
   },
   "pyproject.toml": {
@@ -510,7 +510,7 @@ const FILE_TREE = {
   },
   "README.md": {
     "path": "README.md",
-    "size": 12771,
+    "size": 12465,
     "ext": ".md"
   },
   "schemas": {
@@ -984,7 +984,7 @@ const FILE_TREE = {
   },
   "vercel.json": {
     "path": "vercel.json",
-    "size": 441,
+    "size": 642,
     "ext": ".json"
   },
   "web": {
@@ -996,12 +996,12 @@ const FILE_TREE = {
       },
       "audit.html": {
         "path": "web/audit.html",
-        "size": 6293,
+        "size": 7423,
         "ext": ".html"
       },
       "catalog.html": {
         "path": "web/catalog.html",
-        "size": 10552,
+        "size": 10749,
         "ext": ".html"
       },
       "context-menu.js": {
@@ -1011,17 +1011,17 @@ const FILE_TREE = {
       },
       "data.json": {
         "path": "web/data.json",
-        "size": 100562,
+        "size": 103366,
         "ext": ".json"
       },
       "file-content.js": {
         "path": "web/file-content.js",
-        "size": 1245113,
+        "size": 1282057,
         "ext": ".js"
       },
       "file-tree.js": {
         "path": "web/file-tree.js",
-        "size": 25558,
+        "size": 30093,
         "ext": ".js"
       },
       "graph-app": {
@@ -1110,22 +1110,22 @@ const FILE_TREE = {
       },
       "graph-data.js": {
         "path": "web/graph-data.js",
-        "size": 165512,
+        "size": 177412,
         "ext": ".js"
       },
       "graph-rf.json": {
         "path": "web/graph-rf.json",
-        "size": 247173,
+        "size": 265679,
         "ext": ".json"
       },
       "graph-stats.js": {
         "path": "web/graph-stats.js",
-        "size": 1422,
+        "size": 1413,
         "ext": ".js"
       },
       "graph.html": {
         "path": "web/graph.html",
-        "size": 8330,
+        "size": 9469,
         "ext": ".html"
       },
       "icons.js": {
@@ -1135,7 +1135,7 @@ const FILE_TREE = {
       },
       "index.html": {
         "path": "web/index.html",
-        "size": 32693,
+        "size": 33994,
         "ext": ".html"
       },
       "install-data.js": {
@@ -1150,7 +1150,7 @@ const FILE_TREE = {
       },
       "skill-deps.js": {
         "path": "web/skill-deps.js",
-        "size": 1446,
+        "size": 1471,
         "ext": ".js"
       },
       "store.js": {
@@ -1165,7 +1165,7 @@ const FILE_TREE = {
       },
       "why.html": {
         "path": "web/why.html",
-        "size": 6642,
+        "size": 6740,
         "ext": ".html"
       }
     }
