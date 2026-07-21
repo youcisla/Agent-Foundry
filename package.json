@@ -15,18 +15,21 @@
     "eval": "python scripts/foundry-eval.py"
   },
   "files": [
-    "agent_foundry/",
-    "skills/",
-    "agents/",
-    ".codex/",
-    ".cursor/",
-    ".gemini/",
-    ".opencode/",
-    "hooks/",
+    "agent_foundry",
+    "skills",
+    "agents",
+    ".codex",
+    ".cursor",
+    ".gemini",
+    ".opencode",
+    "hooks",
     "scripts/install.js",
     "scripts/install.sh",
     "scripts/install.bat",
-    "scripts/install.ps1"
+    "scripts/install.ps1",
+    "**/__pycache__",
+    "!**/__pycache__/**",
+    "!**/*.pyc"
   ],
   "keywords": [
     "skills",

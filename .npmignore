@@ -1,0 +1,42 @@
+# Build artifacts
+*.pyc
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyc
+.pyo
+
+# Generated / cached (rebuild on install)
+node_modules/
+*.tmp
+.cache/
+.DS_Store
+Thumbs.db
+
+# Graphify (regenerable, not source)
+graphify-out/
+.graphify-cache/
+
+# HyperFrames demo (regenerate)
+web/demo/*/renders/
+web/demo/*/snapshots/
+
+# Vercel config (not relevant to npm users)
+vercel.json
+
+# Local-only inspection artifacts
+web/assets/preview-*.png
+
+# Internal docs that aren't for end users
+plans/
+catalog/
+catalog.cache/
+catalog/*.tmp
+catalog/*.csv
+
+# Don't ship a git history or CI in the tarball
+.git/
+.github/
+.gitignore
