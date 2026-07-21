@@ -48,7 +48,7 @@ if [[ -n "$RELEVANT" ]]; then
   echo "│  To publish:                                                    │"
   echo "│    bash scripts/publish.sh                                      │"
   echo "│                                                                 │"
-  echo "│  See skill: skills/core/npm-publish/SKILL.md                   │"
+  echo "│  See docs/npm-publish/README.md                   │"
   echo "└─────────────────────────────────────────────────────────────────┘"
   echo ""
 fi

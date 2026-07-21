@@ -467,6 +467,47 @@ const FILE_TREE = {
         "size": 27108,
         "ext": ".md"
       },
+      "npm-publish": {
+        "__files": {
+          "automation": {
+            "__files": {
+              "references": {
+                "__files": {
+                  "ci-pipeline.md": {
+                    "path": "docs/npm-publish/automation/references/ci-pipeline.md",
+                    "size": 1727,
+                    "ext": ".md"
+                  }
+                }
+              },
+              "SKILL.md": {
+                "path": "docs/npm-publish/automation/SKILL.md",
+                "size": 2719,
+                "ext": ".md"
+              }
+            }
+          },
+          "references": {
+            "__files": {
+              "2fa-setup.md": {
+                "path": "docs/npm-publish/references/2fa-setup.md",
+                "size": 2842,
+                "ext": ".md"
+              },
+              "troubleshooting.md": {
+                "path": "docs/npm-publish/references/troubleshooting.md",
+                "size": 3399,
+                "ext": ".md"
+              }
+            }
+          },
+          "SKILL.md": {
+            "path": "docs/npm-publish/SKILL.md",
+            "size": 3570,
+            "ext": ".md"
+          }
+        }
+      },
       "philosophy.md": {
         "path": "docs/philosophy.md",
         "size": 3313,
@@ -500,7 +541,7 @@ const FILE_TREE = {
   },
   "package.json": {
     "path": "package.json",
-    "size": 854,
+    "size": 965,
     "ext": ".json"
   },
   "pyproject.toml": {
@@ -566,7 +607,7 @@ const FILE_TREE = {
       },
       "install.js": {
         "path": "scripts/install.js",
-        "size": 16119,
+        "size": 17474,
         "ext": ".js"
       },
       "install.sh": {
@@ -583,6 +624,11 @@ const FILE_TREE = {
         "path": "scripts/provenance-audit.py",
         "size": 6501,
         "ext": ".py"
+      },
+      "publish.sh": {
+        "path": "scripts/publish.sh",
+        "size": 4194,
+        "ext": ".sh"
       },
       "smoke-test.py": {
         "path": "scripts/smoke-test.py",
@@ -1014,9 +1060,47 @@ const FILE_TREE = {
         "size": 103366,
         "ext": ".json"
       },
+      "demo": {
+        "__files": {
+          "af-demo": {
+            "__files": {
+              "AGENTS.md": {
+                "path": "web/demo/af-demo/AGENTS.md",
+                "size": 6717,
+                "ext": ".md"
+              },
+              "CLAUDE.md": {
+                "path": "web/demo/af-demo/CLAUDE.md",
+                "size": 6717,
+                "ext": ".md"
+              },
+              "hyperframes.json": {
+                "path": "web/demo/af-demo/hyperframes.json",
+                "size": 318,
+                "ext": ".json"
+              },
+              "index.html": {
+                "path": "web/demo/af-demo/index.html",
+                "size": 7434,
+                "ext": ".html"
+              },
+              "meta.json": {
+                "path": "web/demo/af-demo/meta.json",
+                "size": 85,
+                "ext": ".json"
+              },
+              "package.json": {
+                "path": "web/demo/af-demo/package.json",
+                "size": 292,
+                "ext": ".json"
+              }
+            }
+          }
+        }
+      },
       "file-content.js": {
         "path": "web/file-content.js",
-        "size": 1290381,
+        "size": 1290285,
         "ext": ".js"
       },
       "file-tree.js": {
@@ -1130,12 +1214,12 @@ const FILE_TREE = {
       },
       "icons.js": {
         "path": "web/icons.js",
-        "size": 12139,
+        "size": 12978,
         "ext": ".js"
       },
       "index.html": {
         "path": "web/index.html",
-        "size": 33994,
+        "size": 36310,
         "ext": ".html"
       },
       "install-data.js": {
