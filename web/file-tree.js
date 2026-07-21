@@ -351,7 +351,7 @@ const FILE_TREE = {
       },
       "graphify-run.py": {
         "path": "scripts/graphify-run.py",
-        "size": 6632,
+        "size": 8496,
         "ext": ".py"
       },
       "indexer.py": {
@@ -792,17 +792,17 @@ const FILE_TREE = {
       },
       "data.json": {
         "path": "web/data.json",
-        "size": 100566,
+        "size": 100562,
         "ext": ".json"
       },
       "file-content.js": {
         "path": "web/file-content.js",
-        "size": 1235115,
+        "size": 1235119,
         "ext": ".js"
       },
       "file-tree.js": {
         "path": "web/file-tree.js",
-        "size": 24291,
+        "size": 25269,
         "ext": ".js"
       },
       "graph-app": {
@@ -891,17 +891,17 @@ const FILE_TREE = {
       },
       "graph-data.js": {
         "path": "web/graph-data.js",
-        "size": 129350,
+        "size": 163239,
         "ext": ".js"
       },
       "graph-rf.json": {
         "path": "web/graph-rf.json",
-        "size": 193844,
+        "size": 243511,
         "ext": ".json"
       },
       "graph-stats.js": {
         "path": "web/graph-stats.js",
-        "size": 1350,
+        "size": 1422,
         "ext": ".js"
       },
       "graph.html": {
@@ -921,7 +921,7 @@ const FILE_TREE = {
       },
       "install-data.js": {
         "path": "web/install-data.js",
-        "size": 785,
+        "size": 794,
         "ext": ".js"
       },
       "site-data.js": {
@@ -931,7 +931,7 @@ const FILE_TREE = {
       },
       "skill-deps.js": {
         "path": "web/skill-deps.js",
-        "size": 1381,
+        "size": 1446,
         "ext": ".js"
       },
       "store.js": {

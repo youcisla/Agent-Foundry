@@ -15,6 +15,49 @@ from pathlib import Path
 env = os.environ.copy()
 env.pop("PYTHONPATH", None)
 
+# Load gitignore patterns to filter out untracked files
+_GITIGNORE_PATTERNS: list[str] | None = None
+def _load_gitignore() -> list[str]:
+    global _GITIGNORE_PATTERNS
+    if _GITIGNORE_PATTERNS is not None:
+        return _GITIGNORE_PATTERNS
+    patterns = []
+    gi = REPO / ".gitignore"
+    if gi.exists():
+        for line in gi.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#"):
+                patterns.append(line)
+    _GITIGNORE_PATTERNS = patterns
+    return patterns
+
+def _is_gitignored(path: Path) -> bool:
+    """Check if a path matches a .gitignore pattern."""
+    try:
+        rel = str(path.relative_to(REPO)).replace("\\", "/")
+    except ValueError:
+        return False
+    for pat in _load_gitignore():
+        # Strip leading / for matching
+        p = pat.lstrip("/")
+        # Directory patterns ending in /
+        if p.endswith("/"):
+            if p.rstrip("/") in rel.split("/"):
+                return True
+            continue
+        # Exact file match or glob
+        if "*" in p:
+            import fnmatch
+            if fnmatch.fnmatch(rel, p) or fnmatch.fnmatch(rel.split("/")[-1], p):
+                return True
+        elif p in rel or rel.startswith(p + "/") or rel == p:
+            return True
+        # Pattern with leading /
+        if pat.startswith("/"):
+            if rel.startswith(pat.lstrip("/")):
+                return True
+    return False
+
 PY = r"C:\Users\Y.CHEHBOUB\AppData\Roaming\uv\tools\graphifyy\Scripts\python.exe"
 REPO = Path(".").resolve()
 OUT = REPO / "graphify-out"
@@ -48,6 +91,12 @@ print(json.dumps(result, ensure_ascii=False))
 (OUT / ".graphify_detect.json").write_text(r.stdout, encoding="utf-8")
 d = json.loads(r.stdout)
 print(f"  total: {d['total_files']} files, ~{d['total_words']} words")
+# Filter out gitignored files from the detect output
+for cat in list(d["files"].keys()):
+    d["files"][cat] = [f for f in d["files"][cat] if not _is_gitignored(Path(f))]
+d["total_files"] = sum(len(v) for v in d["files"].values())
+(OUT / ".graphify_detect.json").write_text(json.dumps(d, indent=2, ensure_ascii=False), encoding="utf-8")
+print(f"  after gitignore filter: {d['total_files']} files")
 for cat in ("code", "document", "paper", "image", "video"):
     n = len(d["files"].get(cat, []))
     if n:
