@@ -28,10 +28,11 @@
  */
 
 import { existsSync, lstatSync, mkdirSync, rmSync, symlinkSync, linkSync, cpSync,
-         readdirSync, statSync } from 'node:fs';
+         readdirSync, statSync, copyFileSync, chmodSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { homedir, platform, arch } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 
 // ---------- paths ----------
 const __filename = fileURLToPath(import.meta.url);
@@ -128,6 +129,25 @@ function ensureDir(p) {
 
 function rmIfExists(p) {
   try { rmSync(p, { recursive: true, force: true }); } catch {}
+}
+
+function installGitHook() {
+  // Copy our tracked post-commit hook into the user's .git/hooks so the
+  // npm-publish reminder fires on every commit. No-op if not in a git repo.
+  try {
+    const repoRoot = execSync('git rev-parse --show-toplevel', { encoding: 'utf8' }).trim();
+    const src = join(repoRoot, 'hooks', 'post-commit');
+    const dst = join(repoRoot, '.git', 'hooks', 'post-commit');
+    if (existsSync(src)) {
+      copyFileSync(src, dst);
+      try { chmodSync(dst, 0o755); } catch {}
+      log(`  ✓ installed post-commit reminder hook (npm-publish on changes)`);
+    } else {
+      vlog(`  (no hooks/post-commit found at ${src} — skipping)`);
+    }
+  } catch (e) {
+    vlog(`  (git repo not detected or hook install failed: ${e.message?.split('\n')[0]})`);
+  }
 }
 
 // ---------- harness installers ----------
@@ -452,6 +472,7 @@ log('');
 const ok = installer.install(opts.dryRun);
 
 if (ok && !opts.dryRun) {
+  installGitHook();
   log('');
   log('Done. Restart your harness so it picks up the new skills.');
 }

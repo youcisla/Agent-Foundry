@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# post-commit — Agent Foundry
+#
+# Runs after every `git commit`. Detects whether the commit touched
+# npm-relevant files (package.json, scripts/, skills/, agents/) and
+# reminds to publish if so.
+#
+# This is a NOTICE-only hook — it prints a reminder, never auto-publishes.
+# Publishing is opt-in: `bash scripts/publish.sh` after seeing the reminder.
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT" || exit 0
+
+# Files that should trigger a publish reminder when changed
+NPM_RELEVANT_REGEX='^(package\.json|skills/(core|optional)/.*SKILL\.md|agents/.*/AGENT\.md|scripts/install\.(js|sh|bat|ps1)|\.codex/.*|\.cursor/.*|\.gemini/.*|\.opencode/.*|hooks/.*|\.claude-plugin/.*)'
+
+# Look at what was just committed (HEAD vs HEAD~1)
+CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null)
+if [[ -z "$CHANGED_FILES" ]]; then
+  # Initial commit — diff against empty tree
+  CHANGED_FILES=$(git diff --name-only $(git hash-object -t tree /dev/null) HEAD 2>/dev/null)
+fi
+
+# Filter to npm-relevant changes
+RELEVANT=$(echo "$CHANGED_FILES" | grep -E "$NPM_RELEVANT_REGEX" || true)
+
+if [[ -n "$RELEVANT" ]]; then
+  # Count
+  COUNT=$(echo "$RELEVANT" | wc -l | tr -d ' ')
+
+  # Get current local + published versions
+  LOCAL_VER=$(node -p "require('./package.json').version" 2>/dev/null || echo "?")
+  PUBLISHED_VER=$(npm view agent-foundry version 2>/dev/null || echo "unpublished")
+
+  echo ""
+  echo "┌─────────────────────────────────────────────────────────────────┐"
+  echo "│  Agent Foundry: npm-relevant changes detected ($COUNT files)  │"
+  echo "├─────────────────────────────────────────────────────────────────┤"
+  echo "│  Local version:     $LOCAL_VER"
+  echo "│  Published version: $PUBLISHED_VER"
+  if [[ "$LOCAL_VER" == "$PUBLISHED_VER" ]]; then
+    echo "│                                                                 │"
+    echo "│  ⚠  Local and published versions match.                        │"
+    echo "│     Consider bumping before publishing:                         │"
+    echo "│       npm version patch --no-git-tag-version                    │"
+  fi
+  echo "│                                                                 │"
+  echo "│  To publish:                                                    │"
+  echo "│    bash scripts/publish.sh                                      │"
+  echo "│                                                                 │"
+  echo "│  See skill: skills/core/npm-publish/SKILL.md                   │"
+  echo "└─────────────────────────────────────────────────────────────────┘"
+  echo ""
+fi
+
+exit 0
