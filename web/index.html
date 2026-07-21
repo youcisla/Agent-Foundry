@@ -79,22 +79,15 @@
         <div class="fade-in" style="align-self:start">
           <div class="stat-cards">
             <div class="stat-card"><span class="icon-svg">layers</span><div class="num" id="hs1">--</div><div class="label">Skills</div></div>
-            <div class="stat-card"><span class="icon-svg">agents</span><div class="num" id="hs2">3</div><div class="label">Agents</div></div>
-            <div class="stat-card"><span class="icon-svg">eye</span><div class="num" id="hs3">396</div><div class="label">Graph nodes</div></div>
-            <div class="stat-card"><span class="icon-svg">shield</span><div class="num" id="hs4"><span class="acc">3</span>/3</div><div class="label">Gates passing</div></div>
+            <div class="stat-card"><span class="icon-svg">agents</span><div class="num" id="hs2">--</div><div class="label">Agents</div></div>
+            <div class="stat-card"><span class="icon-svg">eye</span><div class="num" id="hs3">--</div><div class="label">Graph nodes</div></div>
+            <div class="stat-card"><span class="icon-svg">shield</span><div class="num" id="hs4">--</div><div class="label">Skills gated</div></div>
             <div class="stat-card" style="grid-column:span 2"><span class="icon-svg">box</span><div class="num" id="hs5">3</div><div class="label">Tested adapters</div></div>
           </div>
           <div class="adapter-strip">
-            <div class="title">Adapters (14 total: 3 ✓ · 10 ◐ · 1 ○)</div>
-            <div class="tags">
-              <span class="badge badge-green"><span class="icon-svg">check</span> Claude Code</span>
-              <span class="badge badge-green"><span class="icon-svg">check</span> Hermes</span>
-              <span class="badge badge-green"><span class="icon-svg">check</span> Codex</span>
-              <span class="badge badge-accent"><span class="icon-svg">half</span> Cursor</span>
-              <span class="badge badge-accent"><span class="icon-svg">half</span> OpenCode</span>
-              <span class="badge badge-red"><span class="icon-svg">cross</span> Gemini</span>
-            </div>
-          </div>
+                      <div class="title" id="adapter-strip-title">Adapters</div>
+                      <div class="tags" id="adapter-strip-tags"></div>
+                    </div>
         </div>
       </div>
 
@@ -359,6 +352,28 @@
       setNum('s3', GRAPH_STATS.node_count);
       setNum('s4', GRAPH_STATS.edge_count);
       setNum('s5', GRAPH_STATS.community_count);
+    }
+    // Adapter strip — render all harnesses from ADAPTERS (auto-reflects new ones)
+    if (typeof ADAPTERS !== 'undefined') {
+      const stripEl = document.getElementById('adapter-strip-tags');
+      const titleEl = document.getElementById('adapter-strip-title');
+      if (stripEl) {
+        const counts = { tested: 0, beta: 0, 'coming-soon': 0 };
+        const iconName = { tested: 'check', beta: 'half', 'coming-soon': 'circle' };
+        const cls = { tested: 'badge-green', beta: 'badge-accent', 'coming-soon': 'badge-red' };
+        stripEl.innerHTML = ADAPTERS.map(a => {
+          counts[a.status] = (counts[a.status] || 0) + 1;
+          return `<span class="badge ${cls[a.status] || 'badge-accent'}"><span class="icon-svg">${iconName[a.status] || 'half'}</span> ${a.name}</span>`;
+        }).join('');
+        if (titleEl) {
+          const total = ADAPTERS.length;
+          titleEl.textContent = `Adapters (${total} total: ${counts.tested} ✓ · ${counts.beta} ◐ · ${counts['coming-soon']} ○)`;
+        }
+      }
+      // Update hs5 (tested adapters count)
+      setNum('hs5', counts.tested || 0);
+    // hs4 = skills validated (matches the 31/31 in gates output)
+    setNum('hs4', SKILL_COUNT);
     }
     // Count-up animation (eased), triggered once per grid on scroll-in
     function animateCount(el) {
