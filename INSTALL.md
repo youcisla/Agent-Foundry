@@ -1,21 +1,45 @@
 # Install
 
-Agent Foundry is a Python package (`agent-foundry`) plus a thin Claude Code plugin. It installs a local daemon that plans, dispatches, executes, and logs skill runs. macOS and Linux; Python 3.10+.
+Agent Foundry is a Python package (`agent-foundry`) plus a cross-platform installer. It installs a local daemon that plans, dispatches, executes, and logs skill runs. Works on macOS, Linux, and Windows. Python 3.10+, or Node 18+ for the installer-only path.
 
-## Quick install (recommended)
+## Quick install
+
+macOS / Linux / Git Bash:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash
-export ANTHROPIC_API_KEY=sk-...   # or OPENAI_API_KEY
 ```
 
-The installer is idempotent (re-run to update). It:
+Windows (PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/scripts/install.ps1 | iex
+```
+
+From npm (cross-platform, Node 18+):
+
+```bash
+npm install -g @youcisla/agent-foundry
+agent-foundry            # auto-detect harness and install
+agent-foundry --list     # show all supported targets
+```
+
+Then set an API key:
+
+```bash
+export ANTHROPIC_API_KEY=sk-...   # macOS / Linux
+$env:ANTHROPIC_API_KEY="sk-..."   # Windows PowerShell
+```
+
+The shell installer is idempotent (re-run to update). It:
 
 1. Checks for Python 3.10+.
 2. Clones the repo to `~/.agent-foundry`.
 3. Creates a venv at `~/.config/agent-foundry/venv` and runs `pip install -e .`.
 4. Symlinks the plugin into `~/.claude/plugins/agent-foundry`.
 5. Runs `agent-foundry init` (writes `~/.config/agent-foundry/config.toml` + the first skill index).
+
+On Windows the `.ps1` and `.bat` scripts delegate to the same `scripts/install.js` Node entry point, which handles symlinks with hard-link and copy fallbacks.
 
 ## Install profiles
 
@@ -57,20 +81,22 @@ agent-foundry --help
 
 ```bash
 agent-foundry doctor            # config / index / daemon / API key
-python3 scripts/foundry-eval.py # quality gate: 32 passed, 0 failed
-./scripts/validate.sh           # skill lint: 30 skills, 0 failed
+python3 scripts/foundry-eval.py # quality gate: 34 passed, 0 failed
+./scripts/validate.sh           # skill lint: 31 skills, 0 failed
 ```
 
 ## Uninstall
 
 ```bash
-rm ~/.claude/plugins/agent-foundry   # remove the plugin symlink
+rm ~/.claude/plugins/agent-foundry   # remove the plugin symlink (macOS/Linux)
 rm -rf ~/.agent-foundry              # remove the repo
 rm -rf ~/.config/agent-foundry       # remove config, venv, and logs
 ```
 
+On Windows, remove the equivalent paths under `%USERPROFILE%` and `%APPDATA%\agent-foundry`.
+
 ## Requirements
 
-- Python 3.10+
-- macOS or Linux (Windows not yet supported)
+- Python 3.10+ (for the daemon) or Node 18+ (for the installer-only path)
+- macOS, Linux, or Windows
 - An Anthropic or OpenAI API key (the daemon uses LiteLLM, so any supported model works)

@@ -1,7 +1,7 @@
 {
   "name": "@youcisla/agent-foundry",
   "version": "0.3.2",
-  "description": "Skill orchestrator for AI coding assistants. MIT-licensed, zero external dependencies, 31 original skills quality-gated on every commit.",
+  "description": "Skill orchestrator for AI coding assistants. MIT-licensed, zero external dependencies, 31 original skills, quality-gated on every commit.",
   "type": "module",
   "main": "scripts/install.js",
   "bin": {

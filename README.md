@@ -10,10 +10,11 @@ MIT, local, no cloud. 31 original skills, 0 external references.
 <br>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-f5a623.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.2.0-4ade80.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.3.2-4ade80.svg)](CHANGELOG.md)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-6496ff.svg)](https://www.python.org)
-[![Skills](https://img.shields.io/badge/skills-30-f5a623.svg)](#catalog)
-[![Agents](https://img.shields.io/badge/agents-2-4ade80.svg)](#catalog)
+[![npm](https://img.shields.io/badge/npm-%40youcisla%2Fagent--foundry-6496ff.svg)](https://www.npmjs.com/package/@youcisla/agent-foundry)
+[![Skills](https://img.shields.io/badge/skills-31-f5a623.svg)](#catalog)
+[![Agents](https://img.shields.io/badge/agents-3-4ade80.svg)](#catalog)
 [![Gates](https://img.shields.io/badge/quality%20gates-3%20green-4ade80.svg)](#quality-gates)
 [![External refs](https://img.shields.io/badge/external%20refs-0-4ade80.svg)](https://github.com/youcisla/Agent-Foundry/blob/main/scripts/nox.sh)
 [![Web](https://img.shields.io/badge/live%20demo-youcisla--agents.vercel.app-f5a623)](https://youcisla-agents.vercel.app)
@@ -29,15 +30,15 @@ MIT, local, no cloud. 31 original skills, 0 external references.
 ## Why Agent Foundry
 
 > Models hallucinate. They over-comment. They reach for `npm install` when
-> you asked for a one-line fix. Agent Foundry steers the model toward the
-> work — not the noise.
+> you asked for a one-line fix. Agent Foundry steers the model back to the
+> actual work.
 
 Three layers:
 
 | Layer | What | Lives in |
 |---|---|---|
-| **🧠 Skills** | Disciplines the model applies — *how to think*, not what to know | `skills/core/<name>/SKILL.md` |
-| **🤖 Agents** | Roles the orchestrator can dispatch — critic, planner | `agents/af-*/AGENT.md` |
+| **🧠 Skills** | Disciplines the model applies (how to think, not what to know) | `skills/core/<name>/SKILL.md` |
+| **🤖 Agents** | Roles the orchestrator can dispatch (critic, planner, orchestrator) | `agents/af-*/AGENT.md` |
 | **⚙️ Orchestrator** | Local daemon that ranks, dispatches, executes, logs, judges | `agent_foundry/` (Python) |
 
 Each layer is portable. A skill body is a plain markdown file with a trigger
@@ -50,9 +51,29 @@ you can `pip install` or run from source.
 
 ### 1. Install
 
+macOS / Linux / Git Bash:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash
-export ANTHROPIC_API_KEY=sk-...
+```
+
+Windows (PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/scripts/install.ps1 | iex
+```
+
+Or from npm (cross-platform, Node 18+):
+
+```bash
+npm install -g @youcisla/agent-foundry
+agent-foundry            # auto-detect harness and install
+```
+
+Then set an API key:
+
+```bash
+export ANTHROPIC_API_KEY=sk-...   # or OPENAI_API_KEY
 ```
 
 ### 2. Use it
@@ -96,7 +117,7 @@ Your prompt  (/af build a react component)
 ### What's in the box
 
 ```text
-skills/         31 disciplines — 25 core + 6 optional   ─┐ feed
+skills/         31 disciplines (25 core + 6 optional)    ─┐ feed
 agents/         af-planner · af-critic · af-orchestrator  │ the
                                                           ▼ indexer
 agent_foundry/  config.py ─▶ daemon.py (FastAPI)
@@ -104,7 +125,7 @@ agent_foundry/  config.py ─▶ daemon.py (FastAPI)
                 loop.py ─▶ judge.py (af-critic) ─▶ logging_db.py
 ```
 
-The daemon is lazy-started by the CLI — no systemd/launchd requirement.
+The daemon is lazy-started by the CLI, so there is no systemd/launchd requirement.
 Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.db`.
 
 ### The loop, end to end
@@ -129,12 +150,12 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 
 **31 skills, 3 agents.** All original work under MIT. Each skill:
 
-- 📏 **≤150 lines / ≤8 KB** — Codex cap, no exceptions
-- 🎯 **Exactly one trigger phrase** — `Use when...` so the model knows when to fire
-- 🚫 **Anti-patterns + Verification checklist** — teach what *not* to do, then confirm it was done
-- ⚡ **Action verbs, not tool names** — `examine` not `Read`, `create` not `Write`
+- 📏 **≤150 lines / ≤8 KB** (Codex cap, no exceptions)
+- 🎯 **Exactly one trigger phrase** (`Use when...` so the model knows when to fire)
+- 🚫 **Anti-patterns + Verification checklist** (teach what *not* to do, then confirm it was done)
+- ⚡ **Action verbs, not tool names** (`examine` not `Read`, `create` not `Write`)
 
-### Core skills (24)
+### Core skills (25)
 
 | Skill | Trigger |
 |---|---|
@@ -146,13 +167,14 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 | [`context-optimization`](skills/core/context-optimization/SKILL.md) | Use on any task with >2K-token outputs, big files, or repeated reads |
 | [`cron-troubleshoot`](skills/core/cron-troubleshoot/SKILL.md) | Debug a missing or wrong cron job |
 | [`e2e-test-strategy`](skills/core/e2e-test-strategy/SKILL.md) | Use when designing test coverage for a web app or API |
+| [`engram-routing`](skills/core/engram-routing/SKILL.md) | Route prompts via O(1) N-gram lookup when trigger patterns should match fast |
 | [`feedback-loop`](skills/core/feedback-loop/SKILL.md) | After shipping, instrument → measure → iterate |
 | [`knowledge-extract`](skills/core/knowledge-extract/SKILL.md) | Turn a session into a skill draft |
 | [`landscape-first`](skills/core/landscape-first/SKILL.md) | Research the space before building |
 | [`measure-first`](skills/core/measure-first/SKILL.md) | Use when about to optimize, refactor, or claim a system is slow |
 | [`plan-before-code`](skills/core/plan-before-code/SKILL.md) | Use before writing any non-trivial code change |
 | [`plan-then-act`](skills/core/plan-then-act/SKILL.md) | Use when a task has multiple steps and the order matters |
-| [`prompt-discipline`](skills/core/prompt-discipline/SKILL.md) | Use on every non-trivial task — think, simplify, edit surgical, stay goal-driven |
+| [`prompt-discipline`](skills/core/prompt-discipline/SKILL.md) | Use on every non-trivial task: think, simplify, edit surgical, stay goal-driven |
 | [`pushback-when-wrong`](skills/core/pushback-when-wrong/SKILL.md) | Use when reviewing an assertion that smells off |
 | [`quality-protocol`](skills/core/quality-protocol/SKILL.md) | Use before declaring a task complete |
 | [`re-verify-findings`](skills/core/re-verify-findings/SKILL.md) | Use after any prior verification claimed a finding |
@@ -174,12 +196,13 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 | [`funnel-pr-guard`](skills/optional/funnel-pr-guard/SKILL.md) | Guard conversion-critical paths from breaking |
 | [`sql-migration-trio`](skills/optional/sql-migration-trio/SKILL.md) | Three-file migration pattern (up/down/schema) |
 
-### Agents (2)
+### Agents (3)
 
 | Agent | Model | Job |
 |---|---|---|
-| [`af-critic`](agents/af-critic/AGENT.md) | `opus` | Score output on correctness, slop, scope — returns JSON |
-| [`af-planner`](agents/af-planner/AGENT.md) | `opus` | Decompose a request into a skill/agent plan — returns JSON |
+| [`af-critic`](agents/af-critic/AGENT.md) | `opus` | Score output on correctness, slop, scope. Returns JSON. |
+| [`af-planner`](agents/af-planner/AGENT.md) | `opus` | Decompose a request into a skill/agent plan. Returns JSON. |
+| [`af-orchestrator`](agents/af-orchestrator/AGENT.md) | `opus` | Dispatch subtasks to specialized agents and skills, then merge results. |
 
 ---
 
@@ -203,31 +226,30 @@ Every command also has an HTTP endpoint on the daemon (`/plan`, `/execute`, `/lo
 
 ## Install profiles
 
+The shell installer takes a profile:
+
 ```bash
 AF_PROFILE=minimal ./install.sh    # Skills only (no daemon)
 AF_PROFILE=core    ./install.sh    # Skills + daemon (default)
 AF_PROFILE=full    ./install.sh    # Skills + daemon + hooks
 ```
 
-Or directly from PyPI:
-
-```bash
-pip install -e .
-```
-
-Or clone-and-link:
+Run from source (any OS):
 
 ```bash
 git clone https://github.com/youcisla/Agent-Foundry.git ~/.agent-foundry
 cd ~/.agent-foundry && pip install -e .
 ```
 
+See [INSTALL.md](INSTALL.md) for the full matrix of harnesses, profiles, and platforms.
+
 ---
 
 ## Requirements
 
-- **Python 3.10+**
-- A supported harness: Claude Code, Codex, Gemini, Hermes, or OpenCode
+- **Python 3.10+** (for the daemon) or **Node 18+** (for the cross-platform installer)
+- macOS, Linux, or Windows
+- A supported harness: Claude Code, Codex, Gemini, Hermes, OpenCode, or any of the 13 adapters
 - An API key (Anthropic, OpenAI, or any provider LiteLLM supports)
 - ~50 MB disk for the catalog and generated index
 
@@ -238,7 +260,7 @@ cd ~/.agent-foundry && pip install -e .
 Every commit runs three gates. **All green right now.**
 
 ```bash
-# 32 assets pass static quality checks (trigger phrase, body size, anti-patterns)
+# 34 assets pass static quality checks (trigger phrase, body size, anti-patterns)
 python scripts/foundry-eval.py
 
 # All skills have correct frontmatter (name, description, version, author)
@@ -252,7 +274,7 @@ bash scripts/nox.sh
 
 | Gate | Result |
 |---|---|
-| `foundry-eval.py` | **32 passed, 0 failed** ✅ |
+| `foundry-eval.py` | **34 passed, 0 failed** ✅ |
 | `validate.sh` | **31 skills, 0 failed** ✅ |
 | `nox.sh` | **0 external references** ✅ |
 
@@ -269,7 +291,7 @@ Browse the catalog, the knowledge graph, and the audit at
 | Page | What |
 |---|---|
 | [Catalog](https://youcisla-agents.vercel.app/catalog) | All 31 skills + 3 agents with live search |
-| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (396 nodes, 626 edges, 44 communities) |
+| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (555 nodes, 898 edges, 54 communities) |
 | [Audit](https://youcisla-agents.vercel.app/audit) | God nodes, surprising connections, interactive React Flow diagrams |
 
 The site regenerates from live repo state on every commit via
@@ -283,7 +305,7 @@ The site regenerates from live repo state on every commit via
 |---|---|
 | ✅ v0.1 | Python package + FastAPI daemon + Claude Code plugin |
 | ✅ v0.2 | Foundational audit, frozen Config, multi-page web app, knowledge graph, interactive React Flow diagrams |
-| 📋 v0.3 | Multi-harness adapters (Codex, Gemini, OpenCode, Hermes) |
+| ✅ v0.3 | npm package, Engram O(1) routing, af-orchestrator agent, 13 harness adapters (3 tested) |
 | 📋 v0.4 | `af verify` signed-manifest integrity |
 
 See [docs/launch-plan.md](docs/launch-plan.md) for the full design spec.

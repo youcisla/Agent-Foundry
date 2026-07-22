@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-foundry"
-version = "0.2.0"
-description = "Curated runtime skill orchestrator for AI coding assistants — plan, execute, verify."
+version = "0.3.2"
+description = "Curated runtime skill orchestrator for AI coding assistants: plan, execute, verify."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
