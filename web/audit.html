@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Audit — Agent Foundry</title>
+  <title>Audit - Agent Foundry</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -56,7 +56,7 @@
     <div class="container">
       <h2>Community cohesion</h2>
       <p class="section-sub">Low cohesion doesn't always mean &ldquo;split it.&rdquo; Most low-cohesion clusters are cross-cutting infrastructure.</p>
-      <div class="rf-diagram" data-rf-diagram="cohesion" role="img" aria-label="Community cohesion clusters — tight, medium, and low-cohesion (cross-cutting) modules">
+      <div class="rf-diagram" data-rf-diagram="cohesion" role="img" aria-label="Community cohesion clusters - tight, medium, and low-cohesion (cross-cutting) modules">
         <div class="gp-loading">Loading diagram…</div>
       </div>
     </div>
@@ -66,10 +66,10 @@
     <div class="container">
       <h2>God nodes</h2>
       <p class="section-sub">Top 10 most-connected symbols. Refactor with care.</p>
-      <div class="rf-diagram" data-rf-diagram="sequence" role="img" aria-label="Request lifecycle — user prompt through run_loop, rank_skills, executor, LiteLLM, af-critic, and executions.db">
+      <div class="rf-diagram" data-rf-diagram="sequence" role="img" aria-label="Request lifecycle - user prompt through run_loop, rank_skills, executor, LiteLLM, af-critic, and executions.db">
         <div class="gp-loading">Loading diagram…</div>
       </div>
-      <div class="rf-diagram" data-rf-diagram="godnodes" role="img" aria-label="God nodes — most-connected symbols and their dependency edges">
+      <div class="rf-diagram" data-rf-diagram="godnodes" role="img" aria-label="God nodes - most-connected symbols and their dependency edges">
         <div class="gp-loading">Loading diagram…</div>
       </div>
       <div class="audit-grid" id="god-grid"></div>
@@ -88,7 +88,7 @@
     <div class="container">
       <h2>How to read this page</h2>
       <p class="section-sub">Numbers come from the static knowledge graph. Run <code>python scripts/graphify-run.py</code> to refresh.</p>
-      <div class="rf-diagram" data-rf-diagram="architecture" role="img" aria-label="Repository architecture map — Agent Foundry package modules and repo-root directories">
+      <div class="rf-diagram" data-rf-diagram="architecture" role="img" aria-label="Repository architecture map - Agent Foundry package modules and repo-root directories">
         <div class="gp-loading">Loading diagram…</div>
       </div>
     </div>
@@ -96,7 +96,7 @@
 
   <footer>
     <div class="container">
-      <div>Agent Foundry — MIT License · Built by <a href="https://github.com/youcisla">Youcisla</a></div>
+      <div>Agent Foundry - MIT License · Built by <a href="https://github.com/youcisla">Youcisla</a></div>
     </div>
   </footer>
 
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="cm-item" onclick="window.history.back()">← Back</div>
   <div class="cm-item" onclick="location.reload()">↻ Reload</div>
   <div class="cm-sep"></div>
-  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry — '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
+  <div class="cm-item" onclick="navigator.clipboard.writeText('Agent Foundry - '+document.title+'\n'+location.href);this.closest('#af-context-menu').style.display='none'">📋 Copy page info</div>
   <div class="cm-item" onclick="window.open('https://github.com/youcisla/Agent-Foundry','_blank')">Open on GitHub</div>
 </div>
 <script>
