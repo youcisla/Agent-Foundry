@@ -394,7 +394,7 @@
     // Install tabs
     const cmds = {
       bash: "# macOS / Linux / Git Bash\ncurl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash\n\n# Windows PowerShell\niwr -useb https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.ps1 | iex\n\n# Windows CMD\ncurl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.bat -o install.bat && install.bat",
-      node: "# Run the installer directly via npx (no install required)\nnpx --yes https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/scripts/install.js --list\n\n# Or install globally from the repo\ngit clone https://github.com/youcisla/Agent-Foundry\ncd Agent-Foundry\nnpm install -g .\nagent-foundry --list\n\n# (npm package coming soon, installs the same scripts/install.js as a global `agent-foundry` bin)",
+      node: "# Install globally from npm (Node 18+, cross-platform)\nnpm install -g @youcisla/agent-foundry\n\n# Run it: auto-detects your harness and installs\nagent-foundry\n\n# Or list every supported target first\nagent-foundry --list",
       git: "git clone https://github.com/youcisla/Agent-Foundry.git\ncd Agent-Foundry\nnode scripts/install.js --harness=claude-code",
       claude: "/plugin marketplace add youcisla/Agent-Foundry\n/plugin install agent-foundry"
     };

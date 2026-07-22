@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install.sh — install Agent Foundry (macOS / Linux)
+# install.sh: install Agent Foundry (macOS / Linux / Git Bash on Windows)
 #
 # Idempotent: re-run to update.
 
@@ -24,7 +24,26 @@ OS="$(uname -s)"
 case "$OS" in
   Linux)  PLATFORM=linux ;;
   Darwin) PLATFORM=mac ;;
-  *) echo "ERROR: unsupported OS '$OS'. supports macOS/Linux." >&2; exit 1 ;;
+  MINGW*|MSYS*|CYGWIN*)
+    # Git Bash / MSYS / Cygwin on Windows. The native shell installer below
+    # relies on macOS/Linux idioms, so delegate to the cross-platform Node
+    # installer instead. First clone (if needed), then hand off.
+    if ! command -v node >/dev/null 2>&1; then
+      echo "ERROR: Node.js 18+ is required to install on Windows under Git Bash." >&2
+      echo "       Install from https://nodejs.org, or use scripts/install.ps1 / install.bat." >&2
+      exit 1
+    fi
+    if [ ! -d "$INSTALL_DIR/.git" ]; then
+      echo "Cloning repo to $INSTALL_DIR ..."
+      mkdir -p "$(dirname "$INSTALL_DIR")"
+      git clone --depth=1 "$REPO_URL" "$INSTALL_DIR"
+    else
+      (cd "$INSTALL_DIR" && git pull --depth=1 --ff-only) || true
+    fi
+    echo "Windows detected (Git Bash). Launching the Node installer..."
+    exec node "$INSTALL_DIR/scripts/install.js" "$@"
+    ;;
+  *) echo "ERROR: unsupported OS '$OS'. supports macOS/Linux/Windows." >&2; exit 1 ;;
 esac
 
 # 1) Python 3.10+
