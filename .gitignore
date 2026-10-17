@@ -1,3 +1,6 @@
+# Private research (internal findings, audits, competitor teardowns)
+docs/research/
+
 # Private triage ledger — local only, not for distribution
 *.csv
 catalog/
