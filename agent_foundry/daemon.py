@@ -31,6 +31,7 @@ def _site_signature() -> str:
     return "|".join(parts)
 
 from . import __version__
+from .attest import MANIFEST_NAME
 from .config import Config, LOG_DB_PATH
 from .executor import execute as executor_run
 from .indexer import (
@@ -161,13 +162,19 @@ def create_app(cfg: Config | None = None) -> FastAPI:
         if idx is None:
             raise HTTPException(status_code=409,
                                 detail="No index. POST /index first.")
-        return executor_run(req, model=cfg.core.default_llm,
+        return executor_run(req, model=req.model or cfg.core.default_llm,
                             skill_paths=idx.skill_paths,
                             db_path=db_path,
                             skill_hashes={s.id: s.sha256 for s in idx.skills},
                             timeout_seconds=cfg.core.executor_timeout_seconds,
                             max_tokens=cfg.core.executor_max_tokens,
-                            retries=cfg.core.executor_retries)
+                            retries=cfg.core.executor_retries,
+                            policy_mode=cfg.core.policy_mode,
+                            fallback_models=cfg.core.fallback_llms,
+                            attest_manifest=Path(cfg.core.skills_dir).expanduser()
+                            / MANIFEST_NAME,
+                            attest_key_path=Path(cfg.core.attest_key_path).expanduser(),
+                            attest_strict=cfg.core.attest_strict)
 
     @app.post("/loop")
     def do_loop(req: LoopRequest):

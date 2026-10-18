@@ -1,67 +1,71 @@
 const GRAPH_STATS = {
-  "node_count": 766,
-  "edge_count": 1394,
-  "skill_count": 35,
+  "node_count": 911,
+  "edge_count": 1860,
+  "skill_count": 39,
   "agent_count": 3,
-  "community_count": 75,
+  "community_count": 71,
   "god_nodes": [
     {
       "label": "Config",
+      "degree": 51
+    },
+    {
+      "label": "PolicyAction",
       "degree": 36
     },
     {
-      "label": "create_app()",
-      "degree": 26
-    },
-    {
-      "label": "build_index()",
-      "degree": 23
-    },
-    {
-      "label": "PlanRequest",
-      "degree": 21
+      "label": "ExecuteRequest",
+      "degree": 34
     },
     {
       "label": "McpServer",
-      "degree": 19
+      "degree": 31
     },
     {
-      "label": "rank_skills()",
-      "degree": 19
+      "label": "execute()",
+      "degree": 28
+    },
+    {
+      "label": "PlanRequest",
+      "degree": 28
+    },
+    {
+      "label": "create_app()",
+      "degree": 27
+    },
+    {
+      "label": "build_index()",
+      "degree": 25
     },
     {
       "label": "PlannerConfig",
-      "degree": 18
-    },
-    {
-      "label": "run_loop()",
-      "degree": 18
+      "degree": 24
     }
   ],
   "surprising": [
     {
-      "source": "DaemonTests",
+      "source": "AttestTests",
       "target": "PlannerConfig",
       "relation": "uses"
     },
     {
-      "source": "EvalVerifyTests",
+      "source": "PolicyTests",
       "target": "PlannerConfig",
       "relation": "uses"
     },
     {
-      "source": "IntegrityTests",
-      "target": "PlannerConfig",
+      "source": "AttestTests",
+      "target": "Config",
       "relation": "uses"
     },
     {
-      "source": "LoopSessionTests",
-      "target": "PlannerConfig",
+      "source": "PolicyTests",
+      "target": "Config",
       "relation": "uses"
     },
     {
-      "source": "McpTests",
-      "target": "PlannerConfig",
+      "source": "AttestTests",
+      "target": "McpServer",
       "relation": "uses"
     }
   ]

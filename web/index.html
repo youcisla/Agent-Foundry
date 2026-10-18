@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agent Foundry, Skill runtime for AI coding assistants</title>
-  <meta name="description" content="MIT-licensed, graph-native skill runtime with no third-party skill content. 35 skills, 3 agents, quality-gated on every commit.">
+  <meta name="description" content="MIT-licensed, graph-native skill runtime with no third-party skill content. 39 skills, 3 agents, quality-gated on every commit.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -55,7 +55,7 @@
       <div class="hero-badges fade-in">
         <span class="badge-pill"><span class="dot green"></span> v0.5.0, all gates pass</span>
         <span class="badge-pill"><span class="dot green"></span> 0 external references</span>
-        <span class="badge-pill"><span class="dot green"></span> 35 original skills</span>
+        <span class="badge-pill"><span class="dot green"></span> 39 original skills</span>
         <span class="badge-pill"><span class="dot green"></span> npm · PyPI · MCP registry</span>
       </div>
       <div class="hero-grid">
@@ -138,11 +138,11 @@
           <div class="terminal-body">
             <span class="dim">$ </span><span class="cmd">curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash</span><br>
             <span class="highlight">▸ Installing agent-foundry for claude-code...</span><br>
-            <span class="dim">✔ Installed: ~/.claude/skills/&lt;35 skills&gt;</span><br>
-            <span class="dim">✔ 35 skills · 3 agents · 19 CLI commands</span><br>
+            <span class="dim">✔ Installed: ~/.claude/skills/&lt;39 skills&gt;</span><br>
+            <span class="dim">✔ 39 skills · 3 agents · 22 CLI commands</span><br>
             <span class="dim">$ </span><span class="cmd">agent-foundry doctor</span><br>
             <span class="dim">✔ Config:     ~/.config/agent-foundry/config.toml</span><br>
-            <span class="dim">✔ Index:      35 skills loaded</span><br>
+            <span class="dim">✔ Index:      39 skills loaded</span><br>
             <span class="dim">✔ Daemon:     running on 127.0.0.1:8765</span><br>
             <span class="dim">✔ API key:    ANTHROPIC_API_KEY configured</span><br>
             <span class="dim">$ </span><span class="cmd">agent-foundry plan "refactor auth middleware"</span><br>
@@ -155,7 +155,7 @@
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;justify-content:center">
           <div class="feature-card" style="padding:18px 20px">
-            <h3><span class="icon-svg">gears</span> 35 curated skills</h3>
+            <h3><span class="icon-svg">gears</span> 39 curated skills</h3>
             <p>Each ≤150 lines with trigger phrases, anti-patterns, and verification checklists. Disciplines, not domain knowledge.</p>
           </div>
           <div class="feature-card" style="padding:18px 20px">
@@ -164,7 +164,7 @@
           </div>
           <div class="feature-card" style="padding:18px 20px">
             <h3><span class="icon-svg">graph</span> Graph-aware planning</h3>
-            <p>766 nodes, 1,394 edges, 75 communities. The knowledge graph feeds back into the planner, boosting related skills 15% higher in the ranking.</p>
+            <p>911 nodes, 1,860 edges, 71 communities. The knowledge graph feeds back into the planner, boosting related skills 15% higher in the ranking.</p>
           </div>
           <div class="feature-card" style="padding:18px 20px">
             <h3><span class="icon-svg">refresh</span> Self-improvement loop</h3>
@@ -195,7 +195,7 @@
         <div class="compare-card with">
           <div class="compare-card-header with">With Agent Foundry</div>
           <div class="compare-card-body">
-            <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> 35 curated, tested, MIT-licensed skills</div>
+            <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> 39 curated, tested, MIT-licensed skills</div>
             <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> Skill indexer + ranker picks the right skill</div>
             <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> Budget guard with configurable token cap</div>
             <div class="compare-item"><span class="icon-wrap check"><span class="icon-svg">check</span></span> SQLite log with judge scores</div>
@@ -218,8 +218,8 @@
         <div class="feature-card fade-in" style="animation-delay:100ms"><span class="icon-svg">gears</span><h3>Orchestrator</h3><p>Local daemon: ranks, dispatches, executes, logs, judges. FastAPI, SQLite, lazy-started. HTTP endpoints for everything: /plan, /execute, /loop, /health.</p></div>
         <div class="feature-card fade-in" style="animation-delay:180ms"><span class="icon-svg">bolt</span><h3>Engram routing</h3><p>Adopted from DeepSeek's Engram paper. O(1) N-gram hash → SQLite lookup for hot prompts. Plan + execute the same task in microseconds when the pattern is recognized.</p></div>
         <div class="feature-card fade-in" style="animation-delay:240ms"><span class="icon-svg">refresh</span><h3>Self-improvement</h3><p>Rate executions, run <code>agent-foundry learn</code>, and the system suggests new trigger patterns from successful runs. Instincts stored in SQLite, user-approvable, MIT.</p></div>
-        <div class="feature-card fade-in" style="animation-delay:200ms"><span class="icon-svg">eye</span><h3>Knowledge graph</h3><p>766 nodes, 1,394 edges, 75 communities. Tree-sitter AST extraction, community detection, god nodes, surprising connections. Graph-aware planning boosts related skills 15%.</p></div>
-        <div class="feature-card fade-in" style="animation-delay:250ms"><span class="icon-svg">shield</span><h3>Quality gates</h3><p>Three gates on every commit: 35/35 validate, dependency-free MCP server, version drift check. Every skill is original, verified, and MIT-licensed.</p></div>
+        <div class="feature-card fade-in" style="animation-delay:200ms"><span class="icon-svg">eye</span><h3>Knowledge graph</h3><p>911 nodes, 1,860 edges, 71 communities. Tree-sitter AST extraction, community detection, god nodes, surprising connections. Graph-aware planning boosts related skills 15%.</p></div>
+        <div class="feature-card fade-in" style="animation-delay:250ms"><span class="icon-svg">shield</span><h3>Quality gates</h3><p>Three gates on every commit: 39/39 validate, dependency-free MCP server, version drift check. Every skill is original, verified, and MIT-licensed.</p></div>
         <div class="feature-card fade-in" style="animation-delay:300ms"><span class="icon-svg">box</span><h3>14 harness adapters</h3><p>Claude Code, Codex, Cursor, Hermes, Gemini, OpenCode, Antigravity, CodeBuddy, JoyCode, Qwen, Kimi, OpenClaw, Claude project, and Zed. Every target passes the installer + indexer smoke test.</p></div>
       </div>
     </div>
@@ -228,7 +228,7 @@
   <!-- Command surface -->
   <section id="commands">
     <div class="container">
-      <h2>19 commands, one local runtime</h2>
+      <h2>22 commands, one local runtime</h2>
       <p class="section-sub">Every command is available from the CLI. The daemon starts lazily when a command needs it.</p>
       <div class="feature-grid" style="margin-top:8px">
         <div class="feature-card"><h3><code>agent-foundry init</code></h3><p>Write config and the first skill index. <code>--force</code> rewrites both.</p></div>
@@ -247,9 +247,12 @@
         <div class="feature-card"><h3><code>agent-foundry learn</code></h3><p>Learn trigger weights from judged executions.</p></div>
         <div class="feature-card"><h3><code>agent-foundry instincts</code></h3><p>List proposed trigger instincts.</p></div>
         <div class="feature-card"><h3><code>agent-foundry instinct-approve &lt;id&gt;</code></h3><p>Approve an instinct and persist it.</p></div>
-        <div class="feature-card"><h3><code>agent-foundry mcp</code></h3><p>Start the stdio MCP server: plan, execute, list_skills, get_skill.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry mcp</code></h3><p>Start the stdio MCP server: plan, execute, list_skills, search_skills, get_skill, verify_skills, check_action, runtime_status, execution_history, list_models.</p></div>
         <div class="feature-card"><h3><code>agent-foundry browse</code></h3><p>Browse or search the catalog; <code>--read &lt;id&gt;</code> prints a skill.</p></div>
         <div class="feature-card"><h3><code>agent-foundry eval --tasks &lt;file&gt;</code></h3><p>Paired evaluation with and without a skill, reporting lift.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry attest</code></h3><p>Sign a manifest of skill file hashes and frontmatter digests.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry verify</code></h3><p>Verify the installed manifest and signature; <code>--strict</code> exits on any mismatch.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry gate</code></h3><p>Classify a shell, file, text, or network action as allow, confirm, or deny.</p></div>
       </div>
     </div>
   </section>
@@ -274,12 +277,12 @@
       <h2>By the numbers</h2>
       <p class="stats-lead">Live from the repo, regenerated on every build, no hand-maintained counts.</p>
       <div class="stats-grid">
-        <div class="stat-item"><span class="stat-ic icon-svg">skills</span><div class="num" id="s1" data-target="35">35</div><div class="label">Skills</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">skills</span><div class="num" id="s1" data-target="39">39</div><div class="label">Skills</div></div>
         <div class="stat-item"><span class="stat-ic icon-svg">agents</span><div class="num" id="s2" data-target="3">3</div><div class="label">Agents</div></div>
-        <div class="stat-item"><span class="stat-ic icon-svg">terminal</span><div class="num" data-target="19">19</div><div class="label">CLI commands</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">terminal</span><div class="num" data-target="22">22</div><div class="label">CLI commands</div></div>
         <div class="stat-item"><span class="stat-ic icon-svg">route</span><div class="num" data-target="15">15</div><div class="label">HTTP endpoints</div></div>
-        <div class="stat-item"><span class="stat-ic icon-svg">graph</span><div class="num" id="s3" data-target="766">766</div><div class="label">Graph nodes</div></div>
-        <div class="stat-item"><span class="stat-ic icon-svg">link</span><div class="num" id="s4" data-target="1394">1394</div><div class="label">Graph edges</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">graph</span><div class="num" id="s3" data-target="911">911</div><div class="label">Graph nodes</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">link</span><div class="num" id="s4" data-target="1860">1860</div><div class="label">Graph edges</div></div>
         <div class="stat-item"><span class="stat-ic icon-svg">layers</span><div class="num" id="s5" data-target="75">75</div><div class="label">Communities</div></div>
         <div class="stat-item"><span class="stat-ic icon-svg">shield</span><div class="num plain" data-target="0">0</div><div class="label">External refs</div></div>
       </div>
@@ -290,7 +293,7 @@
   <section class="alt-dark">
     <div class="container">
       <h2>Harness adapters</h2>
-      <p class="section-sub">Every target is tested by the installer + indexer smoke test and ships 35 skills as direct children.</p>
+      <p class="section-sub">Every target is tested by the installer + indexer smoke test and ships 39 skills as direct children.</p>
       <div class="skill-grid" id="adapter-grid" style="padding-top:8px"></div>
     </div>
   </section>
@@ -299,7 +302,7 @@
   <section>
     <div class="container">
       <h2>Featured skills</h2>
-      <p class="section-sub">A taste of the catalog. <a href="catalog.html">See all 35 →</a></p>
+      <p class="section-sub">A taste of the catalog. <a href="catalog.html">See all 39 →</a></p>
       <div class="skill-grid" id="featured-grid"></div>
     </div>
   </section>
@@ -310,8 +313,8 @@
       <h2 style="text-align:center">FAQ</h2>
       <p class="section-sub" style="text-align:center">Quick answers to common questions.</p>
       <div class="faq-grid">
-        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>How is Agent Foundry different from other agent harnesses?</div><div class="faq-a"><p>Agent Foundry ships 35 original skills with a hard zero-external-references gate, every skill is original MIT-licensed work. We also ship a live knowledge graph of the codebase and a 3-gate audit pipeline on every commit, including an external-reference scanner that fails the build if any third-party name leaks in.</p></div></div>
-        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>What does "graph-native" mean?</div><div class="faq-a"><p>Every commit runs a tree-sitter AST extraction of the entire codebase. The resulting graph (766 nodes, 1,394 edges, 75 communities) feeds back into the orchestrator, related skills get a 15% boost in planning. The graph is a first-class feature, not a visualization afterthought.</p></div></div>
+        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>How is Agent Foundry different from other agent harnesses?</div><div class="faq-a"><p>Agent Foundry ships 39 original skills with a hard zero-external-references gate, every skill is original MIT-licensed work. We also ship a live knowledge graph of the codebase and a 3-gate audit pipeline on every commit, including an external-reference scanner that fails the build if any third-party name leaks in.</p></div></div>
+        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>What does "graph-native" mean?</div><div class="faq-a"><p>Every commit runs a tree-sitter AST extraction of the entire codebase. The resulting graph (911 nodes, 1,860 edges, 71 communities) feeds back into the orchestrator, related skills get a 15% boost in planning. The graph is a first-class feature, not a visualization afterthought.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Is it free?</div><div class="faq-a"><p>Yes. MIT-licensed, all local, no cloud. You supply the API key for your LLM provider. No SaaS, no telemetry, no subscription.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Which harnesses work?</div><div class="faq-a"><p>All 14 adapters are tested: Claude Code, Codex, Cursor, Hermes, Gemini, OpenCode, Antigravity, CodeBuddy, JoyCode, Qwen, Kimi, OpenClaw, Claude project, and Zed. Install one with <code>node scripts/install.js --harness=NAME</code> or use the npm, PyPI, or MCP package.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Can I contribute a skill?</div><div class="faq-a"><p>Absolutely. Fork the repo, add a skill under <code>skills/core/</code> following the template in <code>community/README.md</code>, and open a PR. Every skill must pass <code>foundry-eval.py</code> and the <code>nox.sh</code> external-reference gate.</p></div></div>
@@ -324,7 +327,7 @@
   <div class="cta-block">
     <div class="container">
       <h2>Ship with confidence</h2>
-      <p>35 curated skills, 3 agents, a live knowledge graph, a self-improvement loop, and three quality gates, all MIT, all local.</p>
+      <p>39 curated skills, 3 agents, a live knowledge graph, a self-improvement loop, and three quality gates, all MIT, all local.</p>
       <div class="cta-buttons">
         <button class="btn btn-primary btn-large" onclick="document.querySelector('.install-tab')?.click();document.querySelector('.install-widget')?.scrollIntoView({behavior:'smooth'});">Install now →</button>
         <a class="btn btn-large btn-ghost" href="https://github.com/youcisla/Agent-Foundry"><span class="icon-svg">star</span> Star on GitHub</a>

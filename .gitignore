@@ -27,6 +27,9 @@ graphify-out/
 .graphify-cache/
 .archify/
 
+# Archify delivery receipts (absolute local paths)
+web/*.delivery.json
+
 # Python
 __pycache__/
 *.pyc

@@ -15,7 +15,7 @@ Skills must be direct children of the skills root.
 node scripts/install.js --harness=opencode
 ```
 
-This links 35 skills into `~/.config/opencode/skills/` and copies the
+This links 39 skills into `~/.config/opencode/skills/` and copies the
 instruction files into `~/.config/opencode/agent-foundry/instructions/`.
 
 Agent and command definitions are not auto-merged into

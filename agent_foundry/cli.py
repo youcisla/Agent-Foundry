@@ -508,11 +508,18 @@ def cmd_feedback(ctx, execution_id, score):
 
 
 @cli.command("learn")
+@click.option("--scope", type=click.Choice(["project", "global"]), default=None,
+              help="Use the observation ledger with this scope")
+@click.option("--project-id", default=None, help="Override the project key")
 @click.pass_context
-def cmd_learn(ctx):
+def cmd_learn(ctx, scope, project_id):
     """Analyze execution log and generate trigger-pattern instincts."""
-    from .logging_db import learn, LOG_DB_PATH
-    result = learn(LOG_DB_PATH)
+    from .logging_db import learn, learn_scoped, LOG_DB_PATH
+    if scope:
+        result = learn_scoped(LOG_DB_PATH, scope=scope, project_id=project_id)
+        click.echo(f"Scope: {result['scope']} ({result.get('project_id') or 'all projects'})")
+    else:
+        result = learn(LOG_DB_PATH)
     click.echo(f"New instincts: {result['new_instincts']}")
     click.echo(f"Updated: {result['updated_instincts']}")
     click.echo(f"Skill weights updated: {result.get('weights_updated', 0)}")
@@ -522,13 +529,39 @@ def cmd_learn(ctx):
 
 @cli.command("instincts")
 @click.option("--approved", is_flag=True, help="Show approved only")
+@click.option("--explain", "explain_id", type=int, default=None,
+              help="Show supporting observations for one instinct")
+@click.option("--proposals", is_flag=True, help="Cluster instincts into reviewable proposals")
 @click.pass_context
-def cmd_instincts(ctx, approved):
+def cmd_instincts(ctx, approved, explain_id, proposals):
     """List learned trigger-pattern instincts."""
-    from .logging_db import list_instincts, LOG_DB_PATH
+    from .logging_db import (
+        LOG_DB_PATH,
+        cluster_instincts,
+        explain_instinct,
+        list_instincts,
+        write_proposals,
+    )
+    if explain_id is not None:
+        detail = explain_instinct(LOG_DB_PATH, explain_id)
+        if detail is None:
+            raise click.ClickException(f"instinct not found: {explain_id}")
+        click.echo(json.dumps(detail, indent=2, ensure_ascii=False))
+        return
+    if proposals:
+        groups = cluster_instincts(LOG_DB_PATH)
+        out_dir = Path.home() / ".config" / "agent-foundry" / "proposals"
+        paths = write_proposals(groups, out_dir)
+        click.echo(f"Proposals: {len(paths)}")
+        for path in paths:
+            click.echo(f"  {path}")
+        return
     for inst in list_instincts(LOG_DB_PATH, approved_only=approved):
         flag = "✓" if inst["approved"] else "○"
-        click.echo(f"  {flag} #{inst['id']} [{inst['skill']}] \"{inst['pattern']}\" conf={inst['confidence']:.2f} ({inst['samples']} samples)")
+        scope = inst.get("scope") or "global"
+        click.echo(f"  {flag} #{inst['id']} [{inst['skill']}] \"{inst['pattern']}\" "
+                   f"conf={inst['confidence']:.2f} ({inst['samples']} samples, "
+                   f"{inst.get('successes', 0)}+/{inst.get('failures', 0)}-, {scope})")
 
 
 @cli.command("instinct-approve")
@@ -541,10 +574,87 @@ def cmd_instinct_approve(ctx, instinct_id):
     click.echo("✓ Approved" if ok else "✗ Not found")
 
 
+@cli.command("attest")
+@click.option("--root", type=click.Path(), default=None,
+              help="Installed skills root (default: cfg.core.skills_dir)")
+@click.pass_context
+def cmd_attest(ctx, root):
+    """Sign the installed skill manifest with a local key."""
+    from .attest import MANIFEST_NAME, attest_root
+    cfg = ctx.obj["cfg"]
+    root_path = Path(root).expanduser() if root else Path(cfg.core.skills_dir).expanduser()
+    manifest = root_path / MANIFEST_NAME
+    result = attest_root(root_path, manifest,
+                         Path(cfg.core.attest_key_path).expanduser())
+    click.echo(f"attested {len(result['entries'])} skills -> {manifest}")
+
+
+@cli.command("verify")
+@click.option("--root", type=click.Path(), default=None,
+              help="Installed skills root (default: cfg.core.skills_dir)")
+@click.option("--strict", is_flag=True,
+              help="Fail on missing or unsigned skills as well as tampering")
+@click.option("--json", "as_json", is_flag=True, help="Machine-readable output")
+@click.pass_context
+def cmd_verify(ctx, root, strict, as_json):
+    """Verify the installed manifest, signature, and skill hashes."""
+    from .attest import MANIFEST_NAME, verify_manifest
+    cfg = ctx.obj["cfg"]
+    root_path = Path(root).expanduser() if root else Path(cfg.core.skills_dir).expanduser()
+    result = verify_manifest(
+        root_path / MANIFEST_NAME,
+        Path(cfg.core.attest_key_path).expanduser(),
+        root=root_path,
+    )
+    if as_json:
+        click.echo(json.dumps(result.to_dict(), indent=2, ensure_ascii=False))
+    else:
+        click.echo(f"checked: {result.checked}")
+        for label, values in (("missing", result.missing),
+                              ("mismatched", result.mismatched),
+                              ("unsigned", result.unsigned),
+                              ("errors", result.errors)):
+            if values:
+                click.echo(f"{label}: {', '.join(map(str, values))}")
+        click.echo("ok" if result.ok else "not ok")
+
+    hard_fail = bool(result.errors or result.mismatched)
+    if strict:
+        hard_fail = hard_fail or bool(result.missing or result.unsigned)
+    if hard_fail:
+        sys.exit(1)
+
+
+@cli.command("gate")
+@click.option("--kind", type=click.Choice(["shell", "file_write", "text", "network"]),
+              default="shell")
+@click.option("--value", default=None, help="Action value (command, path, or URL)")
+@click.option("--text", default=None, help="Text to scan instead of --value")
+@click.option("--direction", type=click.Choice(["inbound", "outbound"]), default="inbound")
+@click.option("--workspace", default=".", help="Workspace root for file_write checks")
+@click.option("--json", "as_json", is_flag=True, help="Machine-readable output")
+def cmd_gate(kind, value, text, direction, workspace, as_json):
+    """Classify one action against the local policy rules."""
+    from .policy import PolicyAction, evaluate
+    if text is not None:
+        action = PolicyAction("text", text, {"direction": direction})
+    elif value is not None:
+        action = PolicyAction(kind, value, {"workspace": workspace})
+    else:
+        raise click.ClickException("--value or --text is required")
+    decision = evaluate(action)
+    if as_json:
+        click.echo(json.dumps(decision.to_dict(), indent=2, ensure_ascii=False))
+    else:
+        click.echo(f"{decision.decision}: {decision.rule_id or 'no-rule'} "
+                   f"({decision.reason})")
+    sys.exit({"allow": 0, "confirm": 2, "deny": 1}[decision.decision])
+
+
 @cli.command("mcp")
 @click.pass_context
 def cmd_mcp(ctx):
-    """Run the MCP stdio server (plan/execute/list_skills/get_skill)."""
+    """Run the MCP stdio server (ten tools; see `agent_foundry.mcp_server`)."""
     from .mcp_server import run_stdio
     run_stdio(ctx.obj.get("cfg"))
 

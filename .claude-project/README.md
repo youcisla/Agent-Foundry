@@ -14,7 +14,7 @@ under a shared parent folder is not supported.
     api-design/SKILL.md
     plan-before-code/SKILL.md
     verify-first/SKILL.md
-    ... (35 total)
+    ... (39 total)
     .agent-foundry-installed.json
 ```
 

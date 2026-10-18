@@ -18,7 +18,7 @@ shipped defaults.
 ## Skills Discovery
 
 Codex scans `.agents/skills/` from the working directory up to the repository
-root, plus `$HOME/.agents/skills/`. The installer links each of the 35 skills
+root, plus `$HOME/.agents/skills/`. The installer links each of the 39 skills
 as a direct child of `$HOME/.agents/skills/`.
 
 `~/.codex/skills/` is a legacy location and is not used by the installer.

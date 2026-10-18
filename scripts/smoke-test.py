@@ -5,7 +5,7 @@ smoke-test.py - Verify a harness adapter end-to-end.
 What "tested" means (see docs/adapters/README.md):
   1. The install path exists and is readable.
   2. The Agent Foundry indexer builds a valid SkillIndex from it.
-  3. The index has 35 skills + 1 fallback = 36 total.
+  3. The index has every repo skill + 1 fallback.
   4. Each skill has non-empty frontmatter (name, description).
 
 Usage:
@@ -47,7 +47,9 @@ ADAPTER_PATHS = {
     "zed":          HOME / ".agents" / "skills",
 }
 
-EXPECTED_SKILL_COUNT = 35  # +1 generic-reasoning fallback = 36
+REPO_ROOT = Path(__file__).resolve().parent.parent
+EXPECTED_SKILL_COUNT = sum(1 for _ in (REPO_ROOT / "skills").rglob("SKILL.md"))
+# The index always adds one virtual generic-reasoning fallback.
 
 
 def load_indexer():
@@ -112,7 +114,7 @@ def check_managed(label: str, path: Path) -> bool | None:
 
 
 def check_skill_count(label: str, count: int) -> bool:
-    # 35 skills + 1 virtual fallback = 36
+    # every repo skill + 1 virtual fallback
     if count == -1:
         return True  # skipped
     if count != EXPECTED_SKILL_COUNT + 1:

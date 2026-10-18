@@ -17,7 +17,7 @@ Engram-style routing for skill selection. Inverted from
 ## When to use
 
 - A prompt pattern repeats across sessions (same user, similar tasks)
-- Linear scan over 35 skills is wasteful for hot patterns
+- Linear scan over 39 skills is wasteful for hot patterns
 - You want O(1) routing for the top 5% of prompts that drive 80% of usage
 
 ## Procedure

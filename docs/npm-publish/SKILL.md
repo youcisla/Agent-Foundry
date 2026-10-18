@@ -46,7 +46,7 @@ If `npm whoami` returns `ENEEDAAUTH`:
 ### 2 - Quality gates
 
 `scripts/publish.sh` runs all three before publishing:
-- `bash scripts/validate.sh` — 35 skills, no syntax errors
+- `bash scripts/validate.sh` — 39 skills, no syntax errors
 - `python scripts/foundry-eval.py` — 33+ checks pass
 - `bash scripts/nox.sh` — 0 external references in tracked files
 
@@ -65,7 +65,7 @@ the bump so the publish picks up the new version.
 
 `scripts/publish.sh` always runs `npm publish --dry-run` first. Expected
 output: about 114 files, ~111 KB tarball, no `__pycache__/`, no `plans/`, no
-`web/demo/*/renders/`. All 35 skills and 3 agents present, plus the four
+`web/demo/*/renders/`. All 39 skills and 3 agents present, plus the four
 install scripts (`install.{js,sh,bat,ps1}`).
 
 ### 5 - Publish

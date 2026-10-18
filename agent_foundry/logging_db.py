@@ -4,6 +4,8 @@ P1: feedback column, instincts table, learn queries.
 """
 from __future__ import annotations
 
+import json
+import os
 import sqlite3
 import re
 from collections import Counter, defaultdict
@@ -37,14 +39,16 @@ def _ngram_hash(prompt: str) -> str:
     return hashlib.sha1(canonical).hexdigest()[:16]
 
 
-def engram_lookup(db_path: Path, prompt: str, min_confidence: float = 0.25) -> dict | None:
+def engram_lookup(db_path: Path, prompt: str, min_confidence: float = 0.25,
+                  project_id: str | None = None) -> dict | None:
     """O(1) Engram-style routing lookup.
 
     Returns the highest-confidence instinct matching this prompt's
     N-gram fingerprint, or None if no match above min_confidence.
 
     Default min_confidence=0.25: matches freshly-learned instincts (initial
-    confidence 0.3). Bump to 0.5+ for high-stakes routing.
+    confidence 0.3). Bump to 0.5+ for high-stakes routing. When project_id is
+    supplied, project-scoped rows outrank global rows for the same fingerprint.
 
     Caller should fall back to the full plan flow when this returns None.
     """
@@ -54,14 +58,26 @@ def engram_lookup(db_path: Path, prompt: str, min_confidence: float = 0.25) -> d
         return None
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
-        row = conn.execute(
-            """SELECT id, source_skill_id, trigger_pattern, confidence, samples
-               FROM instincts
-               WHERE ngram_hash = ? AND approved = 1 AND confidence >= ?
-               ORDER BY confidence DESC, samples DESC
-               LIMIT 1""",
-            (h, min_confidence),
-        ).fetchone()
+        if project_id:
+            row = conn.execute(
+                """SELECT id, source_skill_id, trigger_pattern, confidence, samples, scope
+                   FROM instincts
+                   WHERE ngram_hash = ? AND approved = 1 AND confidence >= ?
+                     AND (scope = 'global' OR project_id = ?)
+                   ORDER BY CASE WHEN scope = 'project' THEN 0 ELSE 1 END,
+                            confidence DESC, samples DESC
+                   LIMIT 1""",
+                (h, min_confidence, project_id),
+            ).fetchone()
+        else:
+            row = conn.execute(
+                """SELECT id, source_skill_id, trigger_pattern, confidence, samples, scope
+                   FROM instincts
+                   WHERE ngram_hash = ? AND approved = 1 AND confidence >= ?
+                   ORDER BY confidence DESC, samples DESC
+                   LIMIT 1""",
+                (h, min_confidence),
+            ).fetchone()
     finally:
         conn.close()
     if not row:
@@ -72,6 +88,7 @@ def engram_lookup(db_path: Path, prompt: str, min_confidence: float = 0.25) -> d
         "trigger_pattern": row[2],
         "confidence": row[3],
         "samples": row[4],
+        "scope": row[5],
         "matched_via": "engram",
     }
 
@@ -129,6 +146,35 @@ CREATE TABLE IF NOT EXISTS instincts (
 );
 CREATE INDEX IF NOT EXISTS idx_instincts_skill ON instincts(source_skill_id);
 CREATE INDEX IF NOT EXISTS idx_instincts_ngram ON instincts(ngram_hash);
+
+CREATE TABLE IF NOT EXISTS observations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp DATETIME NOT NULL,
+    project_id TEXT NOT NULL,
+    skill_id TEXT NOT NULL,
+    prompt_hash TEXT NOT NULL,
+    prompt_excerpt TEXT NOT NULL,
+    plan_json TEXT,
+    outcome TEXT NOT NULL,
+    judge_corr REAL,
+    judge_slop REAL,
+    judge_scope REAL,
+    judge_verdict TEXT,
+    cost_usd REAL NOT NULL DEFAULT 0,
+    latency_ms INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_observations_project ON observations(project_id);
+CREATE INDEX IF NOT EXISTS idx_observations_skill ON observations(skill_id);
+
+CREATE TABLE IF NOT EXISTS policy_decisions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp DATETIME NOT NULL,
+    action_kind TEXT NOT NULL,
+    decision TEXT NOT NULL,
+    rule_id TEXT,
+    detail TEXT,
+    receipt_hash TEXT
+);
 """
 
 MIGRATIONS = [
@@ -149,6 +195,12 @@ MIGRATIONS = [
     "CREATE INDEX IF NOT EXISTS idx_instincts_ngram ON instincts(ngram_hash)",
     # v5: cost tracking
     "ALTER TABLE executions ADD COLUMN cost_usd REAL NOT NULL DEFAULT 0",
+    # v6: scoped instinct ledger
+    "ALTER TABLE instincts ADD COLUMN scope TEXT NOT NULL DEFAULT 'global'",
+    "ALTER TABLE instincts ADD COLUMN project_id TEXT",
+    "ALTER TABLE instincts ADD COLUMN successes INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE instincts ADD COLUMN failures INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE instincts ADD COLUMN evidence_count INTEGER NOT NULL DEFAULT 1",
 ]
 
 def init_db(db_path: Path) -> None:
@@ -191,6 +243,104 @@ def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
                 judge_corr, judge_slop, judge_scope, judge_verdict,
                 float(cost_usd),
             ),
+        )
+        return int(cur.lastrowid)
+    finally:
+        conn.close()
+
+
+def list_executions(db_path: Path, skill_id: str | None = None,
+                    limit: int = 20, offset: int = 0) -> list[dict[str, Any]]:
+    """Newest-first execution history without full output bodies."""
+    init_db(db_path)
+    limit = max(1, min(int(limit), 100))
+    offset = max(0, int(offset))
+    sql = """SELECT id, timestamp, skill_id, tokens_used, duration_seconds,
+                    success, error, was_fallback, cost_usd, feedback,
+                    judge_corr, judge_slop, judge_scope, judge_verdict
+             FROM executions"""
+    params: list[Any] = []
+    if skill_id:
+        sql += " WHERE skill_id = ?"
+        params.append(skill_id)
+    sql += " ORDER BY id DESC LIMIT ? OFFSET ?"
+    params.extend([limit, offset])
+    conn = sqlite3.connect(str(db_path))
+    try:
+        rows = conn.execute(sql, params).fetchall()
+    finally:
+        conn.close()
+    keys = ("id", "timestamp", "skill_id", "tokens_used", "duration_seconds",
+            "success", "error", "was_fallback", "cost_usd", "feedback",
+            "judge_corr", "judge_slop", "judge_scope", "judge_verdict")
+    return [dict(zip(keys, row)) for row in rows]
+
+
+def current_project_id(explicit: str | None = None) -> str:
+    """Stable project key: explicit override, env var, or cwd digest."""
+    if explicit:
+        return explicit
+    env = os.environ.get("AGENT_FOUNDRY_PROJECT_ID")
+    if env:
+        return env
+    return hashlib.sha256(str(Path.cwd()).encode("utf-8")).hexdigest()[:12]
+
+
+def _jsonable(value: Any) -> Any:
+    """Convert Pydantic models and containers into JSON-safe values."""
+    if hasattr(value, "model_dump"):
+        return value.model_dump()
+    if isinstance(value, dict):
+        return {k: _jsonable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable(v) for v in value]
+    return value
+
+
+def log_observation(db_path: Path, *, project_id: str, skill_id: str,
+                    prompt: str, outcome: str,
+                    judge: dict | None = None,
+                    cost_usd: float = 0.0, latency_ms: int = 0,
+                    plan: list | None = None) -> int:
+    """Record one execution observation without persisting the full prompt."""
+    init_db(db_path)
+    prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+    judge = judge or {}
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        cur = conn.execute(
+            """INSERT INTO observations
+            (timestamp, project_id, skill_id, prompt_hash, prompt_excerpt,
+             plan_json, outcome, judge_corr, judge_slop, judge_scope,
+             judge_verdict, cost_usd, latency_ms)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                datetime.now(timezone.utc).isoformat(),
+                project_id, skill_id, prompt_hash, prompt[:160],
+                json.dumps(_jsonable(plan), ensure_ascii=False) if plan is not None else None,
+                outcome,
+                judge.get("correctness"), judge.get("slop"), judge.get("scope"),
+                judge.get("verdict"), float(cost_usd), int(latency_ms),
+            ),
+        )
+        return int(cur.lastrowid)
+    finally:
+        conn.close()
+
+
+def log_policy_decision(db_path: Path, *, action_kind: str, decision: str,
+                        rule_id: str | None = None, detail: str = "",
+                        receipt_hash: str = "") -> int:
+    """Record one policy decision for later audit."""
+    init_db(db_path)
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        cur = conn.execute(
+            """INSERT INTO policy_decisions
+            (timestamp, action_kind, decision, rule_id, detail, receipt_hash)
+            VALUES (?, ?, ?, ?, ?, ?)""",
+            (datetime.now(timezone.utc).isoformat(), action_kind, decision,
+             rule_id, detail, receipt_hash),
         )
         return int(cur.lastrowid)
     finally:
@@ -414,18 +564,277 @@ def learn(db_path: Path) -> dict:
 
     return results
 
+
+def learn_scoped(db_path: Path, *, scope: str = "project",
+                 project_id: str | None = None) -> dict:
+    """Derive evidence-weighted instincts from the observation ledger.
+
+    Confidence is the Beta(1,1) posterior mean:
+    (successes + 1) / (successes + failures + 2).
+    """
+    if scope not in ("project", "global"):
+        raise ValueError("scope must be 'project' or 'global'")
+    init_db(db_path)
+    pid = current_project_id(project_id) if scope == "project" else None
+    results = {"new_instincts": 0, "updated_instincts": 0, "patterns_found": [],
+               "scope": scope, "project_id": pid}
+
+    conn = sqlite3.connect(str(db_path))
+    try:
+        if scope == "project":
+            rows = conn.execute(
+                """SELECT skill_id, prompt_excerpt, outcome, judge_verdict
+                   FROM observations WHERE project_id = ?
+                   ORDER BY id DESC LIMIT 500""",
+                (pid,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                """SELECT skill_id, prompt_excerpt, outcome, judge_verdict
+                   FROM observations ORDER BY id DESC LIMIT 500"""
+            ).fetchall()
+    finally:
+        conn.close()
+
+    if not rows:
+        return results
+
+    stats: dict[str, dict] = defaultdict(
+        lambda: {"successes": 0, "failures": 0, "prompts": [], "verdicts": []}
+    )
+    for skill_id, excerpt, outcome, verdict in rows:
+        bucket = stats[skill_id]
+        if outcome == "success":
+            bucket["successes"] += 1
+        else:
+            bucket["failures"] += 1
+        bucket["prompts"].append(excerpt or "")
+        if verdict:
+            bucket["verdicts"].append(verdict)
+
+    now = datetime.now(timezone.utc).isoformat()
+    stop = {
+        "the", "and", "for", "that", "this", "with", "from", "how",
+        "what", "when", "why", "where", "which", "your", "have",
+        "will", "can", "are", "not", "but", "all", "was", "out", "use",
+    }
+    for skill_id, bucket in stats.items():
+        counter: Counter = Counter()
+        for prompt in bucket["prompts"]:
+            counter.update(w for w in re.findall(r"[a-z]{3,}", prompt.lower())
+                           if w not in stop)
+        tokens = [w for w, _c in counter.most_common(5)]
+        pattern = " or ".join(tokens)
+        if not pattern:
+            continue
+        ngram_hash = ""
+        for prompt in bucket["prompts"]:
+            h = _ngram_hash(prompt)
+            if h:
+                ngram_hash = h
+                break
+        successes = bucket["successes"]
+        failures = bucket["failures"]
+        confidence = (successes + 1.0) / (successes + failures + 2.0)
+        evidence = max(1, successes + failures)
+
+        conn = sqlite3.connect(str(db_path), isolation_level=None)
+        try:
+            if scope == "project":
+                existing = conn.execute(
+                    """SELECT id FROM instincts
+                       WHERE source_skill_id = ? AND trigger_pattern = ?
+                         AND scope = 'project' AND project_id = ?""",
+                    (skill_id, pattern, pid),
+                ).fetchone()
+            else:
+                existing = conn.execute(
+                    """SELECT id FROM instincts
+                       WHERE source_skill_id = ? AND trigger_pattern = ?
+                         AND scope = 'global' AND project_id IS NULL""",
+                    (skill_id, pattern),
+                ).fetchone()
+            if existing:
+                conn.execute(
+                    """UPDATE instincts
+                       SET confidence = ?, samples = ?, successes = ?, failures = ?,
+                           evidence_count = ?, ngram_hash = COALESCE(?, ngram_hash),
+                           last_seen = ?
+                       WHERE id = ?""",
+                    (confidence, evidence, successes, failures, evidence,
+                     ngram_hash or None, now, existing[0]),
+                )
+                results["updated_instincts"] += 1
+            else:
+                conn.execute(
+                    """INSERT INTO instincts
+                    (source_skill_id, trigger_pattern, ngram_hash, confidence,
+                     samples, created, last_seen, approved, scope, project_id,
+                     successes, failures, evidence_count)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)""",
+                    (skill_id, pattern, ngram_hash or None, confidence, evidence,
+                     now, now, scope, pid, successes, failures, evidence),
+                )
+                results["new_instincts"] += 1
+                results["patterns_found"].append({
+                    "skill": skill_id, "pattern": pattern, "scope": scope,
+                    "confidence": round(confidence, 4),
+                    "successes": successes, "failures": failures,
+                })
+        finally:
+            conn.close()
+
+    return results
+
+
+def explain_instinct(db_path: Path, instinct_id: int) -> dict | None:
+    """Return one instinct plus the observations that support it."""
+    init_db(db_path)
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        row = conn.execute(
+            """SELECT id, source_skill_id, trigger_pattern, confidence, samples,
+                      approved, scope, project_id, successes, failures, evidence_count
+               FROM instincts WHERE id = ?""",
+            (instinct_id,),
+        ).fetchone()
+        if not row:
+            return None
+        obs = conn.execute(
+            """SELECT id, timestamp, outcome, judge_verdict, cost_usd, prompt_excerpt
+               FROM observations WHERE skill_id = ?
+               ORDER BY id DESC LIMIT 20""",
+            (row[1],),
+        ).fetchall()
+    finally:
+        conn.close()
+    return {
+        "id": row[0], "skill": row[1], "pattern": row[2], "confidence": row[3],
+        "samples": row[4], "approved": bool(row[5]), "scope": row[6],
+        "project_id": row[7], "successes": row[8], "failures": row[9],
+        "evidence_count": row[10],
+        "confidence_formula": "(successes + 1) / (successes + failures + 2)",
+        "observations": [
+            {"id": o[0], "timestamp": o[1], "outcome": o[2],
+             "judge_verdict": o[3], "cost_usd": o[4], "excerpt": o[5]}
+            for o in obs
+        ],
+    }
+
+
+def _overlap(a: set[str], b: set[str]) -> float:
+    if not a or not b:
+        return 0.0
+    return len(a & b) / min(len(a), len(b))
+
+
+def cluster_instincts(db_path: Path, *, min_overlap: float = 0.5,
+                      min_shared: int = 2) -> list[dict]:
+    """Group instincts whose trigger keywords overlap enough to suggest a skill."""
+    init_db(db_path)
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        rows = conn.execute(
+            """SELECT id, source_skill_id, trigger_pattern, confidence, samples,
+                      scope, successes, failures
+               FROM instincts ORDER BY confidence DESC"""
+        ).fetchall()
+    finally:
+        conn.close()
+
+    items = []
+    for row in rows:
+        words = {w for w in re.split(r"[^a-z0-9]+", row[2].lower()) if len(w) >= 3}
+        items.append({"id": row[0], "skill": row[1], "pattern": row[2],
+                      "confidence": row[3], "samples": row[4], "scope": row[5],
+                      "successes": row[6], "failures": row[7], "words": words})
+
+    parent = list(range(len(items)))
+
+    def find(i: int) -> int:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    def union(i: int, j: int) -> None:
+        ri, rj = find(i), find(j)
+        if ri != rj:
+            parent[rj] = ri
+
+    for i in range(len(items)):
+        for j in range(i + 1, len(items)):
+            shared = items[i]["words"] & items[j]["words"]
+            if len(shared) >= min_shared and _overlap(items[i]["words"],
+                                                      items[j]["words"]) >= min_overlap:
+                union(i, j)
+
+    groups: dict[int, list[dict]] = defaultdict(list)
+    for i, item in enumerate(items):
+        groups[find(i)].append(item)
+
+    out: list[dict] = []
+    for members in groups.values():
+        if len(members) < 2:
+            continue
+        shared = set.intersection(*(m["words"] for m in members))
+        if not shared:
+            shared = set.intersection(*(m["words"] for m in members[:2]))
+        keywords = sorted(shared)[:6]
+        out.append({
+            "suggested_name": "-".join(keywords[:3]) or f"{members[0]['skill']}-cluster",
+            "keywords": keywords,
+            "members": [{k: v for k, v in m.items() if k != "words"} for m in members],
+        })
+    return out
+
+
+def write_proposals(groups: list[dict], out_dir: Path) -> list[str]:
+    """Write one reviewable Markdown proposal per cluster. Never writes skills."""
+    out_dir = out_dir.expanduser()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    paths: list[str] = []
+    for group in groups:
+        slug = re.sub(r"[^a-z0-9-]+", "-", group["suggested_name"].lower()).strip("-")
+        path = out_dir / f"proposal-{slug or 'cluster'}.md"
+        lines = [
+            "# Skill Patch Proposal",
+            "",
+            "Human review required. This file is generated from instincts; it does not modify any skill.",
+            "",
+            f"- Suggested name: `{group['suggested_name']}`",
+            f"- Shared keywords: {', '.join(group['keywords']) or '(none)'}",
+            "",
+            "| Instinct | Skill | Pattern | Confidence | Evidence |",
+            "|---|---|---|---|---|",
+        ]
+        for m in group["members"]:
+            lines.append(
+                f"| {m['id']} | {m['skill']} | {m['pattern']} | "
+                f"{m['confidence']:.2f} | {m['successes']}+/{m['failures']}- |"
+            )
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        paths.append(str(path))
+    return paths
+
+
 def list_instincts(db_path: Path, approved_only: bool = False) -> list[dict]:
     """Return instincts as dicts."""
     init_db(db_path)
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
+        cols = ("id, source_skill_id, trigger_pattern, confidence, samples, "
+                "approved, scope, project_id, successes, failures, evidence_count")
         if approved_only:
-            rows = conn.execute("SELECT id, source_skill_id, trigger_pattern, confidence, samples, approved FROM instincts WHERE approved = 1 ORDER BY confidence DESC").fetchall()
+            rows = conn.execute(f"SELECT {cols} FROM instincts WHERE approved = 1 ORDER BY confidence DESC").fetchall()
         else:
-            rows = conn.execute("SELECT id, source_skill_id, trigger_pattern, confidence, samples, approved FROM instincts ORDER BY confidence DESC").fetchall()
+            rows = conn.execute(f"SELECT {cols} FROM instincts ORDER BY confidence DESC").fetchall()
     finally:
         conn.close()
-    return [{"id": r[0], "skill": r[1], "pattern": r[2], "confidence": r[3], "samples": r[4], "approved": bool(r[5])} for r in rows]
+    return [{"id": r[0], "skill": r[1], "pattern": r[2], "confidence": r[3],
+             "samples": r[4], "approved": bool(r[5]), "scope": r[6],
+             "project_id": r[7], "successes": r[8], "failures": r[9],
+             "evidence_count": r[10]} for r in rows]
 
 def approve_instinct(db_path: Path, instinct_id: int) -> bool:
     init_db(db_path)

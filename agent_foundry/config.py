@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from .model_catalog import DEFAULT_MODEL
+
 
 CONFIG_PATH = Path.home() / ".config" / "agent-foundry" / "config.toml"
 LOG_DB_PATH = Path.home() / ".config" / "agent-foundry" / "executions.db"
@@ -21,7 +23,8 @@ DEFAULT_CONFIG = """# Agent Foundry configuration
 [core]
 skills_dir = "~/.config/agent-foundry/skills"
 index_path = "~/.config/agent-foundry/skills-index.json"
-default_llm = "claude-3-7-sonnet-20250219"
+default_llm = "claude-sonnet-5-5"
+fallback_llms = []
 token_budget = 100000
 daemon_port = 8765
 index_cache_ttl_seconds = 60
@@ -29,6 +32,9 @@ harness_type = "claude-code"
 executor_timeout_seconds = 120
 executor_max_tokens = 0
 executor_retries = 2
+attest_strict = false
+attest_key_path = "~/.config/agent-foundry/attest.key"
+policy_mode = "warn"
 
 [planner]
 # Score added per matched trigger pattern (regex).
@@ -52,6 +58,17 @@ rerank_top_k = 10
 """
 
 
+def _toml_value(value: Any) -> str:
+    """Render scalar and string-list values as TOML literals."""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, str):
+        return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    if isinstance(value, (list, tuple)):
+        return "[" + ", ".join(_toml_value(v) for v in value) + "]"
+    return str(value)
+
+
 @dataclass(frozen=True)
 class PlannerConfig:
     """Tunable planner weights. Frozen — construct a new instance to change."""
@@ -71,7 +88,8 @@ class CoreConfig:
     """Runtime config. Frozen — construct a new instance to change."""
     skills_dir: str = "~/.config/agent-foundry/skills"
     index_path: str = "~/.config/agent-foundry/skills-index.json"
-    default_llm: str = "claude-3-7-sonnet-20250219"
+    default_llm: str = DEFAULT_MODEL
+    fallback_llms: list[str] = field(default_factory=list)
     token_budget: int = 100000
     daemon_port: int = 8765
     index_cache_ttl_seconds: int = 60
@@ -79,6 +97,9 @@ class CoreConfig:
     executor_timeout_seconds: int = 120
     executor_max_tokens: int = 0
     executor_retries: int = 2
+    attest_strict: bool = False
+    attest_key_path: str = "~/.config/agent-foundry/attest.key"
+    policy_mode: str = "warn"
 
 
 @dataclass(frozen=True)
@@ -136,9 +157,17 @@ class Config:
             for k in cfg.planner.__dataclass_fields__
             if k in data.get("planner", {})
         }
+        core = dataclasses.replace(cfg.core, **core_overrides)
+        if core.policy_mode not in ("off", "warn", "enforce"):
+            print(
+                f"WARN: {p} has policy_mode={core.policy_mode!r}; "
+                "expected off, warn, or enforce. Falling back to warn.",
+                file=sys.stderr,
+            )
+            core = dataclasses.replace(core, policy_mode="warn")
         return dataclasses.replace(
             cfg,
-            core=dataclasses.replace(cfg.core, **core_overrides),
+            core=core,
             planner=dataclasses.replace(cfg.planner, **planner_overrides),
             fallback_system_prompt=data.get("fallback_system_prompt"),
             config_path=p,
@@ -158,13 +187,11 @@ class Config:
         lines.append("")
         lines.append("[core]")
         for k, v in vars(self.core).items():
-            v_str = f'"{v}"' if isinstance(v, str) else str(v)
-            lines.append(f"{k} = {v_str}")
+            lines.append(f"{k} = {_toml_value(v)}")
         lines.append("")
         lines.append("[planner]")
         for k, v in vars(self.planner).items():
-            v_str = f'"{v}"' if isinstance(v, str) else str(v)
-            lines.append(f"{k} = {v_str}")
+            lines.append(f"{k} = {_toml_value(v)}")
         lines.append("")
         if self.fallback_system_prompt is not None:
             # toml multiline

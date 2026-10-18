@@ -30,14 +30,25 @@ GENERATED_WEB = {
 
 
 def public_files(base: Path) -> list[Path]:
-    """Tracked files only, so local ignored state never reaches the site."""
+    """Tracked files plus untracked files that are not gitignored."""
     try:
-        raw = subprocess.run(
+        tracked = subprocess.run(
             ["git", "-C", str(base), "ls-files", "-z"],
             capture_output=True, check=True,
         ).stdout
-        paths = [p for p in raw.decode("utf-8", "replace").split("\0") if p]
-        return [base / p for p in paths]
+        pending = subprocess.run(
+            ["git", "-C", str(base), "ls-files", "-z",
+             "--others", "--exclude-standard"],
+            capture_output=True, check=True,
+        ).stdout
+        names = (tracked + pending).decode("utf-8", "replace").split("\0")
+        seen: set[str] = set()
+        paths = []
+        for name in names:
+            if name and name not in seen:
+                seen.add(name)
+                paths.append(base / name)
+        return paths
     except Exception:
         return sorted(base.rglob("*"))
 

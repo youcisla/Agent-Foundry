@@ -22,14 +22,14 @@ node scripts/install.js --harness=antigravity
 
 ## Layout
 
-Each of the 35 skills is a direct child of the chosen skills root:
+Each of the 39 skills is a direct child of the chosen skills root:
 
 ```text
 ~/.gemini/config/
   skills/
     api-design/SKILL.md
     plan-before-code/SKILL.md
-    ... (35 total)
+    ... (39 total)
   rules/
     agent-foundry.md
 ```

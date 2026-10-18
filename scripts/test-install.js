@@ -17,7 +17,13 @@ const env = {
   USERPROFILE: home,
   APPDATA: join(home, 'AppData', 'Roaming'),
 };
-const expected = 35;
+const expected = ['core', 'optional'].reduce((count, category) => {
+  const dir = join(REPO, 'skills', category);
+  if (!existsSync(dir)) return count;
+  return count + readdirSync(dir, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && existsSync(join(dir, e.name, 'SKILL.md')))
+    .length;
+}, 0);
 const failures = [];
 
 function run(harness, cwd = home) {
@@ -63,9 +69,18 @@ try {
     if (!existsSync(marker)) {
       failures.push(`${harness}: missing ${marker}`);
     } else {
-      const managed = JSON.parse(readFileSync(marker, 'utf8')).skills || [];
+      const manifest = JSON.parse(readFileSync(marker, 'utf8'));
+      const managed = manifest.skills || [];
       if (managed.length !== expected) {
         failures.push(`${harness}: manifest lists ${managed.length}/${expected}`);
+      }
+      const entries = manifest.entries || [];
+      if (manifest.manifest_version !== 2 || entries.length !== expected) {
+        failures.push(`${harness}: manifest v2 entries ${entries.length}/${expected}`);
+      }
+      const hash = /^[a-f0-9]{64}$/;
+      if (!entries.every((e) => hash.test(e.sha256) && hash.test(e.frontmatter_sha256))) {
+        failures.push(`${harness}: manifest entry hashes malformed`);
       }
     }
   }

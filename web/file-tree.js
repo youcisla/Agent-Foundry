@@ -339,6 +339,18 @@ const FILE_TREE = {
       "planner.py": {
         "path": "agent_foundry/planner.py",
         "ext": ".py"
+      },
+      "attest.py": {
+        "path": "agent_foundry/attest.py",
+        "ext": ".py"
+      },
+      "model_catalog.py": {
+        "path": "agent_foundry/model_catalog.py",
+        "ext": ".py"
+      },
+      "policy.py": {
+        "path": "agent_foundry/policy.py",
+        "ext": ".py"
       }
     }
   },
@@ -893,6 +905,38 @@ const FILE_TREE = {
                 }
               }
             }
+          },
+          "budget-guard": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/core/budget-guard/SKILL.md",
+                "ext": ".md"
+              }
+            }
+          },
+          "execution-observability": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/core/execution-observability/SKILL.md",
+                "ext": ".md"
+              }
+            }
+          },
+          "fallback-model-routing": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/core/fallback-model-routing/SKILL.md",
+                "ext": ".md"
+              }
+            }
+          },
+          "structured-output-contract": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/core/structured-output-contract/SKILL.md",
+                "ext": ".md"
+              }
+            }
           }
         }
       },
@@ -1036,6 +1080,10 @@ const FILE_TREE = {
   },
   "web": {
     "__files": {
+      "architecture.html": {
+        "path": "web/architecture.html",
+        "ext": ".html"
+      },
       "audit.html": {
         "path": "web/audit.html",
         "ext": ".html"

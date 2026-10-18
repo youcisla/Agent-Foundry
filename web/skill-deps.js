@@ -7,11 +7,22 @@ const SKILL_DEPS = {
     "measure-first",
     "verify-first"
   ],
+  "budget-guard": [
+    "execution-observability",
+    "fallback-model-routing",
+    "measure-first"
+  ],
   "constraint-then-solve": [],
   "context-optimization": [],
   "cron-troubleshoot": [],
   "e2e-test-strategy": [],
   "engram-routing": [],
+  "execution-observability": [],
+  "fallback-model-routing": [
+    "budget-guard",
+    "execution-observability",
+    "structured-output-contract"
+  ],
   "feedback-loop": [],
   "knowledge-extract": [],
   "landscape-first": [
@@ -51,6 +62,7 @@ const SKILL_DEPS = {
     "pushback-when-wrong",
     "verify-first"
   ],
+  "structured-output-contract": [],
   "verify-first": [
     "measure-first",
     "re-verify-findings",

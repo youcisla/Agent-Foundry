@@ -14,7 +14,7 @@ JoyCode uses skills + commands + agents under `.joycode/` (project) or
   skills/
     api-design/SKILL.md
     plan-before-code/SKILL.md
-    ... (35 total)
+    ... (39 total)
   commands/
     af.md
 ```

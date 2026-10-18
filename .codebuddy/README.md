@@ -13,7 +13,7 @@ CodeBuddy uses a flattened rules/skills/commands/agents layout.
   skills/
     api-design/SKILL.md
     plan-before-code/SKILL.md
-    ... (35 total)
+    ... (39 total)
   commands/
     af.md
   agents/

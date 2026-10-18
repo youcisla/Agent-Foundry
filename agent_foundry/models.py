@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
@@ -85,6 +85,8 @@ class ExecuteRequest(BaseModel):
     prompt: str
     force: bool = False
     model: str | None = None
+    fallback_models: list[str] | None = None
+    output_schema: dict | None = None
 
 
 class ExecuteResponse(BaseModel):
@@ -99,6 +101,9 @@ class ExecuteResponse(BaseModel):
     estimated_cost: TokenEstimate | None = None
     was_fallback: bool = False
     cost_usd: float = 0.0
+    model: str = ""
+    structured_output: Any | None = None
+    schema_valid: bool | None = None
 
 
 # ===== Loop =====

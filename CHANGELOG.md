@@ -2,6 +2,54 @@
 
 All notable changes to Agent Foundry. Everything here is original work by the Agent Foundry contributors, released under MIT.
 
+## Unreleased
+
+Portable governance release.
+
+- Skill attestation: `agent-foundry attest` writes a signed manifest v2 with a
+  per-file SHA-256 and a frontmatter digest for every skill. `agent-foundry
+  verify` checks the manifest, HMAC signature, and file hashes; `--strict`
+  fails on mismatches, missing files, or unsigned entries. The signing key
+  lives at `~/.config/agent-foundry/attest.key` with mode `0600`.
+  `attest_strict` in config enforces verification before every execution.
+- Policy gate: `agent-foundry gate` and the `check_action` MCP tool classify
+  shell, file-write, text, and network actions as `allow`, `confirm`, or
+  `deny`, with a SHA-256 decision receipt. Execution checks inbound prompts and
+  outbound text when `policy_mode` is `warn` or `enforce`. The gate is a
+  deterministic classifier, not a sandbox.
+- Scoped instincts: observations are stored without prompts (hash only) and
+  learned as project- or global-scope instincts with a Beta posterior
+  confidence. `learn --scope` and `instincts --explain` expose the evidence;
+  `instincts --proposals` writes review-only skill proposals outside the repo.
+- MCP server now exposes ten tools: `plan`, `execute`, `list_skills`,
+  `search_skills`, `get_skill`, `verify_skills`, `check_action`,
+  `runtime_status`, `execution_history`, and `list_models`. Each tool carries
+  standard MCP annotations (`readOnlyHint`, `destructiveHint`,
+  `idempotentHint`, `openWorldHint`).
+- Model catalog: `claude-fable-5-1`, `claude-opus-5-5`, `claude-sonnet-5-5`,
+  and `claude-haiku-5-5`, with the `fable`, `opus`, `sonnet`, and `haiku`
+  aliases. `claude-sonnet-5-5` is the new default; the stale
+  `claude-3-7-sonnet-20250219` default is gone.
+- Fallback routing: `fallback_llms` in config, `fallback_models` per request,
+  and a bounded chain that retries the primary, then walks fallbacks once.
+  Auth errors stop the chain. Responses report the model that answered.
+- Structured output: `output_schema` on execute requests. The executor parses
+  JSON (tolerating fences), validates type, required fields, properties, and
+  items, allows one repair attempt, and fails closed with `schema_valid=false`.
+- Execution history: `list_executions` and the `execution_history` MCP tool
+  return bounded metadata without full output bodies.
+- Four new original skills: `structured-output-contract`,
+  `fallback-model-routing`, `budget-guard`, and `execution-observability`.
+  The catalog now ships 39 skills (29 core, 10 optional).
+- CLI grows to 22 commands with `attest`, `verify`, and `gate`.
+- Attestation fails closed: `attest_strict` without a manifest is an error,
+  and daemon `/execute` now propagates `policy_mode` and attestation settings.
+- Knowledge graph regenerated from the current tree: 911 nodes, 1,860
+  edges, 71 communities. The site, architecture page, and embedded file
+  browser reflect the new graph and the 22-command / 10-tool surface.
+- Executions now log `cost_usd` on success and record an observation for both
+  success and error outcomes.
+
 ## 0.5.0 - 2026-10-18
 
 UI, distribution, and architecture release.
@@ -22,7 +70,7 @@ UI, distribution, and architecture release.
 
 Harness portability release.
 
-- The installer now links each of the 35 skills as a direct child of the
+- The installer now links each of the 39 skills as a direct child of the
   harness's documented skills root. The previous nested
   `skills/agent-foundry/core/...` layout was invisible to Claude Code and most
   other harnesses.

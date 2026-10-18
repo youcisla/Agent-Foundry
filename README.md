@@ -6,7 +6,7 @@
 **Skill and agent runtime for AI coding assistants.**
 
 Plan → execute → verify. Skills, agents, a local daemon.
-MIT, local, no cloud. 35 original skills, no third-party skill content.
+MIT, local, no cloud. 39 original skills, no third-party skill content.
 
 <br>
 
@@ -14,7 +14,7 @@ MIT, local, no cloud. 35 original skills, no third-party skill content.
 [![Version](https://img.shields.io/badge/version-0.5.0-4ade80.svg)](CHANGELOG.md)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-6496ff.svg)](https://www.python.org)
 [![npm](https://img.shields.io/badge/npm-%40youcisla%2Fagent--foundry-6496ff.svg)](https://www.npmjs.com/package/@youcisla/agent-foundry)
-[![Skills](https://img.shields.io/badge/skills-35-f5a623.svg)](#catalog)
+[![Skills](https://img.shields.io/badge/skills-39-f5a623.svg)](#catalog)
 [![Agents](https://img.shields.io/badge/agents-3-4ade80.svg)](#catalog)
 [![Gates](https://img.shields.io/badge/quality%20gates-3%20green-4ade80.svg)](#quality-gates)
 [![External refs](https://img.shields.io/badge/external%20refs-0-4ade80.svg)](https://github.com/youcisla/Agent-Foundry/blob/main/scripts/nox.sh)
@@ -116,7 +116,7 @@ full catalog, an interactive knowledge graph, and one-click install.
 ### 4. Or connect over MCP
 
 ```bash
-agent-foundry mcp   # stdio MCP server: plan, execute, list_skills, get_skill
+agent-foundry mcp   # stdio MCP server: plan, execute, list_skills, search_skills, get_skill, verify_skills, check_action, runtime_status, execution_history, list_models
 ```
 
 Or run the published package directly:
@@ -164,7 +164,7 @@ Published through three channels: npm (`@youcisla/agent-foundry`), PyPI
 ### What's in the box
 
 ```text
-skills/         35 disciplines (25 core + 10 optional)    ─┐ feed
+skills/         39 disciplines (29 core + 10 optional)    ─┐ feed
 agents/         af-planner · af-critic · af-orchestrator  │ the
                                                           ▼ indexer
 agent_foundry/  config.py ─▶ daemon.py (FastAPI) ─▶ mcp_server.py (stdio MCP)
@@ -196,14 +196,14 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 
 ## Catalog
 
-**35 skills, 3 agents.** All original work under MIT. Each skill:
+**39 skills, 3 agents.** All original work under MIT. Each skill:
 
 - 📏 **≤150 lines / ≤8 KB** (Codex cap, no exceptions)
 - 🎯 **Exactly one trigger phrase** (`Use when...` so the model knows when to fire)
 - 🚫 **Anti-patterns + Verification checklist** (teach what *not* to do, then confirm it was done)
 - ⚡ **Action verbs, not tool names** (`examine` not `Read`, `create` not `Write`)
 
-### Core skills (25)
+### Core skills (29)
 
 | Skill | Trigger |
 |---|---|
@@ -211,11 +211,14 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 | [`api-design`](skills/core/api-design/SKILL.md) | Use when creating a new API endpoint or reviewing API consistency |
 | [`automation-pick`](skills/core/automation-pick/SKILL.md) | Decide whether to automate a task before automating |
 | [`bottleneck-gating`](skills/core/bottleneck-gating/SKILL.md) | Phase a project by measured bottleneck, not intuition |
+| [`budget-guard`](skills/core/budget-guard/SKILL.md) | Set and enforce a hard spend ceiling for paid loops |
 | [`constraint-then-solve`](skills/core/constraint-then-solve/SKILL.md) | Restate the problem, catalog constraints, then solve |
 | [`context-optimization`](skills/core/context-optimization/SKILL.md) | Use on any task with >2K-token outputs, big files, or repeated reads |
 | [`cron-troubleshoot`](skills/core/cron-troubleshoot/SKILL.md) | Debug a missing or wrong cron job |
 | [`e2e-test-strategy`](skills/core/e2e-test-strategy/SKILL.md) | Use when designing test coverage for a web app or API |
 | [`engram-routing`](skills/core/engram-routing/SKILL.md) | Route prompts via O(1) N-gram lookup when trigger patterns should match fast |
+| [`execution-observability`](skills/core/execution-observability/SKILL.md) | Log model, cost, latency, and outcome for every run |
+| [`fallback-model-routing`](skills/core/fallback-model-routing/SKILL.md) | Route around provider failures and report which model answered |
 | [`feedback-loop`](skills/core/feedback-loop/SKILL.md) | After shipping, instrument → measure → iterate |
 | [`knowledge-extract`](skills/core/knowledge-extract/SKILL.md) | Turn a session into a skill draft |
 | [`landscape-first`](skills/core/landscape-first/SKILL.md) | Research the space before building |
@@ -230,6 +233,7 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 | [`session-closeout`](skills/core/session-closeout/SKILL.md) | Apply at the end of any multi-step project |
 | [`session-distill`](skills/core/session-distill/SKILL.md) | Extract patterns from every session |
 | [`show-your-work`](skills/core/show-your-work/SKILL.md) | Output a thinking trace after complex tasks |
+| [`structured-output-contract`](skills/core/structured-output-contract/SKILL.md) | Enforce a JSON Schema for machine-read output |
 | [`verify-first`](skills/core/verify-first/SKILL.md) | Apply before committing to any claim |
 | [`workflow-decompose`](skills/core/workflow-decompose/SKILL.md) | Use when designing or debugging an automation |
 
@@ -274,11 +278,14 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 | `agent-foundry consult "<need>"` | Recommend skills for a need |
 | `agent-foundry cost-report` | Token and time estimates per skill |
 | `agent-foundry feedback <id> <score>` | Attach a human score to an execution |
-| `agent-foundry learn` | Learn trigger weights from judged executions |
-| `agent-foundry instincts` | List proposed trigger instincts |
+| `agent-foundry learn [--scope project\|global]` | Learn trigger weights from judged executions |
+| `agent-foundry instincts [--explain <id>] [--proposals]` | List instincts, explain evidence, or write review-only proposals |
 | `agent-foundry instinct-approve <id>` | Approve an instinct and persist it |
+| `agent-foundry attest` | Sign a manifest of skill file hashes and frontmatter digests |
+| `agent-foundry verify [--strict]` | Verify the installed manifest and signature |
+| `agent-foundry gate --kind <kind> --value <value>` | Classify an action as allow, confirm, or deny |
 | `agent-foundry browse` | Browse/search the catalog, or `--read <id>` |
-| `agent-foundry mcp` | Start the MCP stdio server (plan/execute/list_skills/get_skill) |
+| `agent-foundry mcp` | Start the MCP stdio server (plan/execute/list_skills/search_skills/get_skill/verify_skills/check_action/runtime_status/execution_history/list_models) |
 | `agent-foundry eval --tasks <file>` | Paired skill eval: with vs without, reports lift |
 | `agent-foundry serve` | Start the daemon (lazy-started on first command) |
 
@@ -340,7 +347,7 @@ bash scripts/nox.sh
 | Gate | Result |
 |---|---|
 | `foundry-eval.py` | **34 passed, 0 failed** ✅ |
-| `validate.sh` | **35 skills, 0 failed** ✅ |
+| `validate.sh` | **39 skills, 0 failed** ✅ |
 | `nox.sh` | **0 external references** ✅ |
 
 The `nox.sh` gate is the strongest guarantee: it scans every tracked file for
@@ -355,8 +362,8 @@ Browse the catalog, the knowledge graph, and the audit at
 
 | Page | What |
 |---|---|
-| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 35 skills + 3 agents with live search |
-| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (766 nodes, 1,394 edges, 75 communities) |
+| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 39 skills + 3 agents with live search |
+| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (911 nodes, 1,860 edges, 71 communities) |
 | [Audit](https://youcisla-agents.vercel.app/audit) | God nodes, surprising connections, interactive React Flow diagrams |
 
 The site regenerates from live repo state on every commit via

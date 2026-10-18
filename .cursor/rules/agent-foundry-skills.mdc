@@ -4,7 +4,7 @@ description: Use when applying Agent Foundry discipline skills
 
 # Agent Foundry Skills
 
-35 curated skills under `skills/core/` and `skills/optional/`.
+39 curated skills under `skills/core/` and `skills/optional/`.
 Each SKILL.md has a trigger phrase, anti-patterns, and verification.
 
 If the task is:

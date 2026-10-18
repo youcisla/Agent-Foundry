@@ -27,6 +27,7 @@
 import { existsSync, lstatSync, mkdirSync, rmSync, symlinkSync, linkSync, cpSync,
          readdirSync, statSync, copyFileSync, readFileSync, writeFileSync,
          realpathSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { basename, dirname, join, resolve, sep } from 'node:path';
 import { homedir, platform, arch } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -172,6 +173,22 @@ function rmIfExists(p) {
 const SKILL_ROOTS = [join(REPO, 'skills', 'core'), join(REPO, 'skills', 'optional')];
 const MANAGED_MARKER = '.agent-foundry-installed.json';
 
+function sha256File(path) {
+  return createHash('sha256').update(readFileSync(path)).digest('hex');
+}
+
+function frontmatterSha256(path) {
+  const text = readFileSync(path, 'utf8')
+    .replace(/^﻿/, '')
+    .replace(/\r\n?/g, '\n');
+  if (!text.startsWith('---\n')) {
+    return createHash('sha256').update('').digest('hex');
+  }
+  const end = text.indexOf('\n---', 4);
+  const body = end === -1 ? '' : text.slice(4, end);
+  return createHash('sha256').update(body).digest('hex');
+}
+
 function skillSources() {
   const sources = [];
   for (const root of SKILL_ROOTS) {
@@ -202,12 +219,15 @@ function readManaged(target) {
   }
 }
 
-function writeManaged(target, skills) {
+function writeManaged(target, skills, entries = []) {
   writeFileSync(join(target, MANAGED_MARKER), JSON.stringify({
     package: '@youcisla/agent-foundry',
     repo: REPO,
     mode: opts.copy ? 'copy' : 'link',
+    manifest_version: 2,
+    generated_at: new Date().toISOString(),
     skills,
+    entries,
   }, null, 2) + '\n');
 }
 
@@ -242,6 +262,7 @@ function installSkills(root, dry, { group = '', label = '' } = {}) {
 
   let installed = 0;
   const managed = [];
+  const entries = [];
   for (const src of sources) {
     const name = basename(src);
     const dst = join(target, name);
@@ -259,10 +280,17 @@ function installSkills(root, dry, { group = '', label = '' } = {}) {
     if (linkOrCopy(src, dst, { force: false, copy: opts.copy })) {
       installed++;
       managed.push(name);
+      const skillMd = join(src, 'SKILL.md');
+      entries.push({
+        name,
+        sha256: sha256File(skillMd),
+        frontmatter_sha256: frontmatterSha256(skillMd),
+        installed_at: new Date().toISOString(),
+      });
     }
   }
 
-  writeManaged(target, managed);
+  writeManaged(target, managed, entries);
   log(`  ${installed}/${sources.length} skills ${opts.copy ? 'copied' : 'linked'}${label ? ` for ${label}` : ''}`);
   return installed === sources.length;
 }
@@ -329,7 +357,7 @@ function copyFiles(srcDir, dstDir, dry, { ext = null, label = '' } = {}) {
 
 // ---------- harness installers ----------
 // Status values:
-//   'tested'      — installer + indexer smoke test passes; 35 skills land at the documented root
+//   'tested'      — installer + indexer smoke test passes; 39 skills land at the documented root
 //   'coming-soon' — adapter not yet implemented (refuses to install, prints note)
 const HARNESSES = {
   'claude-code': {
@@ -611,7 +639,7 @@ log('');
 const ok = installer.install(opts.dryRun);
 
 if (ok && opts.dryRun) {
-  log(`Would ${opts.copy ? 'copy' : 'link'} 35 skills -> ${INDEX_SKILLS()} (CLI index)`);
+  log(`Would ${opts.copy ? 'copy' : 'link'} ${skillSources().length} skills -> ${INDEX_SKILLS()} (CLI index)`);
 }
 
 if (ok && !opts.dryRun) {

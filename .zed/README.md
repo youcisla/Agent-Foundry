@@ -17,7 +17,7 @@ Each skill must be a direct child. Zed does not support nested skill folders.
 node scripts/install.js --harness=zed
 ```
 
-The installer links 35 skills into `~/.agents/skills`. It also prints the
+The installer links 39 skills into `~/.agents/skills`. It also prints the
 platform-specific personal instructions path:
 
 - macOS / Linux: `~/.config/zed/AGENTS.md`

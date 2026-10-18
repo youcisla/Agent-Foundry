@@ -12,10 +12,10 @@ node scripts/install.js --harness=gemini-cli
 
 This writes:
 
-- 35 skill links under `~/.gemini/skills/`
+- 39 skill links under `~/.gemini/skills/`
 - `~/.gemini/extensions/agent-foundry/gemini-extension.json`
 - `~/.gemini/extensions/agent-foundry/GEMINI.md`
-- 35 skill links under the extension's `skills/` directory
+- 39 skill links under the extension's `skills/` directory
 
 Restart the CLI and run `/extensions list` or `/skills` to verify.
 
