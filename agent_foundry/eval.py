@@ -3,13 +3,19 @@
 Task file format (JSON array):
   [{"id": "t1", "prompt": "...", "skill": "api-design", "verify": "grep -qi ok"}]
 
-`verify` is an optional shell command. It receives the model output on stdin
-and passes when the exit code is 0. Without a verifier the run is recorded as
+`verify` is an optional command. It receives the model output on stdin and
+passes when the exit code is 0. Without a verifier the run is recorded as
 unscored.
+
+Verifier commands run with `shell=False` by default and are split with
+`shlex`. Pass `allow_shell=True` (CLI: `--allow-shell`) only for task files you
+trust, since that enables pipes, redirection, and arbitrary shell syntax.
+Treat any task file as executable code.
 """
 from __future__ import annotations
 
 import json
+import shlex
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -20,21 +26,36 @@ from .indexer import GENERIC_REASONING_ID, get_index_cached
 from .models import ExecuteRequest
 
 
-def _verify(command: str, output: str) -> bool | None:
+def _verify(command: str, output: str, *, allow_shell: bool = False) -> bool | None:
     if not command:
         return None
     try:
-        proc = subprocess.run(
-            command, shell=True, input=output, text=True,
-            capture_output=True, timeout=60,
-        )
-        return proc.returncode == 0
+        if allow_shell:
+            proc = subprocess.run(
+                command, shell=True, input=output, text=True,
+                capture_output=True, timeout=60,
+            )
+            return proc.returncode == 0
+
+        # Safe subset: `&&` chains, each command split with shlex. No shell
+        # metacharacters, pipes, or redirection unless allow_shell is set.
+        for part in command.split("&&"):
+            argv = shlex.split(part.strip(), posix=True)
+            if not argv:
+                continue
+            proc = subprocess.run(
+                argv, shell=False, input=output, text=True,
+                capture_output=True, timeout=60,
+            )
+            if proc.returncode != 0:
+                return False
+        return True
     except Exception:
         return False
 
 
 def run_eval(tasks_path: Path, *, cfg: Config, model: str | None = None,
-             db_path: Path | None = None) -> dict[str, Any]:
+             db_path: Path | None = None, allow_shell: bool = False) -> dict[str, Any]:
     idx = get_index_cached(Path(cfg.core.index_path).expanduser(),
                            ttl_seconds=cfg.core.index_cache_ttl_seconds)
     if idx is None:
@@ -68,8 +89,10 @@ def run_eval(tasks_path: Path, *, cfg: Config, model: str | None = None,
             retries=cfg.core.executor_retries,
         )
 
-        with_pass = _verify(verify, with_resp.output) if with_resp.success else False
-        no_pass = _verify(verify, no_resp.output) if no_resp.success else False
+        with_pass = (_verify(verify, with_resp.output, allow_shell=allow_shell)
+                     if with_resp.success else False)
+        no_pass = (_verify(verify, no_resp.output, allow_shell=allow_shell)
+                   if no_resp.success else False)
         results.append({
             "id": task.get("id", prompt[:40]),
             "skill": skill_id,

@@ -585,12 +585,15 @@ def cmd_browse(ctx, search, read_id):
               help="JSON task file: [{id,prompt,skill,verify}]")
 @click.option("--model", default=None)
 @click.option("--json", "as_json", is_flag=True, help="Print raw JSON result")
+@click.option("--allow-shell", is_flag=True,
+              help="Run verifier commands with shell syntax; only for trusted task files")
 @click.pass_context
-def cmd_eval(ctx, tasks_path, model, as_json):
+def cmd_eval(ctx, tasks_path, model, as_json, allow_shell):
     """Run a paired skill eval (with vs without skill) and report lift."""
     from .eval import run_eval
     cfg = ctx.obj.get("cfg")
-    result = run_eval(Path(tasks_path), cfg=cfg, model=model, db_path=LOG_DB_PATH)
+    result = run_eval(Path(tasks_path), cfg=cfg, model=model, db_path=LOG_DB_PATH,
+                      allow_shell=allow_shell)
     if as_json:
         click.echo(json.dumps(result, indent=2))
         return

@@ -5,6 +5,7 @@ from pathlib import Path
 
 from agent_foundry.config import Config, PlannerConfig
 from agent_foundry.executor import _verify_integrity
+from agent_foundry.eval import _verify
 from agent_foundry.indexer import build_index, parse_frontmatter, write_index
 from agent_foundry.logging_db import (
     create_loop_session,
@@ -182,6 +183,23 @@ class DaemonTests(unittest.TestCase):
             r = client.post("/plan", json={"prompt": "design a REST API for payments"})
             self.assertEqual(r.status_code, 200)
             self.assertGreaterEqual(len(r.json()["results"]), 1)
+
+
+class EvalVerifyTests(unittest.TestCase):
+    def test_shell_disabled_blocks_redirection(self):
+        with tempfile.TemporaryDirectory() as d:
+            marker = Path(d) / "marker.txt"
+            command = f'echo x > "{marker}"'
+            _verify(command, "")
+            self.assertFalse(marker.exists())
+            _verify(command, "", allow_shell=True)
+            self.assertTrue(marker.exists())
+
+    @unittest.skipIf(__import__("sys").platform == "win32", "grep not on Windows")
+    def test_and_chain_supported_without_shell(self):
+        command = "grep -qiE 'pagination|cursor|page' && grep -qiE 'error|status'"
+        self.assertTrue(_verify(command, "pagination with status"))
+        self.assertFalse(_verify(command, "pagination only"))
 
 
 class SiteDataTests(unittest.TestCase):
