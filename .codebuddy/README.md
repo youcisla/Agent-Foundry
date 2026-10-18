@@ -1,23 +1,27 @@
-# Agent Foundry — Codebuddy Adapter
+# Agent Foundry — CodeBuddy Adapter
 
 **Status:** Beta — adapter structure defined, end-to-end behavior not yet tested.
 
-Codebuddy uses a flattened rules/skills/commands/agents layout.
+CodeBuddy uses a flattened rules/skills/commands/agents layout.
 
 ## Layout
 
-```
+```text
 .codebuddy/
   rules/
     agent-foundry.md
   skills/
-    agent-foundry/
-      SKILL.md
+    api-design/SKILL.md
+    plan-before-code/SKILL.md
+    ... (35 total)
   commands/
     af.md
   agents/
     af-critic.md
 ```
+
+Skills must be direct children of `.codebuddy/skills/`. Nested skill folders
+are not scanned.
 
 ## Install
 

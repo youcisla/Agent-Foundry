@@ -17,21 +17,6 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SKILL_COUNT=0
 FAIL=0
 
-# Check if yq is available; fall back to python
-if command -v yq >/dev/null 2>&1; then
-  PARSE="yq -r"
-elif command -v python >/dev/null 2>&1; then
-  PARSE="python -c"
-else
-  echo "FATAL: need yq or python for YAML parsing" >&2
-  exit 1
-fi
-
-extract_field() {
-  local file=$1 field=$2
-  awk '/^---$/{c++; next} c==1 && $0 ~ "^"field":" {sub("^"field":[ ]*",""); print; exit}' "$file"
-}
-
 check_skill() {
   local file=$1
   local skill_name

@@ -29,7 +29,7 @@ The artifact follows the `session-distill` skill format: what we did, decisions 
       "matcher": "*",
       "hooks": [{
         "type": "command",
-        "command": "bash ~/.claude/skills/agent-foundry/hooks/session-end.sh"
+        "command": "bash ~/.agent-foundry/hooks/session-end.sh"
       }]
     }]
   }
@@ -43,7 +43,7 @@ The artifact follows the `session-distill` skill format: what we did, decisions 
     "session_end": [{
       "hooks": [{
         "type": "command",
-        "command": "bash ~/.claude/skills/agent-foundry/hooks/session-end.sh"
+        "command": "bash ~/.agent-foundry/hooks/session-end.sh"
       }]
     }]
   }
@@ -52,7 +52,7 @@ The artifact follows the `session-distill` skill format: what we did, decisions 
 
 **Manual invocation** (any harness):
 ```bash
-bash ~/.claude/skills/agent-foundry/hooks/session-end.sh --transcript ./transcript.json
+bash ~/.agent-foundry/hooks/session-end.sh --transcript ./transcript.json
 ```
 
 ## 2. On-Demand Skill Extraction (`scripts/auto-extract.sh`)

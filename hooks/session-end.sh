@@ -13,7 +13,7 @@
 #       "matcher": "*",
 #       "hooks": [{
 #         "type": "command",
-#         "command": "bash ~/.claude/skills/agent-foundry/hooks/session-end.sh"
+#         "command": "bash ~/.agent-foundry/hooks/session-end.sh"
 #       }]
 #     }]
 #   }
@@ -21,14 +21,14 @@
 # Hermes (config.yaml):
 #   hooks:
 #     session_end:
-#       command: bash ~/.claude/skills/agent-foundry/hooks/session-end.sh
+#       command: bash ~/.agent-foundry/hooks/session-end.sh
 #
 # Codex (settings.json):
 #   "hooks": {
 #     "session_end": [{
 #       "hooks": [{
 #         "type": "command",
-#         "command": "bash ~/.claude/skills/agent-foundry/hooks/session-end.sh"
+#         "command": "bash ~/.agent-foundry/hooks/session-end.sh"
 #       }]
 #     }]
 #   }

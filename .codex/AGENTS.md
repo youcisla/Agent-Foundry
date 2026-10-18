@@ -17,13 +17,18 @@ shipped defaults.
 
 ## Skills Discovery
 
-After install, skills are auto-loaded from `~/.codex/skills/agent-foundry/`.
+Codex scans `.agents/skills/` from the working directory up to the repository
+root, plus `$HOME/.agents/skills/`. The installer links each of the 35 skills
+as a direct child of `$HOME/.agents/skills/`.
+
+`~/.codex/skills/` is a legacy location and is not used by the installer.
 Each skill contains:
 
 - `SKILL.md` — Detailed instructions and workflow
-- `agents/openai.yaml` — Codex interface metadata (description + required_tools)
+- `agents/openai.yaml` — optional Codex interface metadata
 
-Per-skill, per-agent manifests live at `agents/<skill-id>/agents/openai.yaml`.
+Skills must be direct children of the skills root; Codex does not recurse into
+a shared parent folder.
 
 ## MCP Servers
 
@@ -75,7 +80,7 @@ config_file = "agents/af-planner/agents/openai.yaml"
 |---------|-------------|-----------|
 | Hooks | 8+ event types | Not yet supported |
 | Context file | `CLAUDE.md` + `AGENTS.md` | `AGENTS.md` only |
-| Skills | Skills loaded via plugin | `.codex/skills/` directory |
+| Skills | Direct children of `~/.claude/skills/` | Direct children of `~/.agents/skills/` |
 | Commands | `/slash` commands | Instruction-based |
 | Agents | Subagent Task tool | Multi-agent via `/agent` and `[agents.]` roles |
 | Security | Hook-based enforcement | Instruction + sandbox |

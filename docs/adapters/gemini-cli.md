@@ -1,17 +1,37 @@
-# Gemini CLI integration for Agent Foundry.
+# Gemini CLI / Antigravity CLI
 
-Gemini CLI (https://github.com/google-gemini/gemini-cli) does not have a
-formal plugin manifest. Skills are added by symlinking this repo's
-`skills/` directory into Gemini's skill location.
+Gemini CLI loads skills from `~/.gemini/skills/<skill>/SKILL.md` and the
+cross-tool alias `~/.agents/skills/<skill>/SKILL.md`. It also supports real
+extensions at `~/.gemini/extensions/<name>/gemini-extension.json`.
 
-After running `bash scripts/install.sh --harness=gemini-cli`, the skills
-are linked to `~/.gemini/skills/agent-foundry/`. Verify with:
+## Install
 
-  ls ~/.gemini/skills/agent-foundry/core/ | head
+```bash
+node scripts/install.js --harness=gemini-cli
+```
 
-If you do not see 30 skills, file an issue. The install path is the
-only stable surface today.
+This writes:
 
-NOTE: this adapter is documented but NOT end-to-end tested. The agent
-that built this site (2026-07-20) did not have Gemini CLI installed.
-Do not advertise Gemini as a "tested harness" in marketing.
+- 35 skill links under `~/.gemini/skills/`
+- `~/.gemini/extensions/agent-foundry/gemini-extension.json`
+- `~/.gemini/extensions/agent-foundry/GEMINI.md`
+- 35 skill links under the extension's `skills/` directory
+
+Restart the CLI and run `/extensions list` or `/skills` to verify.
+
+## Antigravity
+
+Antigravity has separate roots:
+
+- App / IDE: `~/.gemini/config/skills/`
+- Antigravity CLI: `~/.gemini/antigravity-cli/skills/`
+- Workspace: `.agents/skills/`
+- Shared: `~/.agents/skills/`
+
+Install all global roots with:
+
+```bash
+node scripts/install.js --harness=antigravity
+```
+
+Legacy `.agent/skills/` and workflows are deprecated; use skills.

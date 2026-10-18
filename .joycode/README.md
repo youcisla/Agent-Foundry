@@ -2,20 +2,24 @@
 
 **Status:** Beta — adapter structure defined.
 
-JoyCode uses skills + commands + agents under `.joycode/`.
+JoyCode uses skills + commands + agents under `.joycode/` (project) or
+`~/.joycode/` (user).
 
 ## Layout
 
-```
+```text
 .joycode/
   rules/
     agent-foundry.md
   skills/
-    agent-foundry/
-      SKILL.md
+    api-design/SKILL.md
+    plan-before-code/SKILL.md
+    ... (35 total)
   commands/
     af.md
 ```
+
+Skills must be direct children of `.joycode/skills/`.
 
 ## Install
 

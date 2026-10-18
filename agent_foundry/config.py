@@ -19,7 +19,7 @@ DEFAULT_CONFIG = """# Agent Foundry configuration
 # Edit this file to tune the orchestrator.
 
 [core]
-skills_dir = "~/.claude/skills/agent-foundry"
+skills_dir = "~/.config/agent-foundry/skills"
 index_path = "~/.config/agent-foundry/skills-index.json"
 default_llm = "claude-3-7-sonnet-20250219"
 token_budget = 100000
@@ -69,7 +69,7 @@ class PlannerConfig:
 @dataclass(frozen=True)
 class CoreConfig:
     """Runtime config. Frozen — construct a new instance to change."""
-    skills_dir: str = "~/.claude/skills/agent-foundry"
+    skills_dir: str = "~/.config/agent-foundry/skills"
     index_path: str = "~/.config/agent-foundry/skills-index.json"
     default_llm: str = "claude-3-7-sonnet-20250219"
     token_budget: int = 100000

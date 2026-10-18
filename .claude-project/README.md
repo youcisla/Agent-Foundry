@@ -1,22 +1,30 @@
-# Agent Foundry — Claude Project Adapter
+# Agent Foundry — Claude Code Project Adapter
 
-**Status:** Coming soon — `claude-project` is identical to claude-code but
-installs into `./.claude/` (per-project) instead of `~/.claude/`. We ship it
-as a separate target once the local install path is verified.
+**Status:** Beta — installs every skill as a direct child of the project's
+`.claude/skills/` directory.
 
-## Expected layout
+Claude Code scans `<project>/.claude/skills/<skill>/SKILL.md`. Nesting skills
+under a shared parent folder is not supported.
 
-```
+## Layout
+
+```text
 .claude/
   skills/
-    agent-foundry/
-      SKILL.md  (linked from skills/)
+    api-design/SKILL.md
+    plan-before-code/SKILL.md
+    verify-first/SKILL.md
+    ... (35 total)
+    .agent-foundry-installed.json
 ```
 
 ## Install
 
+Run from the target project root:
+
 ```bash
-node scripts/install.js --harness=claude-project
+node /path/to/Agent-Foundry/scripts/install.js --harness=claude-project
 ```
 
-Currently aliases to the standard claude-code install path.
+Re-runs replace only skills recorded in `.agent-foundry-installed.json`;
+project-specific skills with other names are preserved.

@@ -1,16 +1,18 @@
 # Agent Foundry — Antigravity Adapter
 
-**Status:** Beta — adapter structure defined, end-to-end behavior not yet tested.
+**Status:** Beta — paths follow current Antigravity docs; harness load not yet
+verified on a live install.
 
-Antigravity is a code-centric agent harness (similar to Cursor/Claude Code
-patterns). It expects:
+Antigravity has separate roots per product:
 
-- Rules: `.agent/rules/*.md`
-- Skills: `.agent/skills/<id>/SKILL.md`
-- Workflows: `.agent/workflows/*.md`
-- Agents: `.agent/agents/<id>.md`
+| Product | Global skills | Global rules |
+| --- | --- | --- |
+| App / IDE | `~/.gemini/config/skills/` | `~/.gemini/config/rules/` |
+| Antigravity CLI | `~/.gemini/antigravity-cli/skills/` | `~/.gemini/antigravity-cli/rules/` |
+| Workspace | `.agents/skills/` | `.agents/rules/` |
 
-This adapter mirrors that layout.
+Legacy `.agent/skills/` is still read but is not a valid new-install target.
+Legacy workflows are deprecated; use skills.
 
 ## Install
 
@@ -20,19 +22,20 @@ node scripts/install.js --harness=antigravity
 
 ## Layout
 
-```
-.agent/
-  rules/
-    agent-foundry.md
+Each of the 35 skills is a direct child of the chosen skills root:
+
+```text
+~/.gemini/config/
   skills/
-    agent-foundry/
-      SKILL.md
-  workflows/
+    api-design/SKILL.md
+    plan-before-code/SKILL.md
+    ... (35 total)
+  rules/
     agent-foundry.md
 ```
 
 ## Test status
 
-- [x] Adapter structure created
+- [x] Adapter structure updated to current paths
 - [x] Install dry-run succeeds
-- [ ] End-to-end test on real Antigravity install
+- [ ] End-to-end test on a real Antigravity install

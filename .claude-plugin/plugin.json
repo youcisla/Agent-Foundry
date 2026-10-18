@@ -1,7 +1,8 @@
 {
   "name": "agent-foundry",
   "description": "A curated, maintained set of agent skills for the local orchestrator — harness-agnostic, token-efficient, MIT-licensed. Original work by the Agent Foundry Contributors.",
-  "version": "0.4.2",
+  "version": "0.4.3",
+  "skills": ["./skills/core", "./skills/optional"],
   "author": {
     "name": "Agent Foundry Contributors"
   },

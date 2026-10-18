@@ -24,7 +24,7 @@ Add to your hooks config:
         "matcher": "*",
         "hooks": [{
           "type": "command",
-          "command": "bash ~/.claude/skills/agent-foundry/hooks/session-distill.sh"
+          "command": "bash ~/.agent-foundry/hooks/session-distill.sh"
         }]
       }
     ]

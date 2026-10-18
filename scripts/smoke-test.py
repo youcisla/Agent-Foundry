@@ -5,7 +5,7 @@ smoke-test.py - Verify a harness adapter end-to-end.
 What "tested" means (see docs/adapters/README.md):
   1. The install path exists and is readable.
   2. The Agent Foundry indexer builds a valid SkillIndex from it.
-  3. The index has 30 skills + 1 fallback = 31 total.
+  3. The index has 35 skills + 1 fallback = 36 total.
   4. Each skill has non-empty frontmatter (name, description).
 
 Usage:
@@ -23,19 +23,31 @@ Exit codes:
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
+HOME = Path.home()
+HERMES = HOME / ".hermes"
+if not HERMES.exists():
+    HERMES = HOME / "AppData" / "Local" / "hermes"
+KIMI = HOME / ".kimi-code" if (HOME / ".kimi-code").exists() else HOME / ".kimi"
+
 ADAPTER_PATHS = {
-    "claude-code":  Path.home() / ".claude" / "skills" / "agent-foundry",
-    "hermes":       Path.home() / "AppData" / "Local" / "hermes" / "skills" / "agent-foundry",
-    "codex":        Path.home() / ".codex" / "skills" / "agent-foundry",
-    "cursor":       Path.home() / ".cursor" / "rules",
-    "gemini-cli":   Path.home() / ".gemini" / "skills" / "agent-foundry",
-    "opencode":     Path.home() / ".config" / "opencode" / "skills" / "agent-foundry",
+    "claude-code":  HOME / ".claude" / "skills",
+    "hermes":       HERMES / "skills" / "agent-foundry",
+    "codex":        HOME / ".agents" / "skills",
+    "cursor":       HOME / ".cursor" / "skills",
+    "gemini-cli":   HOME / ".gemini" / "skills",
+    "opencode":     HOME / ".config" / "opencode" / "skills",
+    "antigravity":  HOME / ".gemini" / "config" / "skills",
+    "qwen":         HOME / ".qwen" / "skills",
+    "kimi":         KIMI / "skills",
+    "openclaw":     HOME / ".openclaw" / "skills" / "agent-foundry",
+    "zed":          HOME / ".agents" / "skills",
 }
 
-EXPECTED_SKILL_COUNT = 30  # +1 generic-reasoning fallback = 31
+EXPECTED_SKILL_COUNT = 35  # +1 generic-reasoning fallback = 36
 
 
 def load_indexer():
@@ -77,8 +89,30 @@ def check_indexer(label: str, path: Path) -> tuple[bool, int]:
     return True, n
 
 
+def managed_skills(path: Path) -> set[str] | None:
+    marker = path / ".agent-foundry-installed.json"
+    if not marker.exists():
+        return None
+    try:
+        data = json.loads(marker.read_text(encoding="utf-8"))
+        return set(data.get("skills", []))
+    except (OSError, ValueError):
+        return set()
+
+
+def check_managed(label: str, path: Path) -> bool | None:
+    names = managed_skills(path)
+    if names is None:
+        return None
+    if len(names) != EXPECTED_SKILL_COUNT:
+        print(f"  [FAIL] {label}: manifest has {len(names)}/{EXPECTED_SKILL_COUNT} skills")
+        return False
+    print(f"  [ OK ] {label}: manifest lists {len(names)} managed skills")
+    return True
+
+
 def check_skill_count(label: str, count: int) -> bool:
-    # 30 skills + 1 virtual fallback = 31
+    # 35 skills + 1 virtual fallback = 36
     if count == -1:
         return True  # skipped
     if count != EXPECTED_SKILL_COUNT + 1:
@@ -89,14 +123,17 @@ def check_skill_count(label: str, count: int) -> bool:
 
 
 def check_frontmatter(label: str, path: Path) -> bool:
-    """Every SKILL.md must have YAML frontmatter with name + description."""
+    """Every managed SKILL.md must have frontmatter with name + description."""
     build_index, SkillManifest = load_indexer()
     if build_index is None:
         return True
     idx = build_index(path)
+    only = managed_skills(path)
     broken = []
     for s in idx.skills:
         if s.id == "generic-reasoning":
+            continue
+        if only is not None and s.name not in only:
             continue
         if not s.name or not s.description:
             broken.append(s.id)
@@ -131,7 +168,10 @@ def main() -> int:
     ok2, count = check_indexer(harness, path)
     ok = ok and ok2
     print()
-    if not check_skill_count(harness, count):
+    managed = check_managed(harness, path)
+    if managed is False:
+        return 3
+    if managed is None and not check_skill_count(harness, count):
         return 3
     print()
     if not check_frontmatter(harness, path):

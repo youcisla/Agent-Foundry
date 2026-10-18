@@ -5,9 +5,9 @@
 # Copy this file to ~/.codex/config.toml for global defaults, or keep it in
 # the project root as .codex/config.toml for project-local settings.
 #
-# After running `bash scripts/install.sh --harness=codex`, this file is
-# symlinked to ~/.codex/skills/agent-foundry/.codex/config.toml and Codex
-# auto-reads it.
+# After running `node scripts/install.js --harness=codex`, skills are linked
+# into ~/.agents/skills/. Copy or merge this file into ~/.codex/config.toml;
+# Codex does not read it from an arbitrary config subdirectory.
 #
 # Official docs:
 # - https://developers.openai.com/codex/config-reference

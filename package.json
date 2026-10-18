@@ -1,6 +1,6 @@
 {
   "name": "@youcisla/agent-foundry",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "mcpName": "io.github.youcisla/agent-foundry",
   "description": "Skill orchestrator for AI coding assistants. MIT-licensed, no third-party skill content, 35 original skills, quality-gated on every commit.",
   "type": "module",
@@ -13,16 +13,27 @@
   },
   "scripts": {
     "validate": "bash scripts/validate.sh",
-    "eval": "python scripts/foundry-eval.py"
+    "eval": "python scripts/foundry-eval.py",
+    "test:installer": "node scripts/test-install.js"
   },
   "files": [
     "agent_foundry",
     "skills",
     "agents",
+    "AGENTS.md",
+    ".claude-plugin",
     ".codex",
     ".cursor",
     ".gemini",
     ".opencode",
+    ".antigravity",
+    ".codebuddy",
+    ".joycode",
+    ".qwen",
+    ".kimi",
+    ".openclaw",
+    ".zed",
+    "docs/harness-compatibility.md",
     "hooks",
     "scripts/install.js",
     "scripts/install.sh",

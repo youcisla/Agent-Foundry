@@ -11,7 +11,7 @@ MIT, local, no cloud. 35 original skills, no third-party skill content.
 <br>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-f5a623.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.4.2-4ade80.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.4.3-4ade80.svg)](CHANGELOG.md)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-6496ff.svg)](https://www.python.org)
 [![npm](https://img.shields.io/badge/npm-%40youcisla%2Fagent--foundry-6496ff.svg)](https://www.npmjs.com/package/@youcisla/agent-foundry)
 [![Skills](https://img.shields.io/badge/skills-35-f5a623.svg)](#catalog)
@@ -70,6 +70,10 @@ Or from npm (cross-platform, Node 18+):
 npm install -g @youcisla/agent-foundry
 agent-foundry            # auto-detect harness and install
 ```
+
+Every harness gets each skill as a direct child of its real discovery root.
+See [docs/harness-compatibility.md](docs/harness-compatibility.md) for the
+path matrix and the dos/don'ts.
 
 Then set an API key:
 
@@ -285,7 +289,7 @@ See [INSTALL.md](INSTALL.md) for the full matrix of harnesses, profiles, and pla
 
 - **Python 3.10+** (for the daemon) or **Node 18+** (for the cross-platform installer)
 - macOS, Linux, or Windows
-- A supported harness: Claude Code, Codex, Gemini, Hermes, OpenCode, or any of the 13 adapters
+- A supported harness: Claude Code, Codex, Cursor, Gemini/Antigravity, OpenCode, Hermes, Zed, or any of the 14 adapters
 - An API key (Anthropic, OpenAI, or any provider LiteLLM supports)
 - ~50 MB disk for the catalog and generated index
 
@@ -341,8 +345,9 @@ The site regenerates from live repo state on every commit via
 |---|---|
 | ✅ v0.1 | Python package + FastAPI daemon + Claude Code plugin |
 | ✅ v0.2 | Foundational audit, frozen Config, multi-page web app, knowledge graph, interactive React Flow diagrams |
-| ✅ v0.3 | npm package, Engram O(1) routing, af-orchestrator agent, 13 harness adapters (3 tested) |
-| 📋 v0.4 | `af verify` signed-manifest integrity |
+| ✅ v0.3 | npm package, Engram O(1) routing, af-orchestrator agent, harness adapters |
+| ✅ v0.4 | PyPI + MCP registry, loop sessions, deterministic site data, per-skill adapter installs |
+| 📋 next | `af verify` signed-manifest integrity |
 
 See [docs/launch-plan.md](docs/launch-plan.md) for the full design spec.
 

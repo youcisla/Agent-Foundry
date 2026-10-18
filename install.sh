@@ -75,7 +75,39 @@ source "$VENV_DIR/bin/activate"
 pip install --upgrade pip >/dev/null
 pip install -e . >/dev/null
 
-# 4) Symlink the Claude Code plugin
+# 4) Install skills at Claude Code's discovery root.
+# Claude scans direct children of ~/.claude/skills only, so link each skill
+# individually instead of the grouped skills/ tree.
+SKILLS_DIR="$HOME/.claude/skills"
+mkdir -p "$SKILLS_DIR"
+for skill_dir in "$INSTALL_DIR"/skills/*/*; do
+  [ -f "$skill_dir/SKILL.md" ] || continue
+  skill_name="$(basename "$skill_dir")"
+  if [ ! -e "$SKILLS_DIR/$skill_name" ]; then
+    ln -s "$skill_dir" "$SKILLS_DIR/$skill_name"
+  fi
+done
+linked=0
+for link in "$SKILLS_DIR"/*; do
+  [ -L "$link" ] || continue
+  case "$(readlink "$link")" in
+    "$INSTALL_DIR"/*) linked=$((linked + 1)) ;;
+  esac
+done
+echo "Linked $linked Agent Foundry skills into $SKILLS_DIR"
+
+# Dedicated CLI index root: only Agent Foundry skills, not every harness skill.
+INDEX_SKILLS_DIR="$CONFIG_DIR/skills"
+mkdir -p "$INDEX_SKILLS_DIR"
+for skill_dir in "$INSTALL_DIR"/skills/*/*; do
+  [ -f "$skill_dir/SKILL.md" ] || continue
+  skill_name="$(basename "$skill_dir")"
+  if [ ! -e "$INDEX_SKILLS_DIR/$skill_name" ]; then
+    ln -s "$skill_dir" "$INDEX_SKILLS_DIR/$skill_name"
+  fi
+done
+
+# Optional: Claude plugin install for agents/commands. Not required for skills.
 if [ ! -e "$PLUGIN_DIR" ]; then
   echo "Symlinking plugin to $PLUGIN_DIR ..."
   mkdir -p "$(dirname "$PLUGIN_DIR")"

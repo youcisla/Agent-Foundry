@@ -2,6 +2,30 @@
 
 All notable changes to Agent Foundry. Everything here is original work by the Agent Foundry contributors, released under MIT.
 
+## 0.4.3 - 2026-10-18
+
+Harness portability release.
+
+- The installer now links each of the 35 skills as a direct child of the
+  harness's documented skills root. The previous nested
+  `skills/agent-foundry/core/...` layout was invisible to Claude Code and most
+  other harnesses.
+- Corrected roots: Codex `~/.agents/skills`, Cursor `~/.cursor/skills`, Gemini
+  `~/.gemini/skills` plus a real `gemini-extension.json`, Antigravity App/IDE and
+  CLI roots, Kimi `~/.kimi-code/skills`, Hermes `~/.hermes/skills`, Zed
+  `~/.agents/skills`, CodeBuddy/JoyCode/Qwen/OpenClaw per-skill installs.
+- The installer records managed skills in `.agent-foundry-installed.json`; it
+  refreshes only its own entries, removes stale ones, and never deletes
+  user-authored skills. `--copy` selects a portable copy instead of links.
+- Windows uses directory junctions, so linking no longer needs admin rights.
+- `agent_foundry/config.py` now defaults `skills_dir` to the dedicated
+  `~/.config/agent-foundry/skills` index root, so CLI routing does not rank
+  third-party harness skills.
+- Claude plugin manifest declares `./skills/core` and `./skills/optional`.
+- Added `docs/harness-compatibility.md` with the path matrix and dos/don'ts,
+  root `AGENTS.md` as the canonical cross-tool instruction file, and
+  `scripts/test-install.js` to verify every target in CI.
+
 ## 0.4.2 - 2026-10-17
 
 Packaging release for PyPI and the MCP registry.

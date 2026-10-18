@@ -18,7 +18,8 @@
   ],
   "skills": {
     "paths": [
-      "../skills"
+      "../skills/core",
+      "../skills/optional"
     ]
   },
   "agent": {

@@ -1,8 +1,16 @@
+---
+trigger: always_on
+description: "Plan before code, verify before done, and avoid generic AI output when Agent Foundry skills are installed."
+---
+
 # Agent Foundry rules for Antigravity
 
-Apply these rules when working in an Antigravity-equipped project:
+Apply these rules when Agent Foundry skills are installed:
 
-- Use the Agent Foundry skills from `.agent/skills/agent-foundry/SKILL.md`.
-- Plan before code (plan-before-code skill).
-- Verify with the judge (af-critic agent) before marking work done.
-- Quality gates: foundry-eval, schema validator, nox external-reference scan.
+- Skills are direct children of `.agents/skills/` (workspace),
+  `~/.gemini/config/skills/` (App/IDE), or
+  `~/.gemini/antigravity-cli/skills/` (CLI).
+- Use `plan-before-code` before non-trivial edits.
+- Use `verify-first` before claiming work is done.
+- Run `af-critic` when the harness exposes the subagent.
+- Quality gates: `foundry-eval`, schema validation, no generic AI slop.

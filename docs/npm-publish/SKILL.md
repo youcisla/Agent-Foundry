@@ -46,7 +46,7 @@ If `npm whoami` returns `ENEEDAAUTH`:
 ### 2 - Quality gates
 
 `scripts/publish.sh` runs all three before publishing:
-- `bash scripts/validate.sh` — 31 skills, no syntax errors
+- `bash scripts/validate.sh` — 35 skills, no syntax errors
 - `python scripts/foundry-eval.py` — 33+ checks pass
 - `bash scripts/nox.sh` — 0 external references in tracked files
 

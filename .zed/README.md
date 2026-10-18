@@ -1,22 +1,27 @@
 # Agent Foundry — Zed Adapter
 
-**Status:** Coming soon — Zed's agent client (zquire) is in beta and lacks a
-stable plugin API. We document the expected layout but won't ship a tested
-adapter until the upstream API stabilizes.
+**Status:** Beta — skills install into Zed's supported global root.
 
-## Expected layout
+Zed loads skills from:
 
-```
-.zed/
-  settings.json
-  commands/
-    af.md
-  agents/
-    af-critic.md
-```
+| Scope | Path |
+| --- | --- |
+| Global | `~/.agents/skills/<skill>/SKILL.md` |
+| Project | `.agents/skills/<skill>/SKILL.md` |
+
+Each skill must be a direct child. Zed does not support nested skill folders.
 
 ## Install
 
 ```bash
 node scripts/install.js --harness=zed
-# Will print the layout but copy nothing until upstream ships.
+```
+
+The installer links 35 skills into `~/.agents/skills`. It also prints the
+platform-specific personal instructions path:
+
+- macOS / Linux: `~/.config/zed/AGENTS.md`
+- Windows: `%APPDATA%\Zed\AGENTS.md`
+
+Project instructions can use `AGENTS.md`, `.rules`, `.cursorrules`,
+`.windsurfrules`, `.clinerules`, or `.github/copilot-instructions.md`.
