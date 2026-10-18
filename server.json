@@ -1,0 +1,31 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.youcisla/agent-foundry",
+  "description": "Skill orchestrator: plan, execute, verify skills over MCP stdio.",
+  "version": "0.4.2",
+  "repository": {
+    "url": "https://github.com/youcisla/Agent-Foundry",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "agent-foundry-runtime",
+      "version": "0.4.2",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "mcp",
+          "valueHint": "mcp",
+          "description": "Run the MCP stdio server",
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

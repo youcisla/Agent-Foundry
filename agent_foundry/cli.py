@@ -299,6 +299,9 @@ def cmd_run(ctx, prompt, model, budget, force, judge):
     fb = " [FALLBACK]" if data.get("was_fallback") else ""
     plan_skills = [p["skill_id"] for p in data.get("plan", [])]
     click.echo(f"--> Skill: {data.get('skill_id')}{fb}   Plan: {plan_skills}")
+    if data.get("session_id"):
+        click.echo(f"    session {data['session_id']} — continue with: "
+                   f"agent-foundry resume {data['session_id']} \"...\"", err=True)
     click.echo("---")
     click.echo(data.get("output", ""))
     if data.get("error"):
@@ -312,6 +315,43 @@ def cmd_run(ctx, prompt, model, budget, force, judge):
     if data.get("judged") and data.get("judge_score"):
         click.echo(f"\nJudge (af-critic): {json.dumps(data['judge_score'], indent=2)}",
                    err=True)
+
+
+@cli.command("resume")
+@click.argument("session_id", type=int)
+@click.argument("prompt")
+@click.option("--model", default=None)
+@click.pass_context
+def cmd_resume(ctx, session_id, prompt, model):
+    """Continue a loop session with a follow-up prompt."""
+    cfg = ctx.obj["cfg"]
+    data = _call_or_daemon(
+        cfg, "POST", "/loop/resume",
+        {"session_id": session_id, "prompt": prompt, "model": model},
+        timeout=max(60.0, float(cfg.core.executor_timeout_seconds) + 15.0),
+    )
+    click.echo(f"--> Session: {data.get('session_id')}  Skill: {data.get('skill_id')}")
+    click.echo("---")
+    click.echo(data.get("output", ""))
+    if data.get("error"):
+        click.echo(f"\n[error] {data['error']}", err=True)
+        sys.exit(1)
+    click.echo(
+        f"\n[tokens={data.get('tokens_used', 0)}  "
+        f"time={data.get('duration_seconds', 0):.2f}s  "
+        f"cost=${data.get('cost_usd', 0.0):.6f}]",
+        err=True,
+    )
+
+
+@cli.command("session")
+@click.argument("session_id", type=int)
+@click.pass_context
+def cmd_session(ctx, session_id):
+    """Show a stored loop session."""
+    cfg = ctx.obj["cfg"]
+    data = _call_or_daemon(cfg, "GET", f"/loop/{session_id}", {})
+    click.echo(json.dumps(data, indent=2, ensure_ascii=False))
 
 
 @cli.command("doctor")
@@ -332,8 +372,25 @@ def cmd_doctor(ctx):
     idx_path = cfg.core.index_path
     if os.path.exists(str(idx_path)):
         click.echo(f"[PASS] Index: {idx_path}")
+        from .indexer import read_index
+        idx = read_index(Path(idx_path).expanduser())
+        if idx:
+            real = [s for s in idx.skills if not s.is_fallback]
+            click.echo(f"[PASS] Skills indexed: {len(real)}")
+        else:
+            click.echo("[FAIL] Index unreadable")
+            ok = False
     else:
         click.echo(f"[WARN] Index not found: {idx_path} (run init)")
+    from .logging_db import get_skill_weights
+    weights = get_skill_weights(LOG_DB_PATH)
+    if weights:
+        click.echo(f"[PASS] Learned skill weights: {len(weights)}")
+    graph = Path(__file__).resolve().parent.parent / "web" / "graph-stats.js"
+    if graph.exists():
+        click.echo(f"[PASS] Knowledge graph stats: {graph.name}")
+    else:
+        click.echo("[WARN] Knowledge graph stats missing (run graphify)")
     import httpx
     try:
         r = httpx.get(f"http://127.0.0.1:{cfg.core.daemon_port}/health", timeout=2)
@@ -357,12 +414,12 @@ def cmd_doctor(ctx):
 @click.pass_context
 def cmd_status(ctx, markdown):
     """Show orchestrator status: routing accuracy, fallback rate."""
-    from .logging_db import get_stats
+    from .logging_db import LOG_DB_PATH, get_stats
     cfg = ctx.obj.get("cfg") if ctx.obj else None
     if cfg is None:
         import agent_foundry.config as _cfg
         cfg = _cfg.Config.load()
-    db_path = cfg.log_path
+    db_path = LOG_DB_PATH
     stats = get_stats(db_path)
     if markdown:
         click.echo("## Agent Foundry Status\n")
@@ -458,6 +515,7 @@ def cmd_learn(ctx):
     result = learn(LOG_DB_PATH)
     click.echo(f"New instincts: {result['new_instincts']}")
     click.echo(f"Updated: {result['updated_instincts']}")
+    click.echo(f"Skill weights updated: {result.get('weights_updated', 0)}")
     for p in result["patterns_found"]:
         click.echo(f"  {p['skill']} → \"{p['pattern']}\"")
 
@@ -481,6 +539,70 @@ def cmd_instinct_approve(ctx, instinct_id):
     from .logging_db import approve_instinct, LOG_DB_PATH
     ok = approve_instinct(LOG_DB_PATH, instinct_id)
     click.echo("✓ Approved" if ok else "✗ Not found")
+
+
+@cli.command("mcp")
+@click.pass_context
+def cmd_mcp(ctx):
+    """Run the MCP stdio server (plan/execute/list_skills/get_skill)."""
+    from .mcp_server import run_stdio
+    run_stdio(ctx.obj.get("cfg"))
+
+
+@cli.command("browse")
+@click.option("--search", default="", help="Filter by id, name, description, or tag")
+@click.option("--read", "read_id", default=None, help="Print one skill's SKILL.md")
+@click.pass_context
+def cmd_browse(ctx, search, read_id):
+    """Browse the skill catalog without leaving the terminal."""
+    cfg = ctx.obj.get("cfg")
+    idx = read_index(Path(cfg.core.index_path).expanduser())
+    if idx is None:
+        raise click.ClickException("No index. Run `agent-foundry index` first.")
+
+    if read_id:
+        path = idx.skill_paths.get(read_id)
+        if not path or path.startswith("__virtual__:"):
+            raise click.ClickException(f"Unknown skill: {read_id}")
+        click.echo(Path(path).read_text(encoding="utf-8"))
+        return
+
+    q = search.lower().strip()
+    shown = 0
+    for s in idx.skills:
+        if s.is_fallback:
+            continue
+        haystack = " ".join([s.id, s.name, s.description, " ".join(s.tags)]).lower()
+        if q and q not in haystack:
+            continue
+        click.echo(f"{s.id:<28} [{s.category:<8}] {s.description[:90]}")
+        shown += 1
+    click.echo(f"\n{shown} skill(s). Use --read <id> to print one.")
+
+
+@cli.command("eval")
+@click.option("--tasks", "tasks_path", required=True, type=click.Path(exists=True),
+              help="JSON task file: [{id,prompt,skill,verify}]")
+@click.option("--model", default=None)
+@click.option("--json", "as_json", is_flag=True, help="Print raw JSON result")
+@click.pass_context
+def cmd_eval(ctx, tasks_path, model, as_json):
+    """Run a paired skill eval (with vs without skill) and report lift."""
+    from .eval import run_eval
+    cfg = ctx.obj.get("cfg")
+    result = run_eval(Path(tasks_path), cfg=cfg, model=model, db_path=LOG_DB_PATH)
+    if as_json:
+        click.echo(json.dumps(result, indent=2))
+        return
+    for t in result["tasks"]:
+        click.echo(
+            f"{t['id']:<30} with={t['with_skill_pass']} without={t['no_skill_pass']}"
+        )
+    click.echo(
+        f"\nscored={result['scored']}  with={result['with_skill_pass_rate']}  "
+        f"without={result['no_skill_pass_rate']}  lift={result['skill_lift']}  "
+        f"cost=${result['total_cost_usd']}"
+    )
 
 
 def main():

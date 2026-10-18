@@ -19,13 +19,16 @@ DEFAULT_CONFIG = """# Agent Foundry configuration
 # Edit this file to tune the orchestrator.
 
 [core]
-skills_dir = "~/.claude/plugins/agent-foundry/skills"
+skills_dir = "~/.claude/skills/agent-foundry"
 index_path = "~/.config/agent-foundry/skills-index.json"
 default_llm = "claude-3-7-sonnet-20250219"
 token_budget = 100000
 daemon_port = 8765
 index_cache_ttl_seconds = 60
 harness_type = "claude-code"
+executor_timeout_seconds = 120
+executor_max_tokens = 0
+executor_retries = 2
 
 [planner]
 # Score added per matched trigger pattern (regex).
@@ -36,6 +39,12 @@ name_in_prompt_boost = 0.2
 cost_penalty_divisor = 5000.0
 # Default top-N returned by /plan.
 max_results = 5
+# Semantic fallback (optional; requires the `semantic` extra).
+semantic_enabled = false
+semantic_model = "all-MiniLM-L6-v2"
+semantic_weight = 0.35
+rerank_enabled = false
+rerank_top_k = 10
 
 # System prompt for the generic-reasoning fallback skill.
 # Edit to override the built-in default.
@@ -50,18 +59,26 @@ class PlannerConfig:
     name_in_prompt_boost: float = 0.2
     cost_penalty_divisor: float = 5000.0
     max_results: int = 5
+    semantic_enabled: bool = False
+    semantic_model: str = "all-MiniLM-L6-v2"
+    semantic_weight: float = 0.35
+    rerank_enabled: bool = False
+    rerank_top_k: int = 10
 
 
 @dataclass(frozen=True)
 class CoreConfig:
     """Runtime config. Frozen — construct a new instance to change."""
-    skills_dir: str = "~/.claude/plugins/agent-foundry/skills"
+    skills_dir: str = "~/.claude/skills/agent-foundry"
     index_path: str = "~/.config/agent-foundry/skills-index.json"
     default_llm: str = "claude-3-7-sonnet-20250219"
     token_budget: int = 100000
     daemon_port: int = 8765
     index_cache_ttl_seconds: int = 60
     harness_type: str = "claude-code"
+    executor_timeout_seconds: int = 120
+    executor_max_tokens: int = 0
+    executor_retries: int = 2
 
 
 @dataclass(frozen=True)

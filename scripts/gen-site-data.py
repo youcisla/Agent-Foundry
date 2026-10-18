@@ -8,11 +8,42 @@ from __future__ import annotations
 import base64
 import json
 import re
-import time
+import subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 WEB = REPO / "web"
+
+# Never publish local/private or generated state.
+EXCLUDED_DIRS = {
+    ".git", "__pycache__", ".venv", "node_modules", "graphify-out",
+    ".graphify-cache", "cache", "agent_foundry.egg-info", ".remember",
+    ".impeccable", ".playwright-mcp", ".smoke-logs", "dist", "build",
+    "docs/research", "plans", "catalog",
+}
+
+GENERATED_WEB = {
+    "file-content.js", "file-tree.js", "data.json", "graph-rf.json",
+    "graph-stats.js", "graph-data.js", "install-data.js", "skill-deps.js",
+}
+
+
+def public_files(base: Path) -> list[Path]:
+    """Tracked files only, so local ignored state never reaches the site."""
+    try:
+        raw = subprocess.run(
+            ["git", "-C", str(base), "ls-files", "-z"],
+            capture_output=True, check=True,
+        ).stdout
+        paths = [p for p in raw.decode("utf-8", "replace").split("\0") if p]
+        return [base / p for p in paths]
+    except Exception:
+        return sorted(base.rglob("*"))
+
+
+def is_generated_web(rel: Path) -> bool:
+    return (bool(rel.parts) and rel.parts[0] == "web"
+            and (rel.name.endswith("-data.js") or rel.name in GENERATED_WEB))
 
 
 def parse_frontmatter(text):
@@ -76,15 +107,14 @@ print(f"site-data.js: {len(skills)} skills, {len(agents)} agents (with body_md)"
 
 # ── 2. file-tree.js ──
 def build_file_tree(base_path: Path, allowed_exts=(".py", ".md", ".html", ".css", ".js", ".toml", ".yaml", ".json", ".sh")):
-    """Build a nested dict tree of source files, excluding common non-source dirs."""
+    """Build a nested dict tree of tracked source files."""
     tree: dict = {}
-    skip_dirs = {".git", "__pycache__", ".venv", "node_modules", "graphify-out", ".graphify-cache", "cache"}
-    for f in sorted(base_path.rglob("*")):
+    for f in public_files(base_path):
         if not f.is_file() or f.suffix not in allowed_exts:
             continue
         rel = f.relative_to(base_path)
         parts = rel.parts
-        if any(p in skip_dirs for p in parts):
+        if any(p in EXCLUDED_DIRS for p in parts) or is_generated_web(rel):
             continue
         node = tree
         for p in parts[:-1]:
@@ -93,7 +123,6 @@ def build_file_tree(base_path: Path, allowed_exts=(".py", ".md", ".html", ".css"
         filename = parts[-1]
         node[filename] = {
             "path": str(rel).replace("\\", "/"),
-            "size": f.stat().st_size,
             "ext": f.suffix,
         }
     return tree
@@ -109,20 +138,16 @@ print(f"file-tree.js: file tree written")
 
 # ── 2b. file-content.js (base64 source, for the in-app viewer) ──
 def build_file_content(base_path: Path, allowed_exts=(".py", ".md", ".html", ".css", ".js", ".toml", ".yaml", ".yml", ".json", ".sh", ".txt"), max_bytes=120_000):
-    """Embed source contents so file clicks render in-UI instead of redirecting to GitHub."""
-    skip_dirs = {".git", "__pycache__", ".venv", "node_modules", "graphify-out", ".graphify-cache", "cache", "agent_foundry.egg-info", ".remember"}
+    """Embed tracked source contents so file clicks render in-UI."""
     out: dict = {}
-    for f in sorted(base_path.rglob("*")):
+    for f in public_files(base_path):
         if not f.is_file() or f.suffix not in allowed_exts:
             continue
         rel = f.relative_to(base_path)
-        if any(p in skip_dirs for p in rel.parts):
-            continue
-        # skip the generated web data blobs (they are not interesting source)
-        if rel.parts and rel.parts[0] == "web" and f.name.endswith("-data.js"):
+        if any(p in EXCLUDED_DIRS for p in rel.parts) or is_generated_web(rel):
             continue
         try:
-            raw = f.read_text(encoding="utf-8")
+            raw = f.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
         except (UnicodeDecodeError, OSError):
             continue
         if len(raw.encode("utf-8")) > max_bytes:
@@ -359,7 +384,6 @@ def build_graph_rf():
                   "raw_edge_count": len(raw_links), "community_count": len(communities),
                   "god_count": sum(1 for n in rf_nodes if n["isGod"]),
                   "surprising_count": sum(1 for e in rf_edges if e["surprising"])},
-        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
 
 
@@ -433,7 +457,6 @@ data_json = {
     "skill_count": len(skills),
     "agent_count": len(agents),
     "graph_stats": _gstats,
-    "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
 }
 (WEB / "data.json").write_text(json.dumps(data_json, separators=(",", ":")), encoding="utf-8")
 print("data.json: written (reactive store source)")

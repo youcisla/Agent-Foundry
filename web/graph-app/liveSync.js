@@ -8,7 +8,10 @@
  */
 import { graphStore } from "./store.js";
 
-export function startGraphLive({ onGraphData, pollMs = 20000, sseUrl = "http://127.0.0.1:8765/events" } = {}) {
+export function startGraphLive({ onGraphData, pollMs = 20000, sseUrl = null } = {}) {
+  const isLocal = ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
+  const wantSse = !!(sseUrl || new URLSearchParams(window.location.search).has("live"));
+  const eventsUrl = wantSse && isLocal ? (sseUrl || "http://127.0.0.1:8765/events") : null;
   let lastSig = null;
 
   async function poll() {
@@ -28,18 +31,24 @@ export function startGraphLive({ onGraphData, pollMs = 20000, sseUrl = "http://1
     }
   }
 
-  if ("EventSource" in window) {
-    try {
-      const es = new EventSource(sseUrl);
-      const onChange = () => poll();
-      es.onmessage = onChange;
-      es.addEventListener("changed", onChange);
-      es.onerror = () => es.close();
-    } catch (e) {
-      /* no-op */
-    }
+  if (eventsUrl && "EventSource" in window) {
+    fetch(eventsUrl.replace(/\/events$/, "/health"), { cache: "no-store" })
+      .then((r) => {
+        if (!r.ok) return;
+        try {
+          const es = new EventSource(eventsUrl);
+          const onChange = () => poll();
+          es.onmessage = onChange;
+          es.addEventListener("changed", onChange);
+          es.onerror = () => es.close();
+        } catch (e) {
+          /* no-op */
+        }
+      })
+      .catch(() => { /* daemon not running */ });
   }
 
+  poll();  // initial load/stats
   setInterval(() => { if (!document.hidden) poll(); }, pollMs);
   window.addEventListener("focus", poll);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) poll(); });

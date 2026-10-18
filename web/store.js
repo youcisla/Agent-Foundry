@@ -63,17 +63,24 @@
     const pollMs = opts.pollMs || 15000;
     const sseUrl = opts.sseUrl || "http://127.0.0.1:8765/events";
 
-    // Local-dev instant updates via SSE (silently ignored in production where the
-    // daemon isn't reachable — the connection errors and we lean on polling).
-    if ("EventSource" in global) {
-      try {
-        const es = new EventSource(sseUrl);
-        const onChange = () => refetch(dataUrl);
-        es.onopen = () => { state.live = true; notify(); };
-        es.onmessage = onChange;
-        es.addEventListener("changed", onChange);
-        es.onerror = () => { es.close(); state.live = false; };
-      } catch (e) { /* no-op */ }
+    // Local-dev instant updates via SSE. Opt-in: pass sseUrl or load with ?live=1.
+    const isLocal = ["localhost", "127.0.0.1", ""].includes(global.location.hostname);
+    const wantSse = !!(opts.sseUrl || new URLSearchParams(global.location.search).has("live"));
+    if ("EventSource" in global && wantSse && isLocal) {
+      const healthUrl = sseUrl.replace(/\/events$/, "/health");
+      fetch(healthUrl, { cache: "no-store" })
+        .then((r) => {
+          if (!r.ok) return;
+          try {
+            const es = new EventSource(sseUrl);
+            const onChange = () => refetch(dataUrl);
+            es.onopen = () => { state.live = true; notify(); };
+            es.onmessage = onChange;
+            es.addEventListener("changed", onChange);
+            es.onerror = () => { es.close(); state.live = false; };
+          } catch (e) { /* no-op */ }
+        })
+        .catch(() => { /* daemon not running */ });
     }
 
     // Production-safe polling + refetch when the tab regains focus.

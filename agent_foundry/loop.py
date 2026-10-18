@@ -1,15 +1,16 @@
 """Loop: plan -> budget guard -> execute -> return."""
 from __future__ import annotations
 
-from typing import Any
-
-from .config import Config
+import time
 from pathlib import Path
 
-from .executor import estimate_prompt_tokens, execute
+from .config import Config
+
+from .executor import build_messages, complete, estimate_prompt_tokens
 from .indexer import GENERIC_REASONING_ID, get_index_cached
 from .models import (
     LoopRequest,
+    LoopResumeRequest,
     LoopResponse,
     PlanRequest,
     PlanResult,
@@ -30,10 +31,12 @@ def _estimate_total(req: LoopRequest, idx, chosen_skill_id: str) -> TokenEstimat
     return TokenEstimate(input=in_tok, output=out_tok)
 
 
-def _pick_skill(prompt: str, idx, cfg: Config) -> tuple[str | None, list[PlanResult], float | None]:
+def _pick_skill(prompt: str, idx, cfg: Config,
+                weights: dict[str, float] | None = None) -> tuple[str | None, list[PlanResult], float | None]:
     """Pick the best skill. Return (skill_id, plan, planner_score).
     If nothing matches, use the generic-reasoning fallback."""
-    ranked = rank_skills(prompt, idx, cfg.planner)
+    rerank = cfg.core.default_llm if cfg.planner.rerank_enabled else None
+    ranked = rank_skills(prompt, idx, cfg.planner, weights=weights, rerank_model=rerank)
     if ranked:
         top = ranked[0]
         return (top.skill_id, ranked, top.score)
@@ -48,7 +51,10 @@ def run_loop(req: LoopRequest, *, cfg: Config, db_path, model_override: str | No
                             error="No skill index. Run `agent-foundry init && agent-foundry index`.",
                             was_fallback=False)
 
-    skill_id, plan_list, planner_score = _pick_skill(req.prompt, idx, cfg)
+    from .logging_db import get_skill_weights
+
+    skill_id, plan_list, planner_score = _pick_skill(
+        req.prompt, idx, cfg, weights=get_skill_weights(db_path))
     if skill_id is None:
         return LoopResponse(plan=plan_list, success=False,
                             error="No skill could be selected.",
@@ -83,54 +89,41 @@ def run_loop(req: LoopRequest, *, cfg: Config, db_path, model_override: str | No
             was_fallback=was_fallback,
         )
 
-    # Execute (do not log here — executor logs at /execute-level granularity;
-    # when invoked via /loop we also log with planner_score + was_fallback)
+    # Execute via the shared completion path so timeout/retries/limits apply.
+    from .logging_db import log_execution
+
     model = model_override or cfg.core.default_llm
     fallback_prompt = cfg.fallback_system_prompt
+    skill_hash = next((s.sha256 for s in idx.skills if s.id == skill_id), "")
+    from .logging_db import create_loop_session, update_loop_session
+    session_id = create_loop_session(db_path, req.prompt, skill_id)
 
-    # We need planner_score + was_fallback to be logged, so we call the
-    # executor's lower-level path here rather than /execute. Use the same
-    # underlying logic but with logging.
-    from .executor import build_messages
-    import time
-    import litellm
-
-    messages, _ = build_messages(skill_id, req.prompt, idx.skill_paths, fallback_prompt=fallback_prompt)
     t0 = time.time()
     try:
-        resp = litellm.completion(model=model, messages=messages)
+        messages, _ = build_messages(skill_id, req.prompt, idx.skill_paths,
+                                     fallback_prompt=fallback_prompt,
+                                     expected_sha256=skill_hash)
+        text, tokens_used, cost_usd = complete(
+            messages, model=model,
+            timeout_seconds=cfg.core.executor_timeout_seconds,
+            max_tokens=cfg.core.executor_max_tokens,
+            retries=cfg.core.executor_retries,
+        )
     except Exception as exc:
         dur = time.time() - t0
-        from .logging_db import log_execution
         log_execution(db_path, skill_id=skill_id, prompt=req.prompt, output="",
                       tokens_used=0, duration_seconds=dur, success=False,
                       error=str(exc)[:1000], planner_score=planner_score,
                       was_fallback=was_fallback)
+        update_loop_session(db_path, session_id, status="failed", output="")
         return LoopResponse(plan=plan_list, skill_id=skill_id, success=False,
                             error=str(exc)[:1000], duration_seconds=dur,
-                            was_fallback=was_fallback)
+                            was_fallback=was_fallback, session_id=session_id)
 
     dur = time.time() - t0
-    try:
-        text = resp.choices[0].message.content or ""
-    except Exception:
-        text = ""
-    if not isinstance(text, str):
-        text = str(text)
-
-    usage: dict[str, Any] = {}
-    try:
-        usage = resp.usage.model_dump() if hasattr(resp.usage, "model_dump") else dict(resp.usage or {})
-    except Exception:
-        pass
-    tokens_used = int(usage.get("total_tokens") or 0)
-    if tokens_used == 0:
-        pt = int(usage.get("prompt_tokens") or 0)
-        ct = int(usage.get("completion_tokens") or 0)
-        tokens_used = pt + ct
-
     truncated = text[:8000]
-    from .logging_db import log_execution
+    update_loop_session(db_path, session_id, status="completed", output=text,
+                        increment_turn=True)
 
     judge_payload = None
     judged_flag = False
@@ -171,4 +164,63 @@ def run_loop(req: LoopRequest, *, cfg: Config, db_path, model_override: str | No
         was_fallback=was_fallback,
         judge_score=judge_payload,
         judged=judged_flag,
+        cost_usd=cost_usd,
+        session_id=session_id,
     )
+
+
+def resume_loop(req: LoopResumeRequest, *, cfg: Config, db_path,
+                model_override: str | None = None) -> LoopResponse:
+    """Continue an existing loop session with a follow-up prompt."""
+    from .logging_db import get_loop_session, log_execution, update_loop_session
+
+    session = get_loop_session(db_path, req.session_id)
+    if session is None:
+        return LoopResponse(success=False,
+                            error=f"loop session {req.session_id} not found")
+
+    idx = get_index_cached(Path(cfg.core.index_path).expanduser(),
+                            ttl_seconds=cfg.core.index_cache_ttl_seconds)
+    if idx is None:
+        return LoopResponse(success=False,
+                            error="No skill index. Run `agent-foundry init && agent-foundry index`.")
+
+    skill_id = session["skill_id"]
+    skill_hash = next((s.sha256 for s in idx.skills if s.id == skill_id), "")
+    model = model_override or cfg.core.default_llm
+    was_fallback = skill_id == GENERIC_REASONING_ID
+
+    t0 = time.time()
+    try:
+        messages, _ = build_messages(skill_id, session["prompt"], idx.skill_paths,
+                                     fallback_prompt=cfg.fallback_system_prompt,
+                                     expected_sha256=skill_hash)
+        if session.get("output"):
+            messages.append({"role": "assistant", "content": session["output"]})
+        messages.append({"role": "user", "content": req.prompt})
+        text, tokens_used, cost_usd = complete(
+            messages, model=model,
+            timeout_seconds=cfg.core.executor_timeout_seconds,
+            max_tokens=cfg.core.executor_max_tokens,
+            retries=cfg.core.executor_retries,
+        )
+    except Exception as exc:
+        dur = time.time() - t0
+        log_execution(db_path, skill_id=skill_id, prompt=req.prompt, output="",
+                      tokens_used=0, duration_seconds=dur, success=False,
+                      error=str(exc)[:1000], was_fallback=was_fallback)
+        return LoopResponse(skill_id=skill_id, success=False, error=str(exc)[:1000],
+                            duration_seconds=dur, was_fallback=was_fallback,
+                            session_id=req.session_id)
+
+    dur = time.time() - t0
+    truncated = text[:8000]
+    update_loop_session(db_path, req.session_id, status="completed", output=text,
+                        increment_turn=True)
+    log_execution(db_path, skill_id=skill_id, prompt=req.prompt, output=truncated,
+                  tokens_used=tokens_used, duration_seconds=dur, success=True,
+                  was_fallback=was_fallback)
+    return LoopResponse(skill_id=skill_id, output=truncated,
+                        tokens_used=tokens_used, duration_seconds=dur,
+                        success=True, was_fallback=was_fallback,
+                        cost_usd=cost_usd, session_id=req.session_id)

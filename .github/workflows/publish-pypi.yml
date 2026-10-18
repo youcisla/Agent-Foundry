@@ -1,0 +1,25 @@
+name: publish-pypi
+
+# Requires a PyPI Trusted Publisher configured for this repository:
+#   PyPI -> project "agent-foundry-runtime" -> Publishing -> Add a new pending publisher
+#   owner: youcisla, repo: Agent-Foundry, workflow: publish-pypi.yml, environment: pypi
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - run: python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1

@@ -56,5 +56,11 @@ uv.lock
 # Generated (indexer rebuilds on demand)
 skills/index.json
 
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Impeccable plugin local state
+.impeccable/
+
 # Claude Code local overrides (keep settings.json tracked)
 .claude/settings.local.json

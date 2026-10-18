@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+      - name: Version drift
+        run: python scripts/sync-version.py --check
+      - name: Generated artifacts current
+        run: |
+          python scripts/gen-skill-index.py
+          python scripts/gen-site-data.py
+          git diff --exit-code
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v

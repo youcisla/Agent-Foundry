@@ -37,6 +37,7 @@ class SkillManifest(BaseModel):
     location: str
     tags: list[str] = Field(default_factory=list)
     is_fallback: bool = False
+    sha256: str = ""
 
     def total_cost(self) -> int:
         c = self.estimated_token_cost or {}
@@ -56,6 +57,7 @@ class SkillIndex(BaseModel):
 class PlanRequest(BaseModel):
     prompt: str
     max_results: int = 5
+    graph_path: str | None = None
 
 
 class PlanResult(BaseModel):
@@ -95,6 +97,8 @@ class ExecuteResponse(BaseModel):
     error: str | None = None
     requires_confirmation: bool = False
     estimated_cost: TokenEstimate | None = None
+    was_fallback: bool = False
+    cost_usd: float = 0.0
 
 
 # ===== Loop =====
@@ -121,6 +125,14 @@ class LoopResponse(BaseModel):
     was_fallback: bool = False
     judge_score: dict | None = None   # correctness/slop/scope/verdict if --judge
     judged: bool = False
+    cost_usd: float = 0.0
+    session_id: int | None = None
+
+
+class LoopResumeRequest(BaseModel):
+    session_id: int
+    prompt: str
+    model: str | None = None
 
 
 # ===== Index =====

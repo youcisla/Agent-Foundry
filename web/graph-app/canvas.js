@@ -21,9 +21,21 @@ export function GraphCanvas({
   const rf = useReactFlow();
   const showMinimap = useStore((s) => s.showMinimap);
   useEffect(() => {
-    const t = setTimeout(() => rf.fitView({ padding: 0.2, duration: 400 }), 80);
+    if (!nodes.length) return;
+    const top = nodes.reduce((best, n) => {
+      const d = (n.data && n.data.degree) || 0;
+      return d > best.d ? { n, d } : best;
+    }, { n: null, d: -1 });
+    const t = setTimeout(() => {
+      if (top.n) {
+        // Center on the highest-degree node at a readable zoom; user can fit out.
+        rf.setCenter(top.n.position.x + 60, top.n.position.y + 20, { zoom: 0.55, duration: 400 });
+      } else {
+        rf.fitView({ padding: 0.2, duration: 400 });
+      }
+    }, 300);
     return () => clearTimeout(t);
-  }, [fitKey]);
+  }, [fitKey, nodes.length]);
 
   return html`
     <${ReactFlow}
@@ -40,8 +52,7 @@ export function GraphCanvas({
       minZoom=${0.04}
       maxZoom=${2.5}
       nodesConnectable=${false}
-      elevateNodesOnSelect=${true}
-      fitView>
+      elevateNodesOnSelect=${true}>
       <${Background} variant=${BackgroundVariant.Dots} gap=${28} size=${1} color="#2a2a33" />
       ${showMinimap
         ? html`<${MiniMap} pannable=${true} zoomable=${true} nodeColor=${minimapColor}

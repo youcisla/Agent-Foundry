@@ -44,3 +44,9 @@ python scripts/book_to_skill.py extract --url=https://example.com/book.pdf --out
 - deep-research (installed): for sourcing the book content
 - push-skill-to-github (installed): to publish the resulting skill
 - agent-memory-vault (installed): to remember what was learned
+
+## Anti-patterns
+
+- Copying chapter text verbatim instead of distilling procedures.
+- Producing a summary with no trigger phrase or verification step.
+- Converting copyrighted material without checking the license.

@@ -1,6 +1,7 @@
 """Indexer: scan skills/*/SKILL.md, build SkillIndex."""
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import time
@@ -36,6 +37,19 @@ GENERIC_REASONING_MANIFEST: dict[str, Any] = {
 }
 
 
+def _coerce_value(value: str):
+    """Strip quotes and parse inline YAML lists like [a, b, c]."""
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+        return value[1:-1]
+    if value.startswith("[") and value.endswith("]"):
+        inner = value[1:-1].strip()
+        if not inner:
+            return []
+        return [item.strip().strip('"').strip("'") for item in inner.split(",") if item.strip()]
+    return value
+
+
 def _parse_simple_frontmatter(body: str) -> dict:
     """Parse frontmatter body without depending on PyYAML.
 
@@ -61,10 +75,7 @@ def _parse_simple_frontmatter(body: str) -> dict:
             key, _, value = raw_line.partition(":")
             key = key.strip()
             value = value.strip()
-            # Strip matching surrounding quotes
-            if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
-                value = value[1:-1]
-            result[key] = value
+            result[key] = _coerce_value(value)
             current_key = key
             continue
 
@@ -127,17 +138,18 @@ def derive_triggers(description: str) -> list:
     """Pull regex triggers from the description."""
     if not description:
         return []
+    desc = description.strip().strip('"').strip("'")
     triggers: list = []
-    m = re.search(r"Use when\s+(.+?)(?:\\.|\\?|\\Z)", description, re.IGNORECASE | re.DOTALL)
+    m = re.search(r"Use when\s+(.+?)(?:\.\s|\.$|$)", desc, re.IGNORECASE | re.DOTALL)
     if m:
         clause = m.group(1).strip()
-        for piece in re.split(r",\\s*|;\\s*|\\bor\\b", clause):
-            piece = piece.strip().rstrip(".").strip()
+        for piece in re.split(r"\s*[,;]\s*|\s+or\s+", clause):
+            piece = piece.strip().strip('"').strip("'").rstrip(".").strip()
             if 3 < len(piece) < 80:
                 triggers.append(r"\b" + re.escape(piece.lower()))
-    words = (description or "").lower().split()[:5]
+    words = re.findall(r"[a-zA-Z][a-zA-Z0-9-]{2,}", desc.lower())[:3]
     if words:
-        triggers.append(r"\b" + r"\s+".join(re.escape(w) for w in words[:3]))
+        triggers.append(r"\b" + r"\s+".join(re.escape(w) for w in words))
     seen: set = set()
     out: list = []
     for t in triggers:
@@ -150,7 +162,7 @@ def derive_triggers(description: str) -> list:
 def build_manifest_from_frontmatter(fm: dict, location: Path) -> dict:
     """Construct a manifest dict from parsed frontmatter + heuristics."""
     name = (fm.get("name") or "").strip() or location.parent.name
-    description = (fm.get("description") or "").strip()
+    description = (fm.get("description") or "").strip().strip('"').strip("'")
     skill_id = location.parent.name
     if not ID_RE.match(skill_id):
         skill_id = re.sub(r"[^a-z0-9-]+", "-", skill_id.lower()).strip("-")
@@ -177,6 +189,7 @@ def build_manifest_from_frontmatter(fm: dict, location: Path) -> dict:
         "estimated_time_seconds": int(time_s),
         "tags": fm.get("tags", []) or [],
         "is_fallback": False,
+        "sha256": hashlib.sha256(location.read_bytes()).hexdigest(),
     }
 
 

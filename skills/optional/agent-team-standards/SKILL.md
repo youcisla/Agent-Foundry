@@ -62,3 +62,9 @@ python scripts/ats.py validate --manifest=agent-teams.lock.json
 ## Use case
 
 Every project that runs in cron should have an `agent-teams.lock.json`. New devs / fresh clones / CI just run `ats apply` and get the exact same skill versions.
+
+## Anti-patterns
+
+- Pinning versions without recording the source.
+- Editing the lock file by hand instead of running `ats apply`.
+- Locking every project into one global team standard.

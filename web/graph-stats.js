@@ -1,7 +1,7 @@
 const GRAPH_STATS = {
   "node_count": 555,
   "edge_count": 898,
-  "skill_count": 31,
+  "skill_count": 35,
   "agent_count": 3,
   "community_count": 54,
   "god_nodes": [

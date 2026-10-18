@@ -1,0 +1,35 @@
+- anti-slop: Kill generic AI patterns before they ship — filler prose, over-co
+- api-design: 'Design REST or GraphQL APIs: resource modeling, URL conventions,
+- automation-pick: Before automating a task, decide whether to automate
+- bottleneck-gating: Phase plans by measured bottleneck, not by requested order
+- constraint-then-solve: Before solving, restate the problem, list unknowns, and catalog e
+- context-optimization: Keep tool outputs small, sandbox large files, reference not repea
+- cron-troubleshoot: 'Debug a cron job that failed or didn''t run: timezone, drift, ov
+- e2e-test-strategy: 'Plan an end-to-end test pyramid: which flows to E2E, which to in
+- engram-routing: Route prompts via N-gram keyed lookup table (Engram-style conditi
+- feedback-loop: 'After shipping, set up the loop: instrument → measure → review w
+- knowledge-extract: Read a session, conversation, or document and identify reusable p
+- landscape-first: 'Before building anything in a competitive space, research 5-10 c
+- measure-first: Before planning any change, query live data (DB, API, analytics,
+- plan-before-code: No implementation without an approved spec for non-trivial work
+- plan-then-act: Plan first, then act
+- prompt-discipline: Enforce the four coding rules — think before acting, minimum viab
+- pushback-when-wrong: When the brief contradicts verified reality, push back with evide
+- quality-protocol: The unified maximum-quality protocol — restate → catalog constrai
+- re-verify-findings: Before executing any audit finding, claimed bug, or reported issu
+- read-before-build: A plan or design document is an aspiration, not a specification
+- session-closeout: 'Before ending a session: reconcile changed files, update docs an
+- session-distill: At session end, auto-summarize what was learned into a structured
+- show-your-work: After any complex task (audit, plan, redesign, multi-agent execut
+- verify-first: 'Every assertion about the codebase, product, or market is a hypo
+- workflow-decompose: 'Decompose any workflow into a DAG: trigger → conditions → action
+- agent-memory-vault: Shared, structured memory store that survives agent sessions - le
+- agent-team-standards: Per-project locked agent skill set with version pins
+- autonomous-briefing: Run a fully autonomous morning briefing: research the day's trend
+- book-to-skill: Convert book chapters, PDF excerpts, or long articles into a runn
+- chrome-devtools-mcp-bridge: Google's official Chrome DevTools MCP — 26+ tools for browser aut
+- design-language: Apply Apple-grade UI polish principles — restraint, coherence, in
+- funnel-pr-guard: Every PR that touches the front door must state which funnel step
+- persistent-memory: Persistent context across sessions for any agent — captures tool
+- sql-migration-trio: 'Every SQL migration = three files: up (forward DDL), down (rever
+- token-compression: Token-compression proxy + MCP server + library that compresses to

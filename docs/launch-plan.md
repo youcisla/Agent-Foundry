@@ -1,5 +1,6 @@
 # Agent Foundry – Public Launch Plan (Option C)
 
+> Superseded 2026-10-17 by the 0.4.0 evidence/distribution plan. Kept for history.
 > Spec-only document. No executable code. Use as input to the implementation harness.
 > Last updated: 2026-07-20. Scope: v0.1 public launch.
 >

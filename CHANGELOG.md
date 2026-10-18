@@ -2,6 +2,50 @@
 
 All notable changes to Agent Foundry. Everything here is original work by the Agent Foundry contributors, released under MIT.
 
+## 0.4.2 - 2026-10-17
+
+Packaging release for PyPI and the MCP registry.
+
+- PyPI distribution is `agent-foundry-runtime` (the name `agent-foundry` is blocked by PyPI's similarity rule). Adds an `agent-foundry-runtime` console-script alias so `uvx agent-foundry-runtime mcp` works.
+- MCP `serverInfo.version` and the FastAPI version now derive from `agent_foundry.__version__`; `sync-version.py` keeps it aligned.
+- `server.json` updated for `agent-foundry-runtime`; registry listing `io.github.youcisla/agent-foundry@0.4.2`.
+
+## 0.4.0 - 2026-10-17
+
+The evidence and distribution release. Fixes a catalog bug that silently dropped four skills and a planner bug that broke `plan()` outright, adds an MCP server, learned routing weights, reliable execution, paired evaluation, and a session-start bootstrap.
+
+**Added**
+
+- `agent-foundry mcp`: MCP stdio server exposing `plan`, `execute`, `list_skills`, and `get_skill`. No new dependencies.
+- `agent-foundry resume <session_id> "<prompt>"` and `agent-foundry session <id>`: multi-turn loop sessions, persisted in SQLite; daemon routes `POST /loop/resume` and `GET /loop/{id}`.
+- `agent-foundry browse`: terminal catalog browser with `--search` and `--read`.
+- `agent-foundry eval`: paired evaluation (same task with and without a skill) with a deterministic verifier and skill-lift reporting.
+- SessionStart bootstrap hook (`hooks/hooks.json`, `hooks/session-start.sh`) injecting a ~733-token skill index, opt-out via `AGENT_FOUNDRY_NO_BOOTSTRAP=1`.
+- Codex and Cursor plugin manifests alongside the Claude Code manifest.
+- `mcpName` in `package.json` and `server.json` for official MCP registry publication; `scripts/publish-mcp.sh` validates versions and publishes.
+- CI workflow: version drift check, generated-artifact check, unit tests.
+- `scripts/sync-version.py`, `scripts/gen-site-data.py`, `scripts/gen-skill-index.py`.
+
+**Changed**
+
+- Planner: keyword-overlap fallback when triggers miss, learned skill weights from judge scores, two-hop graph boost, cached graph adjacency, optional semantic fallback (`[semantic]` extra), optional LLM rerank of the top candidates (`planner.rerank_enabled`).
+- Graph path input is restricted to JSON files inside the repo or working directory.
+- Executor: timeout, max-token cap, retries, cost reporting, full output stored in the log DB (display truncation only), skill integrity verification via SHA-256.
+- Loop uses the shared completion path instead of duplicating LiteLLM logic.
+- Version is now 0.4.0 across every manifest; `sync-version.py --check` enforces it.
+
+**Fixed**
+
+- Inline YAML lists (`tags: [a, b]`) were parsed as strings, silently dropping four optional skills from the index. The catalog now indexes all 35.
+- `PlanRequest` lacked `graph_path`, so `plan()` and the `/plan` endpoint raised `AttributeError`.
+- Trigger derivation produced malformed regexes containing quote characters and literal `\s`, so most prompts matched nothing.
+- `agent-foundry status` referenced a nonexistent `cfg.log_path`.
+- Hosted site no longer opens an SSE connection to `127.0.0.1:8765` (the production console `ERR_CONNECTION_REFUSED`).
+- Site counts (skills, agents, CLI commands, endpoints, graph nodes/edges/communities) now match generated data; testimonials with no source were removed.
+- Accessibility: contrast tokens raised to WCAG AA, `<main>` landmark added, inline links underlined.
+- Graph page header statistics now populate instead of showing placeholders; initial view fits hub nodes so labels are readable.
+
+
 ## 0.3.2 - 2026-07-21
 
 Maintenance release after the npm packaging cycle.

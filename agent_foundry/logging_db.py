@@ -7,7 +7,7 @@ from __future__ import annotations
 import sqlite3
 import re
 from collections import Counter, defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 import hashlib
@@ -92,10 +92,29 @@ CREATE TABLE IF NOT EXISTS executions (
     judge_slop REAL,
     judge_scope REAL,
     judge_verdict TEXT,
-    feedback INTEGER
+    feedback INTEGER,
+    cost_usd REAL NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_executions_ts ON executions(timestamp);
 CREATE INDEX IF NOT EXISTS idx_executions_skill ON executions(skill_id);
+
+CREATE TABLE IF NOT EXISTS skill_weights (
+    skill_id TEXT PRIMARY KEY,
+    weight REAL NOT NULL DEFAULT 1.0,
+    samples INTEGER NOT NULL DEFAULT 0,
+    updated DATETIME NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS loop_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prompt TEXT NOT NULL,
+    skill_id TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'running',
+    turns INTEGER NOT NULL DEFAULT 0,
+    output TEXT,
+    created DATETIME NOT NULL,
+    updated DATETIME NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS instincts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -128,6 +147,8 @@ MIGRATIONS = [
     # v3 -> v4: Engram-style N-gram hash column on instincts
     "ALTER TABLE instincts ADD COLUMN ngram_hash TEXT",
     "CREATE INDEX IF NOT EXISTS idx_instincts_ngram ON instincts(ngram_hash)",
+    # v5: cost tracking
+    "ALTER TABLE executions ADD COLUMN cost_usd REAL NOT NULL DEFAULT 0",
 ]
 
 def init_db(db_path: Path) -> None:
@@ -151,7 +172,8 @@ def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
                   judge_corr: float | None = None,
                   judge_slop: float | None = None,
                   judge_scope: float | None = None,
-                  judge_verdict: str | None = None) -> int:
+                  judge_verdict: str | None = None,
+                  cost_usd: float = 0.0) -> int:
     init_db(db_path)
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
@@ -159,19 +181,119 @@ def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
             """INSERT INTO executions
             (timestamp, skill_id, prompt, output, tokens_used, duration_seconds,
              success, error, planner_score, was_fallback,
-             judge_corr, judge_slop, judge_scope, judge_verdict)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+             judge_corr, judge_slop, judge_scope, judge_verdict, cost_usd)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                datetime.utcnow().isoformat(),
+                datetime.now(timezone.utc).isoformat(),
                 skill_id, prompt, output, int(tokens_used), float(duration_seconds),
                 1 if success else 0, error, planner_score,
                 1 if was_fallback else 0,
                 judge_corr, judge_slop, judge_scope, judge_verdict,
+                float(cost_usd),
             ),
         )
         return int(cur.lastrowid)
     finally:
         conn.close()
+
+
+def get_skill_weights(db_path: Path) -> dict[str, float]:
+    """Learned per-skill multipliers from judge scores and feedback."""
+    if not db_path.exists():
+        return {}
+    init_db(db_path)
+    conn = sqlite3.connect(str(db_path))
+    try:
+        rows = conn.execute("SELECT skill_id, weight FROM skill_weights").fetchall()
+    finally:
+        conn.close()
+    return {r[0]: float(r[1]) for r in rows}
+
+
+def create_loop_session(db_path: Path, prompt: str, skill_id: str) -> int:
+    init_db(db_path)
+    now = datetime.now(timezone.utc).isoformat()
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        cur = conn.execute(
+            """INSERT INTO loop_sessions (prompt, skill_id, status, turns, created, updated)
+               VALUES (?, ?, 'running', 0, ?, ?)""",
+            (prompt, skill_id, now, now),
+        )
+        return int(cur.lastrowid)
+    finally:
+        conn.close()
+
+
+def update_loop_session(db_path: Path, session_id: int, *, status: str | None = None,
+                        output: str | None = None, increment_turn: bool = False) -> None:
+    init_db(db_path)
+    now = datetime.now(timezone.utc).isoformat()
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        if status is not None:
+            conn.execute("UPDATE loop_sessions SET status = ?, updated = ? WHERE id = ?",
+                         (status, now, session_id))
+        if output is not None:
+            conn.execute("UPDATE loop_sessions SET output = ?, updated = ? WHERE id = ?",
+                         (output, now, session_id))
+        if increment_turn:
+            conn.execute("UPDATE loop_sessions SET turns = turns + 1, updated = ? WHERE id = ?",
+                         (now, session_id))
+    finally:
+        conn.close()
+
+
+def get_loop_session(db_path: Path, session_id: int) -> dict | None:
+    if not db_path.exists():
+        return None
+    init_db(db_path)
+    conn = sqlite3.connect(str(db_path))
+    try:
+        row = conn.execute(
+            """SELECT id, prompt, skill_id, status, turns, output, created, updated
+               FROM loop_sessions WHERE id = ?""",
+            (session_id,),
+        ).fetchone()
+    finally:
+        conn.close()
+    if not row:
+        return None
+    return {"id": row[0], "prompt": row[1], "skill_id": row[2], "status": row[3],
+            "turns": row[4], "output": row[5], "created": row[6], "updated": row[7]}
+
+
+def update_skill_weights(db_path: Path) -> int:
+    """Recompute weights: judge mean plus feedback, clipped to [0.6, 1.4]."""
+    init_db(db_path)
+    now = datetime.now(timezone.utc).isoformat()
+    updated = 0
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        rows = conn.execute(
+            """SELECT skill_id,
+                      AVG((judge_corr + judge_slop + judge_scope) / 3.0),
+                      SUM(CASE feedback WHEN 1 THEN 1 WHEN -1 THEN -1 ELSE 0 END),
+                      COUNT(*)
+               FROM executions
+               WHERE judge_corr IS NOT NULL OR feedback IS NOT NULL
+               GROUP BY skill_id"""
+        ).fetchall()
+        for skill_id, judge_mean, feedback_sum, samples in rows:
+            base = (judge_mean / 10.0) if judge_mean is not None else 0.5
+            weight = 0.8 + 0.4 * base + 0.05 * float(feedback_sum or 0) / max(1, samples)
+            weight = max(0.6, min(1.4, weight))
+            conn.execute(
+                """INSERT INTO skill_weights (skill_id, weight, samples, updated)
+                   VALUES (?, ?, ?, ?)
+                   ON CONFLICT(skill_id) DO UPDATE SET
+                     weight=excluded.weight, samples=excluded.samples, updated=excluded.updated""",
+                (skill_id, weight, samples, now),
+            )
+            updated += 1
+    finally:
+        conn.close()
+    return updated
 
 def set_feedback(db_path: Path, execution_id: int, feedback: int) -> bool:
     """feedback: 1 = thumbs_up, -1 = thumbs_down."""
@@ -229,7 +351,8 @@ def learn(db_path: Path) -> dict:
     Returns summary of what was learned.
     """
     init_db(db_path)
-    results = {"new_instincts": 0, "updated_instincts": 0, "patterns_found": []}
+    results = {"new_instincts": 0, "updated_instincts": 0, "patterns_found": [],
+               "weights_updated": update_skill_weights(db_path)}
 
     with sqlite3.connect(str(db_path)) as conn:
         rows = conn.execute(
@@ -254,7 +377,7 @@ def learn(db_path: Path) -> dict:
              'will', 'can', 'are', 'not', 'but', 'all', 'was', 'out', 'use'})
         skill_prompts[skill_id].append(prompt)
 
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
     for skill_id, counter in skill_keywords.items():
         top = counter.most_common(5)
         tokens = [w for w, _c in top]

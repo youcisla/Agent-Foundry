@@ -74,3 +74,9 @@ Sample:
 2. ...
 3. ...
 ```
+
+## Anti-patterns
+
+- Summarizing stale feeds without a timestamp.
+- Reporting more than three actions; the list stops being actionable.
+- Running without a cost budget or a stop condition.

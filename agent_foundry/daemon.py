@@ -30,6 +30,7 @@ def _site_signature() -> str:
                 continue
     return "|".join(parts)
 
+from . import __version__
 from .config import Config, LOG_DB_PATH
 from .executor import execute as executor_run
 from .indexer import (
@@ -47,21 +48,24 @@ from .logging_db import (
     approve_instinct,
     get_stats as db_stats,
     engram_lookup,
+    get_skill_weights,
+    get_loop_session,
 )
-from .loop import run_loop
+from .loop import resume_loop, run_loop
 from .models import (
     ExecuteRequest,
     FeedbackRequest,
     IndexResponse,
     LearnResponse,
     LoopRequest,
+    LoopResumeRequest,
     PlanRequest,
 )
 
 
 def create_app(cfg: Config | None = None) -> FastAPI:
     cfg = cfg or Config.load()
-    app = FastAPI(title="Agent Foundry", version="0.2.0")
+    app = FastAPI(title="Agent Foundry", version=__version__)
     db_path = LOG_DB_PATH
 
     # Dev-only: allow the statically served site (different origin) to reach the
@@ -133,13 +137,16 @@ def create_app(cfg: Config | None = None) -> FastAPI:
         # Engram fast-path: if we have a high-confidence cached routing for this
         # prompt's N-gram fingerprint, use it directly. Falls through to planner
         # otherwise.
+        rerank = cfg.core.default_llm if cfg.planner.rerank_enabled else None
         eg = engram_lookup(db_path, req.prompt, min_confidence=0.6)
         if eg:
             from .planner import plan as planner_run
-            full = planner_run(req, idx, cfg.planner)
+            full = planner_run(req, idx, cfg.planner, weights=get_skill_weights(db_path),
+                               rerank_model=rerank)
             return {**full.model_dump(), "engram_cache_hit": eg}
         from .planner import plan as planner_run
-        return planner_run(req, idx, cfg.planner)
+        return planner_run(req, idx, cfg.planner, weights=get_skill_weights(db_path),
+                           rerank_model=rerank)
 
     @app.get("/engram")
     def do_engram_lookup(prompt: str):
@@ -156,7 +163,11 @@ def create_app(cfg: Config | None = None) -> FastAPI:
                                 detail="No index. POST /index first.")
         return executor_run(req, model=cfg.core.default_llm,
                             skill_paths=idx.skill_paths,
-                            db_path=db_path)
+                            db_path=db_path,
+                            skill_hashes={s.id: s.sha256 for s in idx.skills},
+                            timeout_seconds=cfg.core.executor_timeout_seconds,
+                            max_tokens=cfg.core.executor_max_tokens,
+                            retries=cfg.core.executor_retries)
 
     @app.post("/loop")
     def do_loop(req: LoopRequest):
@@ -164,6 +175,17 @@ def create_app(cfg: Config | None = None) -> FastAPI:
         model_override = req.model
         # run_loop uses cfg.core.default_llm unless model_override provided
         return run_loop(req, cfg=cfg, db_path=db_path, model_override=model_override)
+
+    @app.post("/loop/resume")
+    def do_loop_resume(req: LoopResumeRequest):
+        return resume_loop(req, cfg=cfg, db_path=db_path, model_override=req.model)
+
+    @app.get("/loop/{session_id}")
+    def get_loop(session_id: int):
+        session = get_loop_session(db_path, session_id)
+        if session is None:
+            raise HTTPException(status_code=404, detail="Loop session not found")
+        return session
 
     @app.get("/stats")
     def stats():

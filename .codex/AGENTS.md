@@ -107,6 +107,8 @@ The daemon serves on `http://127.0.0.1:8765` with endpoints:
 - `/plan` — POST, returns ranked skills for a prompt
 - `/execute` — POST, runs a specific skill
 - `/loop` — POST, full plan → execute → return
+- `/loop/resume` — POST, continue a stored loop session
+- `/loop/{id}` — GET, inspect a loop session
 
 ## Compatibility Notes
 

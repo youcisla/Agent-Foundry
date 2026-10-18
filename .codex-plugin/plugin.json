@@ -1,0 +1,14 @@
+{
+  "name": "agent-foundry",
+  "displayName": "Agent Foundry",
+  "version": "0.4.2",
+  "description": "Curated agent skills and a local orchestrator for AI coding assistants.",
+  "category": "Developer Tools",
+  "keywords": ["skills", "agents", "orchestrator", "discipline", "token-efficiency"],
+  "author": {
+    "name": "Agent Foundry Contributors"
+  },
+  "homepage": "https://youcisla-agents.vercel.app/",
+  "repository": "https://github.com/youcisla/Agent-Foundry",
+  "license": "MIT"
+}

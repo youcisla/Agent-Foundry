@@ -61,3 +61,9 @@ python scripts/memory.py context --last=10
 - agent-self-scheduling (installed) for the cron wrapper
 - goal-loop (installed) for the autonomous agent loop
 - handoff (installed) for cross-session context transfer
+
+## Anti-patterns
+
+- Storing secrets or credentials in the vault.
+- Writing free-form notes with no topic key; they become unsearchable.
+- Treating the vault as a transcript; it is a durable fact store, not a log.

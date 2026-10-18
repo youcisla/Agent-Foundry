@@ -1,10 +1,12 @@
 {
   "name": "agent-foundry",
   "description": "A curated, maintained set of agent skills for the local orchestrator — harness-agnostic, token-efficient, MIT-licensed. Original work by the Agent Foundry Contributors.",
-  "version": "0.2.0",
+  "version": "0.4.2",
   "author": {
     "name": "Agent Foundry Contributors"
   },
+  "homepage": "https://youcisla-agents.vercel.app/",
+  "repository": "https://github.com/youcisla/Agent-Foundry",
   "license": "MIT",
   "keywords": [
     "skills",

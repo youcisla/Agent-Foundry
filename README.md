@@ -1,3 +1,4 @@
+<!-- mcp-name: io.github.youcisla/agent-foundry -->
 <div align="center">
 
 # Agent Foundry
@@ -5,15 +6,15 @@
 **Skill and agent runtime for AI coding assistants.**
 
 Plan → execute → verify. Skills, agents, a local daemon.
-MIT, local, no cloud. 31 original skills, 0 external references.
+MIT, local, no cloud. 35 original skills, no third-party skill content.
 
 <br>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-f5a623.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.3.2-4ade80.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.4.2-4ade80.svg)](CHANGELOG.md)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-6496ff.svg)](https://www.python.org)
 [![npm](https://img.shields.io/badge/npm-%40youcisla%2Fagent--foundry-6496ff.svg)](https://www.npmjs.com/package/@youcisla/agent-foundry)
-[![Skills](https://img.shields.io/badge/skills-31-f5a623.svg)](#catalog)
+[![Skills](https://img.shields.io/badge/skills-35-f5a623.svg)](#catalog)
 [![Agents](https://img.shields.io/badge/agents-3-4ade80.svg)](#catalog)
 [![Gates](https://img.shields.io/badge/quality%20gates-3%20green-4ade80.svg)](#quality-gates)
 [![External refs](https://img.shields.io/badge/external%20refs-0-4ade80.svg)](https://github.com/youcisla/Agent-Foundry/blob/main/scripts/nox.sh)
@@ -98,6 +99,32 @@ agent-foundry doctor
 → **[youcisla-agents.vercel.app](https://youcisla-agents.vercel.app)** has the
 full catalog, an interactive knowledge graph, and one-click install.
 
+### 4. Or connect over MCP
+
+```bash
+agent-foundry mcp   # stdio MCP server: plan, execute, list_skills, get_skill
+```
+
+Or run the published package directly:
+
+```bash
+uvx agent-foundry-runtime mcp
+```
+
+Registered name: `io.github.youcisla/agent-foundry`.
+
+### 5. Measure a skill instead of trusting it
+
+```bash
+agent-foundry eval --tasks tasks.json
+```
+
+Each task runs twice, with and without the skill, and reports the pass-rate
+lift. Task format: `{"id", "prompt", "skill", "verify"}` where `verify` is a
+shell command that receives the output on stdin. The layout matches
+SkillsBench v1.1 (`benchflow/skillsbench`), so published benchmarks can be
+reused.
+
 ---
 
 ## Architecture
@@ -117,7 +144,7 @@ Your prompt  (/af build a react component)
 ### What's in the box
 
 ```text
-skills/         31 disciplines (25 core + 6 optional)    ─┐ feed
+skills/         35 disciplines (25 core + 10 optional)    ─┐ feed
 agents/         af-planner · af-critic · af-orchestrator  │ the
                                                           ▼ indexer
 agent_foundry/  config.py ─▶ daemon.py (FastAPI)
@@ -148,7 +175,7 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 
 ## Catalog
 
-**31 skills, 3 agents.** All original work under MIT. Each skill:
+**35 skills, 3 agents.** All original work under MIT. Each skill:
 
 - 📏 **≤150 lines / ≤8 KB** (Codex cap, no exceptions)
 - 🎯 **Exactly one trigger phrase** (`Use when...` so the model knows when to fire)
@@ -185,7 +212,7 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 | [`verify-first`](skills/core/verify-first/SKILL.md) | Apply before committing to any claim |
 | [`workflow-decompose`](skills/core/workflow-decompose/SKILL.md) | Use when designing or debugging an automation |
 
-### Optional skills (6)
+### Optional skills (10)
 
 | Skill | Trigger |
 |---|---|
@@ -195,6 +222,10 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 | [`design-language`](skills/optional/design-language/SKILL.md) | Apply Apple-grade UI polish |
 | [`funnel-pr-guard`](skills/optional/funnel-pr-guard/SKILL.md) | Guard conversion-critical paths from breaking |
 | [`sql-migration-trio`](skills/optional/sql-migration-trio/SKILL.md) | Three-file migration pattern (up/down/schema) |
+| [`agent-memory-vault`](skills/optional/agent-memory-vault/SKILL.md) | Shared structured memory that survives agent sessions |
+| [`agent-team-standards`](skills/optional/agent-team-standards/SKILL.md) | Per-project locked agent skill set with version pins |
+| [`autonomous-briefing`](skills/optional/autonomous-briefing/SKILL.md) | Run a fully autonomous morning briefing |
+| [`book-to-skill`](skills/optional/book-to-skill/SKILL.md) | Convert book chapters or long articles into a runnable skill |
 
 ### Agents (3)
 
@@ -212,15 +243,20 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 |---|---|
 | `agent-foundry plan "<prompt>"` | Rank skills for a prompt |
 | `agent-foundry run "<prompt>"` | Plan + execute the top-ranked skill |
+| `agent-foundry resume <session_id> "<prompt>"` | Continue a loop session with a follow-up |
+| `agent-foundry session <session_id>` | Inspect a stored loop session |
 | `agent-foundry execute <skill_id> "<prompt>"` | Run a specific skill |
 | `agent-foundry doctor` | Health-check: config, index, daemon, API key |
 | `agent-foundry status` | Routing accuracy, fallback rate, average cost |
 | `agent-foundry consult "<need>"` | Recommend skills for a need |
 | `agent-foundry cost-report` | Token and time estimates per skill |
 | `agent-foundry index` | Rebuild the skill index from disk |
+| `agent-foundry browse` | Browse/search the catalog, or `--read <id>` |
+| `agent-foundry mcp` | Start the MCP stdio server (plan/execute/list_skills/get_skill) |
+| `agent-foundry eval --tasks <file>` | Paired skill eval: with vs without, reports lift |
 | `agent-foundry serve` | Start the daemon (lazy-started on first command) |
 
-Every command also has an HTTP endpoint on the daemon (`/plan`, `/execute`, `/loop`, `/index`, `/health`) for programmatic use.
+Every command also has an HTTP endpoint on the daemon (`/plan`, `/execute`, `/loop`, `/loop/resume`, `/loop/{id}`, `/index`, `/health`) for programmatic use.
 
 ---
 
@@ -275,7 +311,7 @@ bash scripts/nox.sh
 | Gate | Result |
 |---|---|
 | `foundry-eval.py` | **34 passed, 0 failed** ✅ |
-| `validate.sh` | **31 skills, 0 failed** ✅ |
+| `validate.sh` | **35 skills, 0 failed** ✅ |
 | `nox.sh` | **0 external references** ✅ |
 
 The `nox.sh` gate is the strongest guarantee: it scans every tracked file for
@@ -290,7 +326,7 @@ Browse the catalog, the knowledge graph, and the audit at
 
 | Page | What |
 |---|---|
-| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 31 skills + 3 agents with live search |
+| [Catalog](https://youcisla-agents.vercel.app/catalog) | All 35 skills + 3 agents with live search |
 | [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (555 nodes, 898 edges, 54 communities) |
 | [Audit](https://youcisla-agents.vercel.app/audit) | God nodes, surprising connections, interactive React Flow diagrams |
 

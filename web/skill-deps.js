@@ -57,6 +57,12 @@ const SKILL_DEPS = {
     "read-before-build"
   ],
   "workflow-decompose": [],
+  "agent-memory-vault": [],
+  "agent-team-standards": [],
+  "autonomous-briefing": [
+    "agent-memory-vault"
+  ],
+  "book-to-skill": [],
   "chrome-devtools-mcp-bridge": [],
   "design-language": [],
   "funnel-pr-guard": [],

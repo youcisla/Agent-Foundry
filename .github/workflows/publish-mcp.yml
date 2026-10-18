@@ -1,0 +1,29 @@
+name: publish-mcp
+
+# Publishes server.json to the official MCP Registry after PyPI succeeds.
+# Uses GitHub Actions OIDC, so no local mcp-publisher login is needed.
+on:
+  workflow_run:
+    workflows: ["publish-pypi"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL -o mcp-publisher.tar.gz \
+            https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz
+          tar -xzf mcp-publisher.tar.gz mcp-publisher
+      - name: Login with GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+      - name: Publish
+        run: ./mcp-publisher publish

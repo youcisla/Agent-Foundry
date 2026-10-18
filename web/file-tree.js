@@ -6,14 +6,12 @@ const FILE_TREE = {
     "__files": {
       "README.md": {
         "path": ".antigravity/README.md",
-        "size": 736,
         "ext": ".md"
       },
       "rules": {
         "__files": {
           "agent-foundry.md": {
             "path": ".antigravity/rules/agent-foundry.md",
-            "size": 373,
             "ext": ".md"
           }
         }
@@ -24,7 +22,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": ".antigravity/skills/agent-foundry/SKILL.md",
-                "size": 429,
                 "ext": ".md"
               }
             }
@@ -35,19 +32,9 @@ const FILE_TREE = {
         "__files": {
           "agent-foundry.md": {
             "path": ".antigravity/workflows/agent-foundry.md",
-            "size": 248,
             "ext": ".md"
           }
         }
-      }
-    }
-  },
-  ".claude": {
-    "__files": {
-      "settings.json": {
-        "path": ".claude/settings.json",
-        "size": 936,
-        "ext": ".json"
       }
     }
   },
@@ -55,12 +42,10 @@ const FILE_TREE = {
     "__files": {
       "marketplace.json": {
         "path": ".claude-plugin/marketplace.json",
-        "size": 292,
         "ext": ".json"
       },
       "plugin.json": {
         "path": ".claude-plugin/plugin.json",
-        "size": 461,
         "ext": ".json"
       }
     }
@@ -69,26 +54,35 @@ const FILE_TREE = {
     "__files": {
       "README.md": {
         "path": ".claude-project/README.md",
-        "size": 499,
         "ext": ".md"
+      }
+    }
+  },
+  ".claude": {
+    "__files": {
+      "proven-config.json": {
+        "path": ".claude/proven-config.json",
+        "ext": ".json"
+      },
+      "settings.json": {
+        "path": ".claude/settings.json",
+        "ext": ".json"
       }
     }
   },
   ".codebuddy": {
     "__files": {
+      "README.md": {
+        "path": ".codebuddy/README.md",
+        "ext": ".md"
+      },
       "commands": {
         "__files": {
           "af.md": {
             "path": ".codebuddy/commands/af.md",
-            "size": 151,
             "ext": ".md"
           }
         }
-      },
-      "README.md": {
-        "path": ".codebuddy/README.md",
-        "size": 411,
-        "ext": ".md"
       },
       "skills": {
         "__files": {
@@ -96,7 +90,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": ".codebuddy/skills/agent-foundry/SKILL.md",
-                "size": 188,
                 "ext": ".md"
               }
             }
@@ -105,58 +98,67 @@ const FILE_TREE = {
       }
     }
   },
+  ".codex-plugin": {
+    "__files": {
+      "plugin.json": {
+        "path": ".codex-plugin/plugin.json",
+        "ext": ".json"
+      }
+    }
+  },
   ".codex": {
     "__files": {
       "AGENTS.md": {
         "path": ".codex/AGENTS.md",
-        "size": 4195,
         "ext": ".md"
       },
       "config.toml": {
         "path": ".codex/config.toml",
-        "size": 1931,
         "ext": ".toml"
       }
     }
   },
-  ".cursor": {
+  ".cursor-plugin": {
     "__files": {
-      "hooks.json": {
-        "path": ".cursor/hooks.json",
-        "size": 278,
+      "plugin.json": {
+        "path": ".cursor-plugin/plugin.json",
         "ext": ".json"
       }
     }
   },
   ".cursor-rules.md": {
     "path": ".cursor-rules.md",
-    "size": 477,
     "ext": ".md"
+  },
+  ".cursor": {
+    "__files": {
+      "hooks.json": {
+        "path": ".cursor/hooks.json",
+        "ext": ".json"
+      }
+    }
   },
   ".gemini": {
     "__files": {
       "AGENTS.md": {
         "path": ".gemini/AGENTS.md",
-        "size": 399,
         "ext": ".md"
       }
     }
   },
   ".joycode": {
     "__files": {
+      "README.md": {
+        "path": ".joycode/README.md",
+        "ext": ".md"
+      },
       "commands": {
         "__files": {
           "af.md": {
             "path": ".joycode/commands/af.md",
-            "size": 130,
             "ext": ".md"
           }
         }
-      },
-      "README.md": {
-        "path": ".joycode/README.md",
-        "size": 337,
-        "ext": ".md"
       },
       "skills": {
         "__files": {
@@ -164,7 +166,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": ".joycode/skills/agent-foundry/SKILL.md",
-                "size": 175,
                 "ext": ".md"
               }
             }
@@ -177,7 +178,6 @@ const FILE_TREE = {
     "__files": {
       "README.md": {
         "path": ".kimi/README.md",
-        "size": 313,
         "ext": ".md"
       },
       "skills": {
@@ -186,7 +186,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": ".kimi/skills/agent-foundry/SKILL.md",
-                "size": 166,
                 "ext": ".md"
               }
             }
@@ -199,7 +198,6 @@ const FILE_TREE = {
     "__files": {
       "README.md": {
         "path": ".openclaw/README.md",
-        "size": 285,
         "ext": ".md"
       },
       "skills": {
@@ -208,7 +206,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": ".openclaw/skills/agent-foundry/SKILL.md",
-                "size": 176,
                 "ext": ".md"
               }
             }
@@ -223,19 +220,16 @@ const FILE_TREE = {
         "__files": {
           "PLAN.md": {
             "path": ".opencode/instructions/PLAN.md",
-            "size": 227,
             "ext": ".md"
           },
           "VERIFY.md": {
             "path": ".opencode/instructions/VERIFY.md",
-            "size": 264,
             "ext": ".md"
           }
         }
       },
       "opencode.json": {
         "path": ".opencode/opencode.json",
-        "size": 2446,
         "ext": ".json"
       }
     }
@@ -244,7 +238,6 @@ const FILE_TREE = {
     "__files": {
       "README.md": {
         "path": ".qwen/README.md",
-        "size": 326,
         "ext": ".md"
       },
       "skills": {
@@ -253,7 +246,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": ".qwen/skills/agent-foundry/SKILL.md",
-                "size": 140,
                 "ext": ".md"
               }
             }
@@ -266,71 +258,82 @@ const FILE_TREE = {
     "__files": {
       "README.md": {
         "path": ".zed/README.md",
-        "size": 451,
         "ext": ".md"
       }
     }
+  },
+  "AUTHORSHIP.md": {
+    "path": "AUTHORSHIP.md",
+    "ext": ".md"
+  },
+  "CHANGELOG.md": {
+    "path": "CHANGELOG.md",
+    "ext": ".md"
+  },
+  "INSTALL.md": {
+    "path": "INSTALL.md",
+    "ext": ".md"
+  },
+  "README.md": {
+    "path": "README.md",
+    "ext": ".md"
   },
   "agent_foundry": {
     "__files": {
       "__init__.py": {
         "path": "agent_foundry/__init__.py",
-        "size": 82,
         "ext": ".py"
       },
       "__main__.py": {
         "path": "agent_foundry/__main__.py",
-        "size": 101,
         "ext": ".py"
       },
       "cli.py": {
         "path": "agent_foundry/cli.py",
-        "size": 17316,
         "ext": ".py"
       },
       "config.py": {
         "path": "agent_foundry/config.py",
-        "size": 6429,
         "ext": ".py"
       },
       "daemon.py": {
         "path": "agent_foundry/daemon.py",
-        "size": 6884,
+        "ext": ".py"
+      },
+      "eval.py": {
+        "path": "agent_foundry/eval.py",
         "ext": ".py"
       },
       "executor.py": {
         "path": "agent_foundry/executor.py",
-        "size": 4162,
         "ext": ".py"
       },
       "indexer.py": {
         "path": "agent_foundry/indexer.py",
-        "size": 8828,
         "ext": ".py"
       },
       "judge.py": {
         "path": "agent_foundry/judge.py",
-        "size": 2529,
         "ext": ".py"
       },
       "logging_db.py": {
         "path": "agent_foundry/logging_db.py",
-        "size": 12768,
         "ext": ".py"
       },
       "loop.py": {
         "path": "agent_foundry/loop.py",
-        "size": 6435,
+        "ext": ".py"
+      },
+      "mcp_server.py": {
+        "path": "agent_foundry/mcp_server.py",
         "ext": ".py"
       },
       "models.py": {
         "path": "agent_foundry/models.py",
-        "size": 4198,
         "ext": ".py"
       },
       "planner.py": {
         "path": "agent_foundry/planner.py",
-        "size": 4221,
         "ext": ".py"
       }
     }
@@ -341,14 +344,12 @@ const FILE_TREE = {
         "__files": {
           "AGENT.md": {
             "path": "agents/af-critic/AGENT.md",
-            "size": 2561,
             "ext": ".md"
           },
           "agents": {
             "__files": {
               "openai.toml": {
                 "path": "agents/af-critic/agents/openai.toml",
-                "size": 552,
                 "ext": ".toml"
               }
             }
@@ -359,7 +360,6 @@ const FILE_TREE = {
         "__files": {
           "AGENT.md": {
             "path": "agents/af-orchestrator/AGENT.md",
-            "size": 1328,
             "ext": ".md"
           }
         }
@@ -368,14 +368,12 @@ const FILE_TREE = {
         "__files": {
           "AGENT.md": {
             "path": "agents/af-planner/AGENT.md",
-            "size": 2416,
             "ext": ".md"
           },
           "agents": {
             "__files": {
               "openai.toml": {
                 "path": "agents/af-planner/agents/openai.toml",
-                "size": 695,
                 "ext": ".toml"
               }
             }
@@ -384,35 +382,14 @@ const FILE_TREE = {
       }
     }
   },
-  "AUTHORSHIP.md": {
-    "path": "AUTHORSHIP.md",
-    "size": 644,
-    "ext": ".md"
-  },
-  "catalog": {
-    "__files": {
-      "decisions.md": {
-        "path": "catalog/decisions.md",
-        "size": 3851,
-        "ext": ".md"
-      }
-    }
-  },
-  "CHANGELOG.md": {
-    "path": "CHANGELOG.md",
-    "size": 4475,
-    "ext": ".md"
-  },
   "claude_code_plugin.json": {
     "path": "claude_code_plugin.json",
-    "size": 546,
     "ext": ".json"
   },
   "community": {
     "__files": {
       "README.md": {
         "path": "community/README.md",
-        "size": 571,
         "ext": ".md"
       }
     }
@@ -421,69 +398,71 @@ const FILE_TREE = {
     "__files": {
       "adapters": {
         "__files": {
+          "README.md": {
+            "path": "docs/adapters/README.md",
+            "ext": ".md"
+          },
           "gemini-cli.md": {
             "path": "docs/adapters/gemini-cli.md",
-            "size": 734,
             "ext": ".md"
           },
           "opencode.md": {
             "path": "docs/adapters/opencode.md",
-            "size": 82,
-            "ext": ".md"
-          },
-          "README.md": {
-            "path": "docs/adapters/README.md",
-            "size": 3174,
             "ext": ".md"
           }
         }
+      },
+      "adr-0001-routing-and-mcp.md": {
+        "path": "docs/adr-0001-routing-and-mcp.md",
+        "ext": ".md"
+      },
+      "architecture.md": {
+        "path": "docs/architecture.md",
+        "ext": ".md"
       },
       "architecture": {
         "__files": {
           "community-cohesion.md": {
             "path": "docs/architecture/community-cohesion.md",
-            "size": 4066,
             "ext": ".md"
           }
         }
       },
-      "architecture.md": {
-        "path": "docs/architecture.md",
-        "size": 6053,
-        "ext": ".md"
-      },
       "authoring.md": {
         "path": "docs/authoring.md",
-        "size": 6254,
         "ext": ".md"
       },
       "auto-learning.md": {
         "path": "docs/auto-learning.md",
-        "size": 3558,
         "ext": ".md"
+      },
+      "eval-tasks.example.json": {
+        "path": "docs/eval-tasks.example.json",
+        "ext": ".json"
       },
       "launch-plan.md": {
         "path": "docs/launch-plan.md",
-        "size": 27108,
         "ext": ".md"
       },
       "npm-publish": {
         "__files": {
+          "SKILL.md": {
+            "path": "docs/npm-publish/SKILL.md",
+            "ext": ".md"
+          },
           "automation": {
             "__files": {
+              "SKILL.md": {
+                "path": "docs/npm-publish/automation/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "ci-pipeline.md": {
                     "path": "docs/npm-publish/automation/references/ci-pipeline.md",
-                    "size": 1727,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "docs/npm-publish/automation/SKILL.md",
-                "size": 2719,
-                "ext": ".md"
               }
             }
           },
@@ -491,74 +470,58 @@ const FILE_TREE = {
             "__files": {
               "2fa-setup.md": {
                 "path": "docs/npm-publish/references/2fa-setup.md",
-                "size": 2842,
                 "ext": ".md"
               },
               "troubleshooting.md": {
                 "path": "docs/npm-publish/references/troubleshooting.md",
-                "size": 3399,
                 "ext": ".md"
               }
             }
-          },
-          "SKILL.md": {
-            "path": "docs/npm-publish/SKILL.md",
-            "size": 3570,
-            "ext": ".md"
           }
         }
       },
       "philosophy.md": {
         "path": "docs/philosophy.md",
-        "size": 3313,
         "ext": ".md"
       }
     }
   },
   "hooks": {
     "__files": {
+      "hooks.json": {
+        "path": "hooks/hooks.json",
+        "ext": ".json"
+      },
       "session-closeout.sh": {
         "path": "hooks/session-closeout.sh",
-        "size": 442,
         "ext": ".sh"
       },
       "session-end.sh": {
         "path": "hooks/session-end.sh",
-        "size": 4795,
+        "ext": ".sh"
+      },
+      "session-start.sh": {
+        "path": "hooks/session-start.sh",
         "ext": ".sh"
       }
     }
   },
-  "INSTALL.md": {
-    "path": "INSTALL.md",
-    "size": 2444,
-    "ext": ".md"
-  },
   "install.sh": {
     "path": "install.sh",
-    "size": 2681,
     "ext": ".sh"
   },
   "package.json": {
     "path": "package.json",
-    "size": 965,
     "ext": ".json"
   },
   "pyproject.toml": {
     "path": "pyproject.toml",
-    "size": 804,
     "ext": ".toml"
-  },
-  "README.md": {
-    "path": "README.md",
-    "size": 12465,
-    "ext": ".md"
   },
   "schemas": {
     "__files": {
       "skill-manifest.schema.json": {
         "path": "schemas/skill-manifest.schema.json",
-        "size": 2766,
         "ext": ".json"
       }
     }
@@ -567,80 +530,81 @@ const FILE_TREE = {
     "__files": {
       "activate.sh": {
         "path": "scripts/activate.sh",
-        "size": 2280,
         "ext": ".sh"
       },
       "auto-extract.sh": {
         "path": "scripts/auto-extract.sh",
-        "size": 3507,
         "ext": ".sh"
       },
       "build-site-data.sh": {
         "path": "scripts/build-site-data.sh",
-        "size": 2152,
         "ext": ".sh"
       },
       "cost-report.py": {
         "path": "scripts/cost-report.py",
-        "size": 3858,
         "ext": ".py"
       },
       "foundry-eval.py": {
         "path": "scripts/foundry-eval.py",
-        "size": 9042,
         "ext": ".py"
       },
       "gen-site-data.py": {
         "path": "scripts/gen-site-data.py",
-        "size": 18741,
+        "ext": ".py"
+      },
+      "gen-skill-index.py": {
+        "path": "scripts/gen-skill-index.py",
         "ext": ".py"
       },
       "graphify-run.py": {
         "path": "scripts/graphify-run.py",
-        "size": 9769,
         "ext": ".py"
       },
       "indexer.py": {
         "path": "scripts/indexer.py",
-        "size": 10330,
         "ext": ".py"
       },
       "install.js": {
         "path": "scripts/install.js",
-        "size": 17474,
         "ext": ".js"
       },
       "install.sh": {
         "path": "scripts/install.sh",
-        "size": 1170,
         "ext": ".sh"
       },
       "nox.sh": {
         "path": "scripts/nox.sh",
-        "size": 1818,
         "ext": ".sh"
       },
       "provenance-audit.py": {
         "path": "scripts/provenance-audit.py",
-        "size": 6501,
         "ext": ".py"
+      },
+      "publish-mcp.sh": {
+        "path": "scripts/publish-mcp.sh",
+        "ext": ".sh"
       },
       "publish.sh": {
         "path": "scripts/publish.sh",
-        "size": 4194,
         "ext": ".sh"
       },
       "smoke-test.py": {
         "path": "scripts/smoke-test.py",
-        "size": 4583,
+        "ext": ".py"
+      },
+      "sync-version.py": {
+        "path": "scripts/sync-version.py",
         "ext": ".py"
       },
       "validate.sh": {
         "path": "scripts/validate.sh",
-        "size": 2927,
         "ext": ".sh"
       }
     }
+  },
+  "server.json": {
+    "path": "server.json",
+    "ext": ".json"
   },
   "skills": {
     "__files": {
@@ -650,44 +614,39 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/anti-slop/SKILL.md",
-                "size": 2376,
                 "ext": ".md"
               }
             }
           },
           "api-design": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/api-design/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/api-design/references/details.md",
-                    "size": 1945,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/api-design/SKILL.md",
-                "size": 1827,
-                "ext": ".md"
               }
             }
           },
           "automation-pick": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/automation-pick/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/automation-pick/references/details.md",
-                    "size": 2576,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/automation-pick/SKILL.md",
-                "size": 2045,
-                "ext": ".md"
               }
             }
           },
@@ -695,7 +654,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/bottleneck-gating/SKILL.md",
-                "size": 2637,
                 "ext": ".md"
               }
             }
@@ -704,7 +662,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/constraint-then-solve/SKILL.md",
-                "size": 2609,
                 "ext": ".md"
               }
             }
@@ -713,44 +670,39 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/context-optimization/SKILL.md",
-                "size": 2123,
                 "ext": ".md"
               }
             }
           },
           "cron-troubleshoot": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/cron-troubleshoot/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/cron-troubleshoot/references/details.md",
-                    "size": 2058,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/cron-troubleshoot/SKILL.md",
-                "size": 1996,
-                "ext": ".md"
               }
             }
           },
           "e2e-test-strategy": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/e2e-test-strategy/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/e2e-test-strategy/references/details.md",
-                    "size": 2014,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/e2e-test-strategy/SKILL.md",
-                "size": 2593,
-                "ext": ".md"
               }
             }
           },
@@ -758,44 +710,39 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/engram-routing/SKILL.md",
-                "size": 2188,
                 "ext": ".md"
               }
             }
           },
           "feedback-loop": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/feedback-loop/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/feedback-loop/references/details.md",
-                    "size": 1772,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/feedback-loop/SKILL.md",
-                "size": 1859,
-                "ext": ".md"
               }
             }
           },
           "knowledge-extract": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/knowledge-extract/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/knowledge-extract/references/details.md",
-                    "size": 1597,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/knowledge-extract/SKILL.md",
-                "size": 1830,
-                "ext": ".md"
               }
             }
           },
@@ -803,7 +750,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/landscape-first/SKILL.md",
-                "size": 2701,
                 "ext": ".md"
               }
             }
@@ -812,7 +758,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/measure-first/SKILL.md",
-                "size": 2775,
                 "ext": ".md"
               }
             }
@@ -821,7 +766,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/plan-before-code/SKILL.md",
-                "size": 2720,
                 "ext": ".md"
               }
             }
@@ -830,7 +774,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/plan-then-act/SKILL.md",
-                "size": 3076,
                 "ext": ".md"
               }
             }
@@ -839,7 +782,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/prompt-discipline/SKILL.md",
-                "size": 2387,
                 "ext": ".md"
               }
             }
@@ -848,26 +790,23 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/pushback-when-wrong/SKILL.md",
-                "size": 2942,
                 "ext": ".md"
               }
             }
           },
           "quality-protocol": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/quality-protocol/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/quality-protocol/references/details.md",
-                    "size": 1031,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/quality-protocol/SKILL.md",
-                "size": 2564,
-                "ext": ".md"
               }
             }
           },
@@ -875,7 +814,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/re-verify-findings/SKILL.md",
-                "size": 2637,
                 "ext": ".md"
               }
             }
@@ -884,7 +822,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/read-before-build/SKILL.md",
-                "size": 3185,
                 "ext": ".md"
               }
             }
@@ -893,26 +830,23 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/session-closeout/SKILL.md",
-                "size": 2458,
                 "ext": ".md"
               }
             }
           },
           "session-distill": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/session-distill/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/session-distill/references/details.md",
-                    "size": 1347,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/session-distill/SKILL.md",
-                "size": 2416,
-                "ext": ".md"
               }
             }
           },
@@ -920,7 +854,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/show-your-work/SKILL.md",
-                "size": 3029,
                 "ext": ".md"
               }
             }
@@ -929,43 +862,98 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/core/verify-first/SKILL.md",
-                "size": 2287,
                 "ext": ".md"
               }
             }
           },
           "workflow-decompose": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/core/workflow-decompose/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/core/workflow-decompose/references/details.md",
-                    "size": 2186,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/core/workflow-decompose/SKILL.md",
-                "size": 2334,
-                "ext": ".md"
               }
             }
           }
         }
       },
-      "index.json": {
-        "path": "skills/index.json",
-        "size": 13869,
-        "ext": ".json"
-      },
       "optional": {
         "__files": {
+          "agent-memory-vault": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/optional/agent-memory-vault/SKILL.md",
+                "ext": ".md"
+              },
+              "scripts": {
+                "__files": {
+                  "memory.py": {
+                    "path": "skills/optional/agent-memory-vault/scripts/memory.py",
+                    "ext": ".py"
+                  }
+                }
+              }
+            }
+          },
+          "agent-team-standards": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/optional/agent-team-standards/SKILL.md",
+                "ext": ".md"
+              },
+              "scripts": {
+                "__files": {
+                  "ats.py": {
+                    "path": "skills/optional/agent-team-standards/scripts/ats.py",
+                    "ext": ".py"
+                  }
+                }
+              }
+            }
+          },
+          "autonomous-briefing": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/optional/autonomous-briefing/SKILL.md",
+                "ext": ".md"
+              },
+              "scripts": {
+                "__files": {
+                  "autonomous_briefing.py": {
+                    "path": "skills/optional/autonomous-briefing/scripts/autonomous_briefing.py",
+                    "ext": ".py"
+                  }
+                }
+              }
+            }
+          },
+          "book-to-skill": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/optional/book-to-skill/SKILL.md",
+                "ext": ".md"
+              },
+              "scripts": {
+                "__files": {
+                  "book_to_skill.py": {
+                    "path": "skills/optional/book-to-skill/scripts/book_to_skill.py",
+                    "ext": ".py"
+                  }
+                }
+              }
+            }
+          },
           "chrome-devtools-mcp-bridge": {
             "__files": {
               "SKILL.md": {
                 "path": "skills/optional/chrome-devtools-mcp-bridge/SKILL.md",
-                "size": 3002,
                 "ext": ".md"
               }
             }
@@ -974,26 +962,23 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/optional/design-language/SKILL.md",
-                "size": 2771,
                 "ext": ".md"
               }
             }
           },
           "funnel-pr-guard": {
             "__files": {
+              "SKILL.md": {
+                "path": "skills/optional/funnel-pr-guard/SKILL.md",
+                "ext": ".md"
+              },
               "references": {
                 "__files": {
                   "details.md": {
                     "path": "skills/optional/funnel-pr-guard/references/details.md",
-                    "size": 539,
                     "ext": ".md"
                   }
                 }
-              },
-              "SKILL.md": {
-                "path": "skills/optional/funnel-pr-guard/SKILL.md",
-                "size": 2438,
-                "ext": ".md"
               }
             }
           },
@@ -1001,7 +986,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/optional/persistent-memory/SKILL.md",
-                "size": 2369,
                 "ext": ".md"
               }
             }
@@ -1010,7 +994,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/optional/sql-migration-trio/SKILL.md",
-                "size": 2280,
                 "ext": ".md"
               }
             }
@@ -1019,7 +1002,6 @@ const FILE_TREE = {
             "__files": {
               "SKILL.md": {
                 "path": "skills/optional/token-compression/SKILL.md",
-                "size": 1798,
                 "ext": ".md"
               }
             }
@@ -1028,37 +1010,31 @@ const FILE_TREE = {
       }
     }
   },
+  "tests": {
+    "__files": {
+      "test_core.py": {
+        "path": "tests/test_core.py",
+        "ext": ".py"
+      }
+    }
+  },
   "vercel.json": {
     "path": "vercel.json",
-    "size": 582,
     "ext": ".json"
   },
   "web": {
     "__files": {
-      "adapters-data.js": {
-        "path": "web/adapters-data.js",
-        "size": 2864,
-        "ext": ".js"
-      },
       "audit.html": {
         "path": "web/audit.html",
-        "size": 7423,
         "ext": ".html"
       },
       "catalog.html": {
         "path": "web/catalog.html",
-        "size": 10749,
         "ext": ".html"
       },
       "context-menu.js": {
         "path": "web/context-menu.js",
-        "size": 3140,
         "ext": ".js"
-      },
-      "data.json": {
-        "path": "web/data.json",
-        "size": 103366,
-        "ext": ".json"
       },
       "demo": {
         "__files": {
@@ -1066,190 +1042,122 @@ const FILE_TREE = {
             "__files": {
               "AGENTS.md": {
                 "path": "web/demo/af-demo/AGENTS.md",
-                "size": 6717,
                 "ext": ".md"
               },
               "CLAUDE.md": {
                 "path": "web/demo/af-demo/CLAUDE.md",
-                "size": 6717,
                 "ext": ".md"
               },
               "hyperframes.json": {
                 "path": "web/demo/af-demo/hyperframes.json",
-                "size": 318,
                 "ext": ".json"
               },
               "index.html": {
                 "path": "web/demo/af-demo/index.html",
-                "size": 7434,
                 "ext": ".html"
               },
               "meta.json": {
                 "path": "web/demo/af-demo/meta.json",
-                "size": 85,
                 "ext": ".json"
               },
               "package.json": {
                 "path": "web/demo/af-demo/package.json",
-                "size": 292,
                 "ext": ".json"
               }
             }
           }
         }
       },
-      "file-content.js": {
-        "path": "web/file-content.js",
-        "size": 1290285,
-        "ext": ".js"
-      },
-      "file-tree.js": {
-        "path": "web/file-tree.js",
-        "size": 30093,
-        "ext": ".js"
-      },
       "graph-app": {
         "__files": {
           "adapters.js": {
             "path": "web/graph-app/adapters.js",
-            "size": 3283,
             "ext": ".js"
           },
           "app.js": {
             "path": "web/graph-app/app.js",
-            "size": 6319,
             "ext": ".js"
           },
           "canvas.js": {
             "path": "web/graph-app/canvas.js",
-            "size": 1824,
             "ext": ".js"
           },
           "deps.js": {
             "path": "web/graph-app/deps.js",
-            "size": 1931,
             "ext": ".js"
           },
           "diagram-specs.js": {
             "path": "web/graph-app/diagram-specs.js",
-            "size": 7339,
             "ext": ".js"
           },
           "diagram.js": {
             "path": "web/graph-app/diagram.js",
-            "size": 3836,
             "ext": ".js"
           },
           "edges.js": {
             "path": "web/graph-app/edges.js",
-            "size": 2519,
             "ext": ".js"
           },
           "graph.css": {
             "path": "web/graph-app/graph.css",
-            "size": 13143,
             "ext": ".css"
           },
           "liveSync.js": {
             "path": "web/graph-app/liveSync.js",
-            "size": 1611,
             "ext": ".js"
           },
           "main.js": {
             "path": "web/graph-app/main.js",
-            "size": 769,
             "ext": ".js"
           },
           "nodes.js": {
             "path": "web/graph-app/nodes.js",
-            "size": 4051,
             "ext": ".js"
           },
           "palette.js": {
             "path": "web/graph-app/palette.js",
-            "size": 1040,
             "ext": ".js"
           },
           "panels.js": {
             "path": "web/graph-app/panels.js",
-            "size": 8914,
             "ext": ".js"
           },
           "schema.js": {
             "path": "web/graph-app/schema.js",
-            "size": 2428,
             "ext": ".js"
           },
           "simulation.js": {
             "path": "web/graph-app/simulation.js",
-            "size": 2038,
             "ext": ".js"
           },
           "store.js": {
             "path": "web/graph-app/store.js",
-            "size": 4411,
             "ext": ".js"
           }
         }
       },
-      "graph-data.js": {
-        "path": "web/graph-data.js",
-        "size": 177412,
-        "ext": ".js"
-      },
-      "graph-rf.json": {
-        "path": "web/graph-rf.json",
-        "size": 265679,
-        "ext": ".json"
-      },
-      "graph-stats.js": {
-        "path": "web/graph-stats.js",
-        "size": 1413,
-        "ext": ".js"
-      },
       "graph.html": {
         "path": "web/graph.html",
-        "size": 9469,
         "ext": ".html"
       },
       "icons.js": {
         "path": "web/icons.js",
-        "size": 12978,
         "ext": ".js"
       },
       "index.html": {
         "path": "web/index.html",
-        "size": 36310,
         "ext": ".html"
-      },
-      "install-data.js": {
-        "path": "web/install-data.js",
-        "size": 794,
-        "ext": ".js"
-      },
-      "site-data.js": {
-        "path": "web/site-data.js",
-        "size": 104750,
-        "ext": ".js"
-      },
-      "skill-deps.js": {
-        "path": "web/skill-deps.js",
-        "size": 1471,
-        "ext": ".js"
       },
       "store.js": {
         "path": "web/store.js",
-        "size": 3540,
         "ext": ".js"
       },
       "styles.css": {
         "path": "web/styles.css",
-        "size": 31447,
         "ext": ".css"
       },
       "why.html": {
         "path": "web/why.html",
-        "size": 6740,
         "ext": ".html"
       }
     }
@@ -1258,22 +1166,18 @@ const FILE_TREE = {
     "__files": {
       "ci-cd-vercel.md": {
         "path": "workflows/ci-cd-vercel.md",
-        "size": 2688,
         "ext": ".md"
       },
       "e2e-on-pr.md": {
         "path": "workflows/e2e-on-pr.md",
-        "size": 3212,
         "ext": ".md"
       },
       "release-train.md": {
         "path": "workflows/release-train.md",
-        "size": 2822,
         "ext": ".md"
       },
       "session-to-skill.md": {
         "path": "workflows/session-to-skill.md",
-        "size": 3426,
         "ext": ".md"
       }
     }

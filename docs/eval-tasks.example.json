@@ -1,0 +1,14 @@
+[
+  {
+    "id": "api-pagination",
+    "prompt": "Design a REST API endpoint for listing payments. Include pagination, error contract, and versioning.",
+    "skill": "api-design",
+    "verify": "grep -qiE 'pagination|cursor|page' && grep -qiE 'error|status'"
+  },
+  {
+    "id": "migration-updown",
+    "prompt": "Write a SQL migration that adds a nullable email column to a users table, with a safe down migration.",
+    "skill": "sql-migration-trio",
+    "verify": "grep -qi 'alter table' && grep -qi 'drop'"
+  }
+]
