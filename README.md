@@ -11,7 +11,7 @@ MIT, local, no cloud. 35 original skills, no third-party skill content.
 <br>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-f5a623.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.4.3-4ade80.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.0-4ade80.svg)](CHANGELOG.md)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-6496ff.svg)](https://www.python.org)
 [![npm](https://img.shields.io/badge/npm-%40youcisla%2Fagent--foundry-6496ff.svg)](https://www.npmjs.com/package/@youcisla/agent-foundry)
 [![Skills](https://img.shields.io/badge/skills-35-f5a623.svg)](#catalog)
@@ -70,6 +70,16 @@ Or from npm (cross-platform, Node 18+):
 npm install -g @youcisla/agent-foundry
 agent-foundry            # auto-detect harness and install
 ```
+
+Or from PyPI (Python 3.10+, includes the MCP runtime):
+
+```bash
+pip install agent-foundry-runtime
+agent-foundry doctor
+uvx agent-foundry-runtime mcp   # MCP stdio server, no install needed
+```
+
+Registry name: `io.github.youcisla/agent-foundry`.
 
 Every harness gets each skill as a direct child of its real discovery root.
 See [docs/harness-compatibility.md](docs/harness-compatibility.md) for the
@@ -142,8 +152,14 @@ Your prompt  (/af build a react component)
                            └─▶ Response to user
 ```
 
+Published through three channels: npm (`@youcisla/agent-foundry`), PyPI
+(`agent-foundry-runtime`), and the official MCP registry
+(`io.github.youcisla/agent-foundry`).
+
 > Interactive versions of every diagram live on the site:
-> **[/graph](https://youcisla-agents.vercel.app/graph)** (knowledge graph + orchestration) and **[/audit](https://youcisla-agents.vercel.app/audit)**.
+> **[/architecture](https://youcisla-agents.vercel.app/architecture)**,
+> **[/graph](https://youcisla-agents.vercel.app/graph)** (knowledge graph +
+> orchestration), and **[/audit](https://youcisla-agents.vercel.app/audit)**.
 
 ### What's in the box
 
@@ -151,9 +167,10 @@ Your prompt  (/af build a react component)
 skills/         35 disciplines (25 core + 10 optional)    ─┐ feed
 agents/         af-planner · af-critic · af-orchestrator  │ the
                                                           ▼ indexer
-agent_foundry/  config.py ─▶ daemon.py (FastAPI)
+agent_foundry/  config.py ─▶ daemon.py (FastAPI) ─▶ mcp_server.py (stdio MCP)
                 indexer.py ─▶ planner.py ─▶ loop.py  ⇄  executor.py
                 loop.py ─▶ judge.py (af-critic) ─▶ logging_db.py
+scripts/        install.js ─▶ 14 harness skill roots + CLI index
 ```
 
 The daemon is lazy-started by the CLI, so there is no systemd/launchd requirement.
@@ -245,6 +262,8 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 
 | Command | What it does |
 |---|---|
+| `agent-foundry init [--force]` | Write config and the first skill index |
+| `agent-foundry index` | Rebuild the skill index from disk |
 | `agent-foundry plan "<prompt>"` | Rank skills for a prompt |
 | `agent-foundry run "<prompt>"` | Plan + execute the top-ranked skill |
 | `agent-foundry resume <session_id> "<prompt>"` | Continue a loop session with a follow-up |
@@ -254,13 +273,19 @@ Everything runs locally. Your data stays in `~/.config/agent-foundry/executions.
 | `agent-foundry status` | Routing accuracy, fallback rate, average cost |
 | `agent-foundry consult "<need>"` | Recommend skills for a need |
 | `agent-foundry cost-report` | Token and time estimates per skill |
-| `agent-foundry index` | Rebuild the skill index from disk |
+| `agent-foundry feedback <id> <score>` | Attach a human score to an execution |
+| `agent-foundry learn` | Learn trigger weights from judged executions |
+| `agent-foundry instincts` | List proposed trigger instincts |
+| `agent-foundry instinct-approve <id>` | Approve an instinct and persist it |
 | `agent-foundry browse` | Browse/search the catalog, or `--read <id>` |
 | `agent-foundry mcp` | Start the MCP stdio server (plan/execute/list_skills/get_skill) |
 | `agent-foundry eval --tasks <file>` | Paired skill eval: with vs without, reports lift |
 | `agent-foundry serve` | Start the daemon (lazy-started on first command) |
 
-Every command also has an HTTP endpoint on the daemon (`/plan`, `/execute`, `/loop`, `/loop/resume`, `/loop/{id}`, `/index`, `/health`) for programmatic use.
+Every command also has an HTTP endpoint on the daemon for programmatic use:
+`/health`, `/site-data`, `/events`, `/index`, `/plan`, `/engram`, `/execute`,
+`/loop`, `/loop/resume`, `/loop/{id}`, `/stats`, `/feedback`, `/learn`,
+`/instincts`, and `/instincts/{id}/approve`.
 
 ---
 
@@ -331,7 +356,7 @@ Browse the catalog, the knowledge graph, and the audit at
 | Page | What |
 |---|---|
 | [Catalog](https://youcisla-agents.vercel.app/catalog) | All 35 skills + 3 agents with live search |
-| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (555 nodes, 898 edges, 54 communities) |
+| [Graph](https://youcisla-agents.vercel.app/graph) | Interactive React Flow knowledge graph (766 nodes, 1,394 edges, 75 communities) |
 | [Audit](https://youcisla-agents.vercel.app/audit) | God nodes, surprising connections, interactive React Flow diagrams |
 
 The site regenerates from live repo state on every commit via

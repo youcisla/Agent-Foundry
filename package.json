@@ -1,6 +1,6 @@
 {
   "name": "@youcisla/agent-foundry",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "mcpName": "io.github.youcisla/agent-foundry",
   "description": "Skill orchestrator for AI coding assistants. MIT-licensed, no third-party skill content, 35 original skills, quality-gated on every commit.",
   "type": "module",

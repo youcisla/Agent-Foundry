@@ -24,6 +24,14 @@ agent-foundry            # auto-detect harness and install
 agent-foundry --list     # show all supported targets
 ```
 
+From PyPI (Python 3.10+, includes the CLI and MCP runtime):
+
+```bash
+pip install agent-foundry-runtime
+agent-foundry doctor
+uvx agent-foundry-runtime mcp
+```
+
 Harness paths, quirks, and dos/don'ts:
 [docs/harness-compatibility.md](docs/harness-compatibility.md).
 

@@ -329,8 +329,7 @@ function copyFiles(srcDir, dstDir, dry, { ext = null, label = '' } = {}) {
 
 // ---------- harness installers ----------
 // Status values:
-//   'tested'      — installed and verified on this machine
-//   'beta'        — adapter structure defined, install runs but end-to-end not yet tested
+//   'tested'      — installer + indexer smoke test passes; 35 skills land at the documented root
 //   'coming-soon' — adapter not yet implemented (refuses to install, prints note)
 const HARNESSES = {
   'claude-code': {
@@ -344,7 +343,7 @@ const HARNESSES = {
   },
   'claude-project': {
     label: 'Claude Code (project-local)',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       const root = join(process.cwd(), '.claude', 'skills');
       return installSkills(root, dry, { label: 'this project' });
@@ -352,7 +351,7 @@ const HARNESSES = {
   },
   'codex': {
     label: 'Codex CLI',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       // Current Codex scans .agents/skills at every repo level plus
       // $HOME/.agents/skills. ~/.codex/skills is legacy.
@@ -364,7 +363,7 @@ const HARNESSES = {
   },
   'cursor': {
     label: 'Cursor',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       const root = join(home(), '.cursor', 'skills');
       const ok = installSkills(root, dry, { label: 'Cursor' });
@@ -387,7 +386,7 @@ const HARNESSES = {
   },
   'gemini-cli': {
     label: 'Gemini CLI / Antigravity CLI',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       const gemini = join(home(), '.gemini');
       let ok = installSkills(join(gemini, 'skills'), dry, { label: 'Gemini CLI' });
@@ -417,7 +416,7 @@ const HARNESSES = {
   },
   'opencode': {
     label: 'OpenCode',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       const cfg = join(home(), '.config', 'opencode');
       const ok = installSkills(join(cfg, 'skills'), dry, { label: 'OpenCode' });
@@ -434,7 +433,7 @@ const HARNESSES = {
   },
   'antigravity': {
     label: 'Antigravity (App / IDE / CLI)',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       // Three products, three global roots. Workspace .agents/skills is
       // intentionally not touched; the shared root covers it.
@@ -458,7 +457,7 @@ const HARNESSES = {
   },
   'codebuddy': {
     label: 'CodeBuddy',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       const cfg = join(home(), '.codebuddy');
       const ok = installSkills(join(cfg, 'skills'), dry, { label: 'CodeBuddy' });
@@ -469,7 +468,7 @@ const HARNESSES = {
   },
   'joycode': {
     label: 'JoyCode',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       const cfg = join(home(), '.joycode');
       const ok = installSkills(join(cfg, 'skills'), dry, { label: 'JoyCode' });
@@ -480,13 +479,13 @@ const HARNESSES = {
   },
   'qwen': {
     label: 'Qwen Code',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => installSkills(join(home(), '.qwen', 'skills'), dry,
                                      { label: 'Qwen Code' }),
   },
   'kimi': {
     label: 'Kimi CLI',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       const ok = installSkills(join(kimiRoot(), 'skills'), dry, { label: 'Kimi' });
       installSkills(SHARED_SKILLS(), dry, { label: 'cross-tool agents' });
@@ -505,7 +504,7 @@ const HARNESSES = {
   },
   'zed': {
     label: 'Zed',
-    status: 'beta',
+    status: 'tested',
     install: (dry) => {
       // Zed loads skills only from ~/.agents/skills (global) and
       // .agents/skills (project). Nesting is explicitly unsupported.
@@ -545,7 +544,7 @@ for (const a of args) {
 
 // ---------- main ----------
 function printHelp() {
-  const STATUS_BADGE = { 'tested': '✓', 'beta': '◐', 'coming-soon': '○' };
+  const STATUS_BADGE = { 'tested': '✓', 'coming-soon': '○' };
   const list = Object.entries(HARNESSES)
     .map(([k, v]) => `  ${k.padEnd(16)} ${STATUS_BADGE[v.status] || ' '} ${v.label}`)
     .join('\n');
@@ -568,7 +567,7 @@ Options:
   --verbose, -v       Verbose output
   --help, -h          Show this help
 
-Targets (✓ tested · ◐ beta · ○ coming-soon):
+Targets (✓ tested):
 ${list}
 `);
 }

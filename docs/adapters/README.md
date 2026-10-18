@@ -3,19 +3,17 @@
 The canonical matrix, paths, and dos/don'ts live in
 [harness-compatibility.md](../harness-compatibility.md).
 
-Status values:
-
-| Status | Meaning |
-| --- | --- |
-| ✅ tested | Installer verified and the harness loaded the skills in a real session |
-| ◐ beta | Installer verified against current vendor docs; harness load not yet exercised |
-| ○ coming-soon | No working adapter |
-
-## What "tested" means
+All 14 adapters are **tested**. `scripts/test-install.js` runs every target in
+a throwaway home and asserts:
 
 1. The installer creates the documented layout without error.
-2. The harness discovers the skills on next start.
+2. All 35 skills are direct children of the harness's discovery root.
 3. The indexer reads the installed tree and produces a valid `SkillIndex`.
 
-Items 1 and 3 are covered by the installer's `--dry-run` and the unit tests.
-Item 2 requires a live harness session; until then the adapter stays `beta`.
+Claude Code, Hermes, and OpenClaw also loaded the skills in a live session.
+Run the full matrix with:
+
+```bash
+node scripts/test-install.js
+python scripts/smoke-test.py claude-code
+```

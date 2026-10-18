@@ -25,6 +25,7 @@ EXCLUDED_DIRS = {
 GENERATED_WEB = {
     "file-content.js", "file-tree.js", "data.json", "graph-rf.json",
     "graph-stats.js", "graph-data.js", "install-data.js", "skill-deps.js",
+    "architecture-diagram.html",
 }
 
 
@@ -252,8 +253,9 @@ if graph_path.exists() and analysis_path.exists():
         "community_count": len(analysis.get("communities", {})),
         "god_nodes": [
             {"label": g["label"], "degree": g["degree"]}
-            for g in analysis.get("gods", [])[:10]
-        ],
+            for g in analysis.get("gods", [])
+            if g["label"][:1].isupper() or g["label"].endswith("()")
+        ][:10],
         "surprising": [
             {"source": s.get("source", ""), "target": s.get("target", ""), "relation": s.get("relation", "")}
             for s in analysis.get("surprises", [])[:10]
@@ -401,9 +403,12 @@ install_data = {
     "coreProfile": "AF_PROFILE=core curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash",
     "fullProfile": "AF_PROFILE=full curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash",
     "minimalProfile": "AF_PROFILE=minimal curl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash",
-    "gitClone": "git clone https://github.com/youcisla/Agent-Foundry.git ~/.agent-foundry && cd ~/.agent-foundry && pip install -e .",
+    "gitClone": "git clone https://github.com/youcisla/Agent-Foundry.git && cd Agent-Foundry && pip install -e . && node scripts/install.js --harness=claude-code",
     "claudeCode": "/plugin marketplace add youcisla/Agent-Foundry\n/plugin install agent-foundry",
-    "npm": "npm i -g agent-foundry",
+    "npm": "npm install -g @youcisla/agent-foundry",
+    "pypi": "pip install agent-foundry-runtime",
+    "mcp": "uvx agent-foundry-runtime mcp",
+    "mcpRegistry": "io.github.youcisla/agent-foundry",
 }
 (WEB / "install-data.js").write_text(
     "const INSTALL_COMMANDS = " + json.dumps(install_data, indent=2) + ";\n",

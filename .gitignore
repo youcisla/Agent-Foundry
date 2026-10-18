@@ -25,6 +25,7 @@ __pycache__/
 # Graphify (local outputs — generated, not source)
 graphify-out/
 .graphify-cache/
+.archify/
 
 # Python
 __pycache__/

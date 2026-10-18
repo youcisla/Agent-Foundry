@@ -1,76 +1,68 @@
 const GRAPH_STATS = {
-  "node_count": 555,
-  "edge_count": 898,
+  "node_count": 766,
+  "edge_count": 1394,
   "skill_count": 35,
   "agent_count": 3,
-  "community_count": 54,
+  "community_count": 75,
   "god_nodes": [
     {
-      "label": "create_app()",
-      "degree": 21
+      "label": "Config",
+      "degree": 36
     },
     {
-      "label": "html",
-      "degree": 20
+      "label": "create_app()",
+      "degree": 26
     },
     {
       "label": "build_index()",
-      "degree": 16
+      "degree": 23
     },
     {
-      "label": "useStore()",
-      "degree": 16
+      "label": "PlanRequest",
+      "degree": 21
     },
     {
-      "label": "Config",
-      "degree": 15
-    },
-    {
-      "label": "run_loop()",
-      "degree": 14
+      "label": "McpServer",
+      "degree": 19
     },
     {
       "label": "rank_skills()",
-      "degree": 14
+      "degree": 19
     },
     {
-      "label": "files",
-      "degree": 13
+      "label": "PlannerConfig",
+      "degree": 18
     },
     {
-      "label": "instructions",
-      "degree": 12
-    },
-    {
-      "label": "get_index_cached()",
-      "degree": 12
+      "label": "run_loop()",
+      "degree": 18
     }
   ],
   "surprising": [
     {
-      "source": "load_indexer()",
-      "target": "SkillManifest",
-      "relation": "indirect_call"
+      "source": "DaemonTests",
+      "target": "PlannerConfig",
+      "relation": "uses"
     },
     {
-      "source": "load_indexer()",
-      "target": "build_index()",
-      "relation": "indirect_call"
+      "source": "EvalVerifyTests",
+      "target": "PlannerConfig",
+      "relation": "uses"
     },
     {
-      "source": "check_frontmatter()",
-      "target": "build_index()",
-      "relation": "calls"
+      "source": "IntegrityTests",
+      "target": "PlannerConfig",
+      "relation": "uses"
     },
     {
-      "source": "check_indexer()",
-      "target": "build_index()",
-      "relation": "calls"
+      "source": "LoopSessionTests",
+      "target": "PlannerConfig",
+      "relation": "uses"
     },
     {
-      "source": "_pick_skill()",
-      "target": "Config",
-      "relation": "references"
+      "source": "McpTests",
+      "target": "PlannerConfig",
+      "relation": "uses"
     }
   ]
 };

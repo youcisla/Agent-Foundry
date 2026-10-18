@@ -262,6 +262,10 @@ const FILE_TREE = {
       }
     }
   },
+  "AGENTS.md": {
+    "path": "AGENTS.md",
+    "ext": ".md"
+  },
   "AUTHORSHIP.md": {
     "path": "AUTHORSHIP.md",
     "ext": ".md"
@@ -440,6 +444,10 @@ const FILE_TREE = {
         "path": "docs/eval-tasks.example.json",
         "ext": ".json"
       },
+      "harness-compatibility.md": {
+        "path": "docs/harness-compatibility.md",
+        "ext": ".md"
+      },
       "launch-plan.md": {
         "path": "docs/launch-plan.md",
         "ext": ".md"
@@ -595,6 +603,10 @@ const FILE_TREE = {
       "sync-version.py": {
         "path": "scripts/sync-version.py",
         "ext": ".py"
+      },
+      "test-install.js": {
+        "path": "scripts/test-install.js",
+        "ext": ".js"
       },
       "validate.sh": {
         "path": "scripts/validate.sh",

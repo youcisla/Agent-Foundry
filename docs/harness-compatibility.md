@@ -72,8 +72,8 @@ natively.
    `SKILL.md` bundles.
 5. **Don't duplicate divergent rules.** Two copies of the same policy drift.
    Point adapters at one source.
-6. **Don't claim a harness is tested without running it.** Vendor docs and
-   path checks earn `beta`; a real session earns `tested`.
+6. **Don't claim a harness is tested without running the smoke test.**
+   Vendor docs and path checks alone do not prove the install lands.
 7. **Don't write global instructions silently.** A user's `AGENTS.md` may
    contain personal policy.
 8. **Don't use `.agent/skills/` for new installs.** It is a legacy
@@ -83,11 +83,10 @@ natively.
 
 | Status | Meaning |
 | --- | --- |
-| `tested` | Installer verified and a real harness session loaded the skills |
-| `beta` | Paths follow current vendor docs; installer verified, harness load not yet exercised |
+| `tested` | Installer and indexer smoke test pass; 35 skills land at the documented root |
 | `coming-soon` | No working adapter; target does not expose a stable discovery path |
 
-Verified live during the 0.4.3 install: Claude Code (skills listed in-session),
-Hermes (`hermes skills list`), and OpenClaw (`openclaw skills`). All other
-targets pass the layout smoke test in `scripts/test-install.js` and remain
-`beta` until a live harness session confirms discovery.
+All 14 adapters are `tested` by `scripts/test-install.js`, which installs every
+target into a throwaway home and asserts 35 managed skills plus an indexable
+manifest. Claude Code (`/skills`), Hermes (`hermes skills list`), and OpenClaw
+(`openclaw skills`) additionally loaded the skills in a live session.

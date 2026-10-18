@@ -7,7 +7,7 @@ import { communityColor, KIND_COLORS, ROLE_COLORS } from "./palette.js";
 const truncate = (s, n = 44) => (s && s.length > n ? s.slice(0, n) + "…" : s || "");
 const clampWeight = (w) => Math.max(1, Math.min(4, Math.round(w || 1)));
 
-/** Build the AST knowledge graph (≈396 nodes / 626 edges, 44 communities). */
+/** Build the AST knowledge graph (766 nodes / 1,394 edges, 75 communities). */
 export function toAstGraph(rf) {
   const layout = rf.layout || {};
   const communities = rf.communities || [];

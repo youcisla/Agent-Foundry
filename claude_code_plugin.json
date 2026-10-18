@@ -1,6 +1,6 @@
 {
   "name": "agent-foundry",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "Skill orchestrator: /plan recommends skills, /af plans and executes the best skill.",
   "author": { "name": "Agent Foundry Contributors" },
   "commands": [

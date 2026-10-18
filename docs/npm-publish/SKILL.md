@@ -64,9 +64,9 @@ the bump so the publish picks up the new version.
 ### 4 - Dry-run
 
 `scripts/publish.sh` always runs `npm publish --dry-run` first. Expected
-output: 77 files, ~76 KB tarball, no `__pycache__/`, no `plans/`, no
-`web/demo/*/renders/`. All 31 `SKILL.md` files present. All 3 `AGENT.md`
-files present. All 4 install scripts (`install.{js,sh,bat,ps1}`).
+output: about 114 files, ~111 KB tarball, no `__pycache__/`, no `plans/`, no
+`web/demo/*/renders/`. All 35 skills and 3 agents present, plus the four
+install scripts (`install.{js,sh,bat,ps1}`).
 
 ### 5 - Publish
 
@@ -83,8 +83,8 @@ pass it via `--otp`.
 The script auto-tags with `git tag -a vX.Y.Z` and pushes. Verify:
 
 ```bash
-npm view agent-foundry version
-npm install -g agent-foundry@X.Y.Z
+npm view @youcisla/agent-foundry version
+npm install -g @youcisla/agent-foundry@X.Y.Z
 agent-foundry --list    # shows 14 harnesses
 ```
 

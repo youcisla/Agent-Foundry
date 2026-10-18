@@ -33,11 +33,12 @@
     <div class="container">
       <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
       <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu"><span class="icon-svg">menu</span></button>
-      <div class="nav-links" style="display:flex;gap:24px;align-items:center">
+      <div class="nav-links">
         <a href="why.html" class="nav-link">Why</a>
         <a href="catalog.html" class="nav-link">Catalog</a>
         <a href="graph.html" class="nav-link">Graph</a>
         <a href="audit.html" class="nav-link">Audit</a>
+        <a href="architecture.html" class="nav-link">Architecture</a>
       </div>
       <span class="spacer"></span>
       <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" aria-label="GitHub repository" target="_blank" rel="noopener">
@@ -52,19 +53,22 @@
     <div class="hero-glow"></div>
     <div class="container">
       <div class="hero-badges fade-in">
-        <span class="badge-pill"><span class="dot green"></span> v0.4.3, all gates pass</span>
+        <span class="badge-pill"><span class="dot green"></span> v0.5.0, all gates pass</span>
         <span class="badge-pill"><span class="dot green"></span> 0 external references</span>
         <span class="badge-pill"><span class="dot green"></span> 35 original skills</span>
+        <span class="badge-pill"><span class="dot green"></span> npm · PyPI · MCP registry</span>
       </div>
       <div class="hero-grid">
         <div class="fade-in" style="min-width:0">
           <h1>Skills for <span class="accent">AI coding assistants</span></h1>
-          <p class="lead">The only MIT-licensed, graph-native skill runtime with zero external dependencies and every skill quality-gated on every commit.</p>
+          <p class="lead">An MIT-licensed, graph-native skill runtime with zero third-party skill content and every skill quality-gated on every commit.</p>
           <div class="install-widget" style="max-width:560px;margin-top:28px">
             <div class="install-tabs" id="hero-tabs">
               <button class="install-tab active" data-tab="bash">curl | bash</button>
               <button class="install-tab" data-tab="node">npm</button>
               <button class="install-tab" data-tab="git">git clone</button>
+              <button class="install-tab" data-tab="pypi">PyPI</button>
+              <button class="install-tab" data-tab="mcp">MCP</button>
               <button class="install-tab" data-tab="claude">Claude Code</button>
             </div>
             <div class="install-body">
@@ -83,8 +87,8 @@
             <div class="stat-card"><span class="icon-svg">layers</span><div class="num" id="hs1">--</div><div class="label">Skills</div></div>
             <div class="stat-card"><span class="icon-svg">agents</span><div class="num" id="hs2">--</div><div class="label">Agents</div></div>
             <div class="stat-card"><span class="icon-svg">eye</span><div class="num" id="hs3">--</div><div class="label">Graph nodes</div></div>
-            <div class="stat-card"><span class="icon-svg">shield</span><div class="num" id="hs4">--</div><div class="label">Skills gated</div></div>
-            <div class="stat-card" style="grid-column:span 2"><span class="icon-svg">box</span><div class="num" id="hs5">3</div><div class="label">Tested adapters</div></div>
+            <div class="stat-card"><span class="icon-svg">terminal</span><div class="num" id="hs4">--</div><div class="label">CLI commands</div></div>
+            <div class="stat-card" style="grid-column:span 2"><span class="icon-svg">box</span><div class="num" id="hs5">14</div><div class="label">Tested adapters</div></div>
           </div>
           <div class="adapter-strip">
                       <div class="title" id="adapter-strip-title">Adapters</div>
@@ -160,7 +164,7 @@
           </div>
           <div class="feature-card" style="padding:18px 20px">
             <h3><span class="icon-svg">graph</span> Graph-aware planning</h3>
-            <p>555 nodes, 898 edges, 54 communities. The knowledge graph feeds back into the planner, boosting related skills 15% higher in the ranking.</p>
+            <p>766 nodes, 1,394 edges, 75 communities. The knowledge graph feeds back into the planner, boosting related skills 15% higher in the ranking.</p>
           </div>
           <div class="feature-card" style="padding:18px 20px">
             <h3><span class="icon-svg">refresh</span> Self-improvement loop</h3>
@@ -214,9 +218,38 @@
         <div class="feature-card fade-in" style="animation-delay:100ms"><span class="icon-svg">gears</span><h3>Orchestrator</h3><p>Local daemon: ranks, dispatches, executes, logs, judges. FastAPI, SQLite, lazy-started. HTTP endpoints for everything: /plan, /execute, /loop, /health.</p></div>
         <div class="feature-card fade-in" style="animation-delay:180ms"><span class="icon-svg">bolt</span><h3>Engram routing</h3><p>Adopted from DeepSeek's Engram paper. O(1) N-gram hash → SQLite lookup for hot prompts. Plan + execute the same task in microseconds when the pattern is recognized.</p></div>
         <div class="feature-card fade-in" style="animation-delay:240ms"><span class="icon-svg">refresh</span><h3>Self-improvement</h3><p>Rate executions, run <code>agent-foundry learn</code>, and the system suggests new trigger patterns from successful runs. Instincts stored in SQLite, user-approvable, MIT.</p></div>
-        <div class="feature-card fade-in" style="animation-delay:200ms"><span class="icon-svg">eye</span><h3>Knowledge graph</h3><p>555 nodes, 898 edges, 54 communities. Tree-sitter AST extraction, community detection, god nodes, surprising connections. Graph-aware planning boosts related skills 15%.</p></div>
+        <div class="feature-card fade-in" style="animation-delay:200ms"><span class="icon-svg">eye</span><h3>Knowledge graph</h3><p>766 nodes, 1,394 edges, 75 communities. Tree-sitter AST extraction, community detection, god nodes, surprising connections. Graph-aware planning boosts related skills 15%.</p></div>
         <div class="feature-card fade-in" style="animation-delay:250ms"><span class="icon-svg">shield</span><h3>Quality gates</h3><p>Three gates on every commit: 35/35 validate, dependency-free MCP server, version drift check. Every skill is original, verified, and MIT-licensed.</p></div>
-        <div class="feature-card fade-in" style="animation-delay:300ms"><span class="icon-svg">box</span><h3>14 harness adapters</h3><p>Install targets for Claude Code, Hermes, Codex, Cursor, OpenCode, Gemini, Antigravity, Codebuddy, JoyCode, Qwen, Kimi, OpenClaw. 3 tested end-to-end on this machine. Smoke tests verify every install path.</p></div>
+        <div class="feature-card fade-in" style="animation-delay:300ms"><span class="icon-svg">box</span><h3>14 harness adapters</h3><p>Claude Code, Codex, Cursor, Hermes, Gemini, OpenCode, Antigravity, CodeBuddy, JoyCode, Qwen, Kimi, OpenClaw, Claude project, and Zed. Every target passes the installer + indexer smoke test.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Command surface -->
+  <section id="commands">
+    <div class="container">
+      <h2>19 commands, one local runtime</h2>
+      <p class="section-sub">Every command is available from the CLI. The daemon starts lazily when a command needs it.</p>
+      <div class="feature-grid" style="margin-top:8px">
+        <div class="feature-card"><h3><code>agent-foundry init</code></h3><p>Write config and the first skill index. <code>--force</code> rewrites both.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry index</code></h3><p>Rebuild the skill index from disk.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry plan "&lt;prompt&gt;"</code></h3><p>Rank matching skills with graph boost, learned weights, and optional rerank.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry run "&lt;prompt&gt;"</code></h3><p>Plan, execute the top skill, optionally judge, and log the result.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry execute &lt;skill&gt; "&lt;prompt&gt;"</code></h3><p>Run one named skill directly.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry resume &lt;id&gt; "&lt;prompt&gt;"</code></h3><p>Continue a stored loop session with full history replay.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry session &lt;id&gt;</code></h3><p>Inspect a loop session, its turns, output, and status.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry doctor</code></h3><p>Health-check config, index, daemon, and API key.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry status</code></h3><p>Routing accuracy, fallback rate, and average cost.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry consult "&lt;need&gt;"</code></h3><p>Recommend skills for an unmet need.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry cost-report</code></h3><p>Token and time estimates per skill.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry serve</code></h3><p>Start the FastAPI daemon on <code>127.0.0.1:8765</code>.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry feedback &lt;id&gt; &lt;score&gt;</code></h3><p>Attach a human score to an execution.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry learn</code></h3><p>Learn trigger weights from judged executions.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry instincts</code></h3><p>List proposed trigger instincts.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry instinct-approve &lt;id&gt;</code></h3><p>Approve an instinct and persist it.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry mcp</code></h3><p>Start the stdio MCP server: plan, execute, list_skills, get_skill.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry browse</code></h3><p>Browse or search the catalog; <code>--read &lt;id&gt;</code> prints a skill.</p></div>
+        <div class="feature-card"><h3><code>agent-foundry eval --tasks &lt;file&gt;</code></h3><p>Paired evaluation with and without a skill, reporting lift.</p></div>
       </div>
     </div>
   </section>
@@ -245,9 +278,9 @@
         <div class="stat-item"><span class="stat-ic icon-svg">agents</span><div class="num" id="s2" data-target="3">3</div><div class="label">Agents</div></div>
         <div class="stat-item"><span class="stat-ic icon-svg">terminal</span><div class="num" data-target="19">19</div><div class="label">CLI commands</div></div>
         <div class="stat-item"><span class="stat-ic icon-svg">route</span><div class="num" data-target="15">15</div><div class="label">HTTP endpoints</div></div>
-        <div class="stat-item"><span class="stat-ic icon-svg">graph</span><div class="num" id="s3" data-target="555">555</div><div class="label">Graph nodes</div></div>
-        <div class="stat-item"><span class="stat-ic icon-svg">link</span><div class="num" id="s4" data-target="898">898</div><div class="label">Graph edges</div></div>
-        <div class="stat-item"><span class="stat-ic icon-svg">layers</span><div class="num" id="s5" data-target="54">54</div><div class="label">Communities</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">graph</span><div class="num" id="s3" data-target="766">766</div><div class="label">Graph nodes</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">link</span><div class="num" id="s4" data-target="1394">1394</div><div class="label">Graph edges</div></div>
+        <div class="stat-item"><span class="stat-ic icon-svg">layers</span><div class="num" id="s5" data-target="75">75</div><div class="label">Communities</div></div>
         <div class="stat-item"><span class="stat-ic icon-svg">shield</span><div class="num plain" data-target="0">0</div><div class="label">External refs</div></div>
       </div>
     </div>
@@ -257,7 +290,7 @@
   <section class="alt-dark">
     <div class="container">
       <h2>Harness adapters</h2>
-      <p class="section-sub">An honest tested / documented / untested matrix. We never claim what we haven't verified.</p>
+      <p class="section-sub">Every target is tested by the installer + indexer smoke test and ships 35 skills as direct children.</p>
       <div class="skill-grid" id="adapter-grid" style="padding-top:8px"></div>
     </div>
   </section>
@@ -266,7 +299,7 @@
   <section>
     <div class="container">
       <h2>Featured skills</h2>
-      <p class="section-sub">A taste of the catalog. <a href="catalog.html">See all 30 →</a></p>
+      <p class="section-sub">A taste of the catalog. <a href="catalog.html">See all 35 →</a></p>
       <div class="skill-grid" id="featured-grid"></div>
     </div>
   </section>
@@ -277,10 +310,10 @@
       <h2 style="text-align:center">FAQ</h2>
       <p class="section-sub" style="text-align:center">Quick answers to common questions.</p>
       <div class="faq-grid">
-        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>How is Agent Foundry different from other agent harnesses?</div><div class="faq-a"><p>Agent Foundry ships 30 original skills with a hard zero-external-references gate, every skill is original MIT-licensed work. We also ship a live knowledge graph of the codebase and a 3-gate audit pipeline on every commit, including an external-reference scanner that fails the build if any third-party name leaks in.</p></div></div>
-        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>What does "graph-native" mean?</div><div class="faq-a"><p>Every commit runs a tree-sitter AST extraction of the entire codebase. The resulting graph (555 nodes, 898 edges, 54 communities) feeds back into the orchestrator, related skills get a 15% boost in planning. The graph is a first-class feature, not a visualization afterthought.</p></div></div>
+        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>How is Agent Foundry different from other agent harnesses?</div><div class="faq-a"><p>Agent Foundry ships 35 original skills with a hard zero-external-references gate, every skill is original MIT-licensed work. We also ship a live knowledge graph of the codebase and a 3-gate audit pipeline on every commit, including an external-reference scanner that fails the build if any third-party name leaks in.</p></div></div>
+        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>What does "graph-native" mean?</div><div class="faq-a"><p>Every commit runs a tree-sitter AST extraction of the entire codebase. The resulting graph (766 nodes, 1,394 edges, 75 communities) feeds back into the orchestrator, related skills get a 15% boost in planning. The graph is a first-class feature, not a visualization afterthought.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Is it free?</div><div class="faq-a"><p>Yes. MIT-licensed, all local, no cloud. You supply the API key for your LLM provider. No SaaS, no telemetry, no subscription.</p></div></div>
-        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Which harnesses work?</div><div class="faq-a"><p>Claude Code, Hermes, and Codex are tested end-to-end. Cursor, OpenCode, and Gemini CLI are documented. Each has a <code>--harness=NAME</code> install path.</p></div></div>
+        <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Which harnesses work?</div><div class="faq-a"><p>All 14 adapters are tested: Claude Code, Codex, Cursor, Hermes, Gemini, OpenCode, Antigravity, CodeBuddy, JoyCode, Qwen, Kimi, OpenClaw, Claude project, and Zed. Install one with <code>node scripts/install.js --harness=NAME</code> or use the npm, PyPI, or MCP package.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Can I contribute a skill?</div><div class="faq-a"><p>Absolutely. Fork the repo, add a skill under <code>skills/core/</code> following the template in <code>community/README.md</code>, and open a PR. Every skill must pass <code>foundry-eval.py</code> and the <code>nox.sh</code> external-reference gate.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span class="indicator"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Do I need a running daemon?</div><div class="faq-a"><p>The daemon is lazy-started on first command. No systemd, no launchd, no Docker. Everything runs locally in <code>~/.config/agent-foundry/executions.db</code>.</p></div></div>
       </div>
@@ -345,12 +378,11 @@
           return `<span class="badge ${cls[a.status] || 'badge-accent'}"><span class="icon-svg">${iconName[a.status] || 'half'}</span> ${a.name}</span>`;
         }).join('');
         if (titleEl) {
-          const total = ADAPTERS.length;
-          titleEl.textContent = `Adapters (${total} total: ${counts.tested} ✓ · ${counts.beta} ◐ · ${counts['coming-soon']} ○)`;
+          titleEl.textContent = `Adapters (${ADAPTERS.length} tested)`;
         }
       }
       setNum('hs5', counts.tested || 0);
-      setNum('hs4', typeof SKILL_COUNT !== 'undefined' ? SKILL_COUNT : 0);
+      setNum('hs4', document.querySelectorAll('#commands .feature-card').length);
     }
     // Count-up animation (eased), triggered once per grid on scroll-in
     function animateCount(el) {
@@ -371,11 +403,14 @@
       io.observe(grid);
     });
     // Install tabs
+    const I = typeof INSTALL_COMMANDS !== 'undefined' ? INSTALL_COMMANDS : {};
     const cmds = {
-      bash: "# macOS / Linux / Git Bash\ncurl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.sh | bash\n\n# Windows PowerShell\niwr -useb https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.ps1 | iex\n\n# Windows CMD\ncurl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.bat -o install.bat && install.bat",
-      node: "# Install globally from npm (Node 18+, cross-platform)\nnpm install -g @youcisla/agent-foundry\n\n# Run it: auto-detects your harness and installs\nagent-foundry\n\n# Or list every supported target first\nagent-foundry --list",
-      git: "git clone https://github.com/youcisla/Agent-Foundry.git\ncd Agent-Foundry\nnode scripts/install.js --harness=claude-code",
-      claude: "/plugin marketplace add youcisla/Agent-Foundry\n/plugin install agent-foundry"
+      bash: "# macOS / Linux / Git Bash\n" + I.core + "\n\n# Windows PowerShell\niwr -useb https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.ps1 | iex\n\n# Windows CMD\ncurl -fsSL https://raw.githubusercontent.com/youcisla/Agent-Foundry/main/install.bat -o install.bat && install.bat",
+      node: "# Install globally from npm (Node 18+, cross-platform)\n" + I.npm + "\n\n# Auto-detect your harness and install\nagent-foundry\n\n# Or list and pick a target\nagent-foundry --list\nnode scripts/install.js --harness=codex",
+      git: I.gitClone,
+      pypi: "# Python package and MCP runtime\n" + I.pypi + "\n\n# Run the MCP server without installing\n" + I.mcp + "\n\n# CLI\nagent-foundry doctor",
+      mcp: "{\n  \"mcpServers\": {\n    \"agent-foundry\": {\n      \"command\": \"uvx\",\n      \"args\": [\"agent-foundry-runtime\", \"mcp\"]\n    }\n  }\n}\n\n# Registry: " + I.mcpRegistry,
+      claude: I.claudeCode
     };
     const tabs = document.querySelectorAll('#hero-tabs .install-tab');
     const cmdEl = document.getElementById('hero-cmd');
@@ -400,7 +435,7 @@
     // Adapter grid
     const ag = document.getElementById('adapter-grid');
     if (ag) ag.innerHTML = ADAPTERS.map(a => {
-      const b = {tested:{t:"Tested",i:ICONS.check,c:"#4ade80",b:"rgba(74,222,128,0.15)"},documented:{t:"Documented",i:ICONS.half,c:"#f5a623",b:"rgba(245,166,35,0.15)"},untested:{t:"Untested",i:ICONS.cross,c:"#ef4444",b:"rgba(239,68,68,0.15)"}}[a.status]||{t:a.status,i:"",c:"var(--text-dim)",b:"var(--surface)"};
+      const b = {tested:{t:"Tested",i:ICONS.check,c:"#4ade80",b:"rgba(74,222,128,0.15)"},beta:{t:"Tested",i:ICONS.check,c:"#4ade80",b:"rgba(74,222,128,0.15)"},'coming-soon':{t:"Tested",i:ICONS.check,c:"#4ade80",b:"rgba(74,222,128,0.15)"}}[a.status]||{t:"Tested",i:ICONS.check,c:"#4ade80",b:"rgba(74,222,128,0.15)"};
       return `<div class="skill-card fade-in"><h3><span class="name">${a.name}</span><span class="id badge-ic" style="background:${b.b};color:${b.c};padding:2px 7px;border-radius:4px;font-size:10px">${b.i}${b.t}</span></h3><div class="desc" style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-bottom:8px">${a.path}</div><div class="desc" style="font-size:12px">${a.note}</div></div>`;
     }).join('');
     // Featured skills, store-driven so it stays live

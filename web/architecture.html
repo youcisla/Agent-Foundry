@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture - Agent Foundry</title>
+  <meta name="description" content="Interactive Agent Foundry architecture: distribution through npm, PyPI, and the MCP registry, the local runtime, and the skill and graph data model.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <script src="icons.js"></script>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="index.html" class="logo"><span class="logo-icon">AF</span> Agent Foundry</a>
+      <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu"><span class="icon-svg">menu</span></button>
+      <div class="nav-links">
+        <a href="why.html" class="nav-link">Why</a>
+        <a href="catalog.html" class="nav-link">Catalog</a>
+        <a href="graph.html" class="nav-link">Graph</a>
+        <a href="audit.html" class="nav-link">Audit</a>
+        <a href="architecture.html" class="nav-link" style="color:var(--text)">Architecture</a>
+      </div>
+      <span class="spacer"></span>
+      <a href="https://github.com/youcisla/Agent-Foundry" class="gh-stars" aria-label="GitHub repository" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+
+  <main style="height:calc(100vh - 72px);min-height:640px">
+    <iframe src="architecture-diagram.html" title="Agent Foundry architecture diagram"
+      style="width:100%;height:100%;border:0;display:block;background:#0b0d10"></iframe>
+  </main>
+</body>
+</html>

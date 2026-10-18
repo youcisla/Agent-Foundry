@@ -1,7 +1,7 @@
 {
   "name": "agent-foundry",
   "displayName": "Agent Foundry",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "Curated agent skills and a local orchestrator for AI coding assistants.",
   "category": "Developer Tools",
   "keywords": ["skills", "agents", "orchestrator", "discipline", "token-efficiency"],

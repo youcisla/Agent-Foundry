@@ -2,6 +2,22 @@
 
 All notable changes to Agent Foundry. Everything here is original work by the Agent Foundry contributors, released under MIT.
 
+## 0.5.0 - 2026-10-18
+
+UI, distribution, and architecture release.
+
+- Site refresh: all 14 harness adapters marked tested, current graph counts
+  (766 nodes, 1,394 edges, 75 communities), a full 19-command surface, and
+  npm / PyPI / MCP install tabs.
+- New interactive architecture page (`/architecture`) generated with Archify:
+  distribution channels, local runtime, skill/agent/graph data, and SQLite.
+- PyPI documented everywhere: `pip install agent-foundry-runtime` and
+  `uvx agent-foundry-runtime mcp`.
+- Graph regenerated from the current repository; god-node and architecture
+  diagrams updated to the new degrees and distribution nodes.
+- Adapter status is uniform: every target passes the installer + indexer smoke
+  test; Claude Code, Hermes, and OpenClaw are live-verified.
+
 ## 0.4.3 - 2026-10-18
 
 Harness portability release.

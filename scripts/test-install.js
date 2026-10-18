@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Cross-platform smoke test for the harness installer. Creates a throwaway
 // home, installs every target, and asserts the documented skill roots.
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -9,6 +9,8 @@ import { spawnSync } from 'node:child_process';
 const REPO = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
 const INSTALLER = join(REPO, 'scripts', 'install.js');
 const home = mkdtempSync(join(tmpdir(), 'af-installer-'));
+const project = join(home, 'project');
+mkdirSync(project, { recursive: true });
 const env = {
   ...process.env,
   HOME: home,
@@ -18,9 +20,9 @@ const env = {
 const expected = 35;
 const failures = [];
 
-function run(harness) {
+function run(harness, cwd = home) {
   const r = spawnSync(process.execPath, [INSTALLER, `--harness=${harness}`], {
-    cwd: home, env, encoding: 'utf8',
+    cwd, env, encoding: 'utf8',
   });
   if (r.status !== 0) failures.push(`${harness}: exit ${r.status}\n${r.stderr}`);
   return r.stdout || '';
@@ -34,6 +36,7 @@ function countSkills(root) {
 
 const roots = {
   'claude-code': join(home, '.claude', 'skills'),
+  'claude-project': join(project, '.claude', 'skills'),
   'codex': join(home, '.agents', 'skills'),
   'cursor': join(home, '.cursor', 'skills'),
   'hermes': join(home, '.hermes', 'skills', 'agent-foundry'),
@@ -49,7 +52,9 @@ const roots = {
 };
 
 try {
-  for (const harness of Object.keys(roots)) run(harness);
+  for (const harness of Object.keys(roots)) {
+    run(harness, harness === 'claude-project' ? project : home);
+  }
 
   for (const [harness, root] of Object.entries(roots)) {
     const n = countSkills(root);
