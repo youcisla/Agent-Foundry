@@ -154,7 +154,6 @@ section.alt-dark { background: var(--surface); }
 .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 22px; position: relative; overflow: hidden; transition: border-color var(--transition), transform var(--transition); }
 .feature-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-.feature-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent-grad); }
 .feature-card .icon-svg { display: block; margin-bottom: 10px; color: var(--accent); }
 .feature-card .icon-svg svg { width: 24px; height: 24px; }
 .feature-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
