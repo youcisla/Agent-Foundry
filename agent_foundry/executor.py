@@ -4,20 +4,22 @@ from __future__ import annotations
 import hashlib
 import json
 import time
+import uuid
 from pathlib import Path
 from typing import Any
 
 from .indexer import GENERIC_REASONING_ID, GENERIC_REASONING_SYSTEM_PROMPT
-from .model_catalog import resolve_model
-from .models import (
-    ExecuteRequest,
-    ExecuteResponse,
-    TokenEstimate,
-)
+from .model_catalog import get_model_spec, resolve_model
+from .models import ExecuteRequest, ExecuteResponse, TokenEstimate
+from .replay import request_metadata, run_config, trace_digest
+from .timing import PhaseTimer
 
 
-# API response cap. Full output is always stored in the log DB.
-OUTPUT_MAX_CHARS = 8000
+def _opt(options: dict | None, key: str, default: Any) -> Any:
+    if not options:
+        return default
+    value = options.get(key, default)
+    return default if value is None else value
 
 
 def estimate_prompt_tokens(prompt: str) -> int:
@@ -42,13 +44,22 @@ def _verify_integrity(path: Path, expected_sha256: str | None) -> None:
 
 def build_messages(skill_id: str, prompt: str, skill_paths: dict[str, str],
                    fallback_prompt: str | None = None,
-                   expected_sha256: str | None = None) -> tuple[list[dict], bool]:
-    """Return (messages, is_fallback). Raises ValueError on integrity mismatch."""
+                   expected_sha256: str | None = None,
+                   model: str | None = None) -> tuple[list[dict], bool]:
+    """Return (messages, is_fallback). Raises ValueError on integrity mismatch.
+
+    When the model does not support a system role, the skill body is folded
+    into the user turn instead of being dropped.
+    """
     path = find_skill_path(skill_paths, skill_id)
+    spec = get_model_spec(model) if model else {}
+    supports_system = bool(spec.get("supports_system_prompt", True))
     if skill_id == GENERIC_REASONING_ID or not path or path.startswith("__virtual__:"):
         system = fallback_prompt or GENERIC_REASONING_SYSTEM_PROMPT
-        return ([{"role": "system", "content": system},
-                 {"role": "user", "content": prompt}], True)
+        if supports_system:
+            return ([{"role": "system", "content": system},
+                     {"role": "user", "content": prompt}], True)
+        return ([{"role": "user", "content": system + "\n\n" + prompt}], True)
 
     file_path = Path(path)
     _verify_integrity(file_path, expected_sha256)
@@ -57,13 +68,17 @@ def build_messages(skill_id: str, prompt: str, skill_paths: dict[str, str],
     except Exception as e:
         return ([{"role": "system", "content": f"(failed to load skill: {e})"},
                  {"role": "user", "content": prompt}], False)
-    return ([{"role": "system", "content": system},
-             {"role": "user", "content": prompt}], False)
+    if supports_system:
+        return ([{"role": "system", "content": system},
+                 {"role": "user", "content": prompt}], False)
+    return ([{"role": "user", "content": system + "\n\n" + prompt}], False)
 
 
 def complete(messages: list[dict], *, model: str, timeout_seconds: int = 120,
-             max_tokens: int = 0, retries: int = 2) -> tuple[str, int, float]:
-    """Run one completion. Returns (full_text, tokens_used, cost_usd)."""
+             max_tokens: int = 0, retries: int = 2,
+             seed: int | None = None,
+             temperature: float | None = None) -> tuple[str, int, float, dict]:
+    """Run one completion. Returns (full_text, tokens, cost_usd, usage)."""
     import litellm
 
     kwargs: dict[str, Any] = {
@@ -74,6 +89,10 @@ def complete(messages: list[dict], *, model: str, timeout_seconds: int = 120,
     }
     if max_tokens and max_tokens > 0:
         kwargs["max_tokens"] = max_tokens
+    if seed is not None:
+        kwargs["seed"] = seed
+    if temperature is not None:
+        kwargs["temperature"] = temperature
 
     resp = litellm.completion(**kwargs)
 
@@ -100,7 +119,7 @@ def complete(messages: list[dict], *, model: str, timeout_seconds: int = 120,
         cost_usd = float(litellm.completion_cost(completion_response=resp) or 0.0)
     except Exception:
         pass
-    return text, tokens_used, cost_usd
+    return text, tokens_used, cost_usd, usage
 
 
 def _extract_json(text: str) -> Any:
@@ -190,18 +209,57 @@ def _auth_error(exc: Exception) -> bool:
     return code in (401, 403)
 
 
+def _preflight(messages: list[dict], model: str, max_tokens: int) -> None:
+    """Reject an over-context request before spending a call."""
+    spec = get_model_spec(model)
+    window = int(spec.get("context_window") or 0)
+    if window <= 0:
+        return
+    prompt_tokens = sum(estimate_prompt_tokens(str(m.get("content", ""))) for m in messages)
+    reserve = max_tokens if max_tokens and max_tokens > 0 else 0
+    if prompt_tokens + reserve > window:
+        raise ValueError(
+            f"request exceeds context window for {model}: "
+            f"estimated {prompt_tokens} prompt + {reserve} output > {window}"
+        )
+
+
+def _unpack_chain_result(result, default_model: str):
+    """Accept old 3/4-tuple test stubs and the current 6-tuple."""
+    if len(result) == 6:
+        return result
+    if len(result) == 4:
+        text, tokens, cost, last = result
+        if isinstance(last, dict):
+            return text, tokens, cost, default_model, 1, last
+        return text, tokens, cost, last, 1, {}
+    if len(result) == 3:
+        text, tokens, cost = result
+        return text, tokens, cost, default_model, 1, {}
+    raise TypeError(f"unexpected completion result arity: {len(result)}")
+
+
 def complete_chain(messages: list[dict], *, models: list[str],
                    timeout_seconds: int = 120, max_tokens: int = 0,
-                   retries: int = 2) -> tuple[str, int, float, str]:
-    """Try each model in order. Returns (text, tokens, cost, used_model)."""
+                   retries: int = 2, seed: int | None = None,
+                   temperature: float | None = None,
+                   max_models: int | None = None
+                   ) -> tuple[str, int, float, str, int, dict]:
+    """Try chain entries in order. Returns (text, tokens, cost, model, attempts, usage)."""
     last: Exception | None = None
+    tried = 0
     for name in models:
+        if max_models is not None and tried >= max(1, max_models):
+            break
+        tried += 1
         try:
-            text, tokens, cost = complete(
+            result = complete(
                 messages, model=name, timeout_seconds=timeout_seconds,
-                max_tokens=max_tokens, retries=retries,
+                max_tokens=max_tokens, retries=retries, seed=seed,
+                temperature=temperature,
             )
-            return text, tokens, cost, name
+            text, tokens, cost, used, _attempts, usage = _unpack_chain_result(result, name)
+            return text, tokens, cost, used, tried, usage
         except Exception as exc:
             if _auth_error(exc):
                 raise
@@ -222,6 +280,10 @@ def policy_check(text: str, direction: str, mode: str,
             log_policy_decision(
                 db_path, action_kind=f"text:{direction}", decision=d.decision,
                 rule_id=d.rule_id, detail=d.reason, receipt_hash=d.receipt_hash,
+                binding_info={
+                    "direction": direction, "mode": mode,
+                    "source": "regex_policy", "decision": d.decision,
+                },
             )
     return worst(decisions)
 
@@ -239,6 +301,35 @@ def record_observation(db_path: Path | None, project_id: str | None, skill_id: s
                     plan=plan)
 
 
+def _usage_counts(usage: dict) -> tuple[int, int, int]:
+    prompt = int(usage.get("prompt_tokens") or 0)
+    completion = int(usage.get("completion_tokens") or 0)
+    cached = 0
+    details = usage.get("prompt_tokens_details") or {}
+    if isinstance(details, dict):
+        cached = int(details.get("cached_tokens") or 0)
+    return prompt, completion, cached
+
+
+def _record_perf(db_path: Path | None, options: dict | None, *, model: str,
+                 skill_id: str, duration_ms: int, success: bool,
+                 usage: dict, cost_usd: float) -> None:
+    if db_path is None or not _opt(options, "perf_cache_enabled", False):
+        return
+    try:
+        from .perf_cache import record_sample
+        prompt, completion, cached = _usage_counts(usage)
+        record_sample(
+            db_path, model=model, skill_id=skill_id,
+            queue_depth=_opt(options, "queue_depth", 0),
+            duration_ms=duration_ms, success=success,
+            prompt_tokens=prompt, completion_tokens=completion,
+            cached_tokens=cached, cost_usd=cost_usd, enabled=True,
+        )
+    except Exception:
+        pass
+
+
 def execute(request: ExecuteRequest, *, model: str, skill_paths: dict[str, str],
             db_path: Path | None = None, planner_score: float | None = None,
             fallback_prompt: str | None = None,
@@ -249,9 +340,11 @@ def execute(request: ExecuteRequest, *, model: str, skill_paths: dict[str, str],
             fallback_models: list[str] | None = None,
             attest_manifest: Path | None = None,
             attest_key_path: Path | None = None,
-            attest_strict: bool = False) -> ExecuteResponse:
+            attest_strict: bool = False,
+            options: dict | None = None) -> ExecuteResponse:
     """Run the skill via LiteLLM. Optionally log to SQLite."""
     t0 = time.time()
+    timer = PhaseTimer()
     was_fallback = False
     text = ""
     tokens_used = 0
@@ -260,54 +353,132 @@ def execute(request: ExecuteRequest, *, model: str, skill_paths: dict[str, str],
     structured_output: Any | None = None
     schema_valid: bool | None = None
     schema_error: str | None = None
-    try:
-        if attest_strict:
-            if attest_manifest is None:
-                raise ValueError("strict attestation requires a manifest path")
-            from .attest import verify_manifest
-            result = verify_manifest(
-                attest_manifest,
-                attest_key_path or Path("~/.config/agent-foundry/attest.key"),
-                root=attest_manifest.parent,
-            )
-            if not result.ok:
-                detail = (result.errors or result.mismatched or result.missing)[:3]
-                raise ValueError(f"skill attestation failed: {detail}")
+    verifier_verdict: str | None = None
+    failure_kind: str | None = None
+    repairs = 0
+    attempts = 1
+    usage: dict = {}
+    messages: list[dict] = []
+    chain: list[str] = []
+    skill_sha = (skill_hashes or {}).get(request.skill_id, "")
+    output_ref: str | None = None
+    preview_chars = int(_opt(options, "output_preview_chars", 8000))
+    error_limit = int(_opt(options, "error_max_chars", 1000))
 
-        inbound = policy_check(request.prompt, "inbound", policy_mode, db_path)
+    def finish_error(err: str, kind: str, *, success: bool = False) -> ExecuteResponse:
+        dur = time.time() - t0
+        if db_path is not None:
+            from .logging_db import log_execution
+            log_execution(
+                db_path, skill_id=request.skill_id, prompt=request.prompt,
+                output=text, tokens_used=tokens_used,
+                duration_seconds=dur, success=success, error=err[:error_limit],
+                planner_score=planner_score, was_fallback=was_fallback,
+                cost_usd=cost_usd, model=used_model or (chain[0] if chain else model),
+                phases=timer.phases, repairs=repairs, output_ref=output_ref,
+                failure_kind=kind,
+            )
+        record_observation(db_path, project_id, request.skill_id, request.prompt,
+                           "error", cost_usd=cost_usd, latency_ms=int(dur * 1000))
+        _record_perf(db_path, options, model=used_model or model,
+                     skill_id=request.skill_id, duration_ms=int(dur * 1000),
+                     success=False, usage=usage, cost_usd=cost_usd)
+        return ExecuteResponse(
+            skill_id=request.skill_id,
+            output=text[:preview_chars],
+            tokens_used=tokens_used,
+            duration_seconds=dur,
+            success=success,
+            error=err[:error_limit],
+            was_fallback=was_fallback,
+            cost_usd=cost_usd,
+            model=used_model,
+            structured_output=structured_output,
+            schema_valid=schema_valid,
+            verifier_verdict=verifier_verdict,
+            phases=timer.phases,
+            attempts=attempts,
+            repairs=repairs,
+            output_ref=output_ref,
+            failure_kind=kind,
+        )
+
+    try:
+        with timer.phase("attest"):
+            if attest_strict:
+                if attest_manifest is None:
+                    raise ValueError("strict attestation requires a manifest path")
+                from .attest import verify_manifest
+                result = verify_manifest(
+                    attest_manifest,
+                    attest_key_path or Path("~/.config/agent-foundry/attest.key"),
+                    root=attest_manifest.parent,
+                )
+                if not result.ok:
+                    detail = (result.errors or result.mismatched or result.missing)[:3]
+                    raise ValueError(f"skill attestation failed: {detail}")
+
+        with timer.phase("policy_in"):
+            inbound = policy_check(request.prompt, "inbound", policy_mode, db_path)
         if inbound is not None and policy_mode == "enforce" \
                 and inbound.decision in ("deny", "confirm"):
-            return ExecuteResponse(
-                skill_id=request.skill_id, success=False,
-                error=f"policy {inbound.decision}: {inbound.rule_id}",
-                requires_confirmation=inbound.decision == "confirm",
-                was_fallback=request.skill_id == GENERIC_REASONING_ID,
-            )
+            return finish_error(f"policy {inbound.decision}: {inbound.rule_id}", "policy")
 
         was_fallback = request.skill_id == GENERIC_REASONING_ID
-        messages, was_fallback = build_messages(
-            request.skill_id, request.prompt, skill_paths,
-            fallback_prompt=fallback_prompt,
-            expected_sha256=(skill_hashes or {}).get(request.skill_id),
-        )
         chain = _model_chain(
             model,
             request.fallback_models if request.fallback_models is not None
             else fallback_models,
         )
+        with timer.phase("build_messages"):
+            messages, was_fallback = build_messages(
+                request.skill_id, request.prompt, skill_paths,
+                fallback_prompt=fallback_prompt,
+                expected_sha256=skill_sha,
+                model=chain[0],
+            )
+
+        constraint_kind = None
+        enforced_by = None
         if request.output_schema is not None:
             messages = _with_schema(messages, request.output_schema)
-        text, tokens_used, cost_usd, used_model = complete_chain(
-            messages, models=chain, timeout_seconds=timeout_seconds,
-            max_tokens=max_tokens, retries=retries,
-        )
+            constraint_kind = "json_schema"
+            enforced_by = "prompt_only"
+
+        with timer.phase("preflight"):
+            _preflight(messages, chain[0], max_tokens)
+
+        max_models = None
+        if _opt(options, "adaptive_retries", False) and db_path is not None:
+            from .retry_policy import allocate_attempts, success_rate
+            depth = int(_opt(options, "queue_depth", 0))
+            min_depth = int(_opt(options, "adaptive_retries_min_queue_depth", 2))
+            if depth >= min_depth:
+                p = success_rate(
+                    db_path, skill_id=request.skill_id, model=chain[0],
+                    min_samples=int(_opt(options, "adaptive_retries_min_samples", 10)),
+                )
+                max_models = allocate_attempts(
+                    p, max_attempts=max(1, int(_opt(options, "max_attempts", 3))),
+                )
+                attempts = max_models
+
+        with timer.phase("complete"):
+            text, tokens_used, cost_usd, used_model, attempts, usage = complete_chain(
+                messages, models=chain, timeout_seconds=timeout_seconds,
+                max_tokens=max_tokens, retries=retries,
+                seed=request.seed, temperature=request.temperature,
+                max_models=max_models,
+            )
+
         if request.output_schema is not None:
             errors: list[str] = []
-            try:
-                structured_output = _extract_json(text)
-                errors = schema_errors(structured_output, request.output_schema)
-            except ValueError as exc:
-                errors = [str(exc)]
+            with timer.phase("schema"):
+                try:
+                    structured_output = _extract_json(text)
+                    errors = schema_errors(structured_output, request.output_schema)
+                except ValueError as exc:
+                    errors = [str(exc)]
             if errors:
                 repair = messages + [
                     {"role": "assistant", "content": text},
@@ -316,83 +487,112 @@ def execute(request: ExecuteRequest, *, model: str, skill_paths: dict[str, str],
                      + "; ".join(errors[:3])
                      + ". Return only the corrected JSON value."},
                 ]
-                try:
-                    text, t2, c2, used_model = complete_chain(
-                        repair, models=[used_model],
-                        timeout_seconds=timeout_seconds,
-                        max_tokens=max_tokens, retries=retries,
-                    )
-                    tokens_used += t2
-                    cost_usd += c2
-                    structured_output = _extract_json(text)
-                    errors = schema_errors(structured_output, request.output_schema)
-                except Exception as exc:
-                    errors = [str(exc)]
+                repairs = 1
+                with timer.phase("schema_repair"):
+                    try:
+                        text, t2, c2, used_model, _repair_attempts, usage2 = complete_chain(
+                            repair, models=[used_model],
+                            timeout_seconds=timeout_seconds,
+                            max_tokens=max_tokens, retries=retries,
+                            seed=request.seed, temperature=request.temperature,
+                        )
+                        tokens_used += t2
+                        cost_usd += c2
+                        usage = usage2
+                        structured_output = _extract_json(text)
+                        errors = schema_errors(structured_output, request.output_schema)
+                    except Exception as exc:
+                        errors = [str(exc)]
             schema_valid = not errors
             if errors:
                 schema_error = "output does not match schema: " + "; ".join(errors[:3])
+                failure_kind = "schema"
+
+        if request.verifier is not None:
+            from .verifiers import run as run_verifier
+            kind = str(request.verifier.get("kind") or "json_schema")
+            spec = request.verifier.get("spec") or {}
+            if structured_output is None:
+                try:
+                    structured_output = _extract_json(text)
+                except ValueError:
+                    structured_output = None
+            verifier_verdict = run_verifier(kind, structured_output, spec)
+            if verifier_verdict == "pass":
+                schema_valid = True
+                schema_error = None
+                failure_kind = None
+            elif verifier_verdict == "fail":
+                schema_valid = False
+                failure_kind = "schema"
+                schema_error = f"verifier {kind} rejected the output"
     except Exception as exc:
         err = str(exc)
-        dur = time.time() - t0
-        if db_path is not None:
-            from .logging_db import log_execution
-            log_execution(db_path, skill_id=request.skill_id, prompt=request.prompt,
-                          output=text, tokens_used=tokens_used,
-                          duration_seconds=dur, success=False, error=err[:1000],
-                          planner_score=planner_score, was_fallback=was_fallback,
-                          cost_usd=cost_usd)
-        record_observation(db_path, project_id, request.skill_id, request.prompt,
-                           "error", cost_usd=cost_usd, latency_ms=int(dur * 1000))
-        return ExecuteResponse(
-            skill_id=request.skill_id,
-            output=text[:OUTPUT_MAX_CHARS],
-            tokens_used=tokens_used,
-            duration_seconds=dur,
-            success=False,
-            error=err[:1000],
-            was_fallback=was_fallback,
-            cost_usd=cost_usd,
-            model=used_model,
-            structured_output=structured_output,
-            schema_valid=schema_valid,
+        kind = failure_kind or ("attest" if "attestation failed" in err else "provider")
+        return finish_error(err, kind)
+
+    with timer.phase("policy_out"):
+        outbound = policy_check(text, "outbound", policy_mode, db_path)
+    if outbound is not None and policy_mode == "enforce" \
+            and outbound.decision in ("deny", "confirm"):
+        return finish_error(
+            f"policy {outbound.decision}: {outbound.rule_id}", "policy",
         )
 
     dur = time.time() - t0
-    outbound = policy_check(text, "outbound", policy_mode, db_path)
-    if outbound is not None and policy_mode == "enforce" \
-            and outbound.decision in ("deny", "confirm"):
-        err = f"policy {outbound.decision}: {outbound.rule_id}"
-        if db_path is not None:
-            from .logging_db import log_execution
-            log_execution(db_path, skill_id=request.skill_id, prompt=request.prompt,
-                          output="", tokens_used=tokens_used,
-                          duration_seconds=dur, success=False, error=err,
-                          planner_score=planner_score, was_fallback=was_fallback,
-                          cost_usd=cost_usd)
-        record_observation(db_path, project_id, request.skill_id, request.prompt,
-                           "error", cost_usd=cost_usd, latency_ms=int(dur * 1000))
-        return ExecuteResponse(
-            skill_id=request.skill_id, output="", tokens_used=tokens_used,
-            duration_seconds=dur, success=False, error=err,
-            was_fallback=was_fallback, cost_usd=cost_usd, model=used_model,
-            structured_output=structured_output, schema_valid=schema_valid,
-        )
+    digest = trace_digest(
+        skill_id=request.skill_id, skill_sha256=skill_sha, models=chain,
+        messages=messages, output=text, schema=request.output_schema,
+        seed=request.seed, temperature=request.temperature,
+    )
+    meta = request_metadata(
+        skill_id=request.skill_id, skill_sha256=skill_sha, models=chain,
+        messages=messages, schema=request.output_schema, seed=request.seed,
+        temperature=request.temperature, constraint_kind=constraint_kind,
+        enforced_by=enforced_by,
+    )
+    config = run_config(
+        skill_id=request.skill_id, models=chain, seed=request.seed,
+        temperature=request.temperature, schema=request.output_schema,
+    )
+
+    if _opt(options, "spill_enabled", True) and db_path is not None:
+        try:
+            from .spill import default_spill_root, save_output
+            root = _opt(options, "spill_root", None)
+            output_ref = save_output(
+                Path(root) if root else default_spill_root(),
+                session_id=_opt(options, "session_id", None),
+                execution_id=uuid.uuid4().hex, text=text,
+            )
+        except Exception:
+            output_ref = None
 
     schema_failed = request.output_schema is not None and schema_valid is False
     if db_path is not None:
         from .logging_db import log_execution
-        log_execution(db_path, skill_id=request.skill_id, prompt=request.prompt,
-                      output=text, tokens_used=tokens_used,
-                      duration_seconds=dur, success=not schema_failed,
-                      error=schema_error, planner_score=planner_score,
-                      was_fallback=was_fallback, cost_usd=cost_usd)
+        prompt_tokens, completion_tokens, cached_tokens = _usage_counts(usage)
+        log_execution(
+            db_path, skill_id=request.skill_id, prompt=request.prompt,
+            output=text, tokens_used=tokens_used, duration_seconds=dur,
+            success=not schema_failed, error=schema_error,
+            planner_score=planner_score, was_fallback=was_fallback,
+            cost_usd=cost_usd, model=used_model, trace_digest=digest,
+            phases=timer.phases, repairs=repairs, output_ref=output_ref,
+            failure_kind=failure_kind,
+            prompt_tokens=prompt_tokens, completion_tokens=completion_tokens,
+            cached_tokens=cached_tokens, request_meta=meta, run_config=config,
+        )
     record_observation(db_path, project_id, request.skill_id, request.prompt,
                        "error" if schema_failed else "success",
                        cost_usd=cost_usd, latency_ms=int(dur * 1000))
+    _record_perf(db_path, options, model=used_model, skill_id=request.skill_id,
+                 duration_ms=int(dur * 1000), success=not schema_failed,
+                 usage=usage, cost_usd=cost_usd)
 
     return ExecuteResponse(
         skill_id=request.skill_id,
-        output=text[:OUTPUT_MAX_CHARS],
+        output=text[:preview_chars],
         tokens_used=tokens_used,
         duration_seconds=dur,
         success=not schema_failed,
@@ -402,4 +602,11 @@ def execute(request: ExecuteRequest, *, model: str, skill_paths: dict[str, str],
         model=used_model,
         structured_output=structured_output,
         schema_valid=schema_valid,
+        verifier_verdict=verifier_verdict,
+        trace_digest=digest,
+        phases=timer.phases,
+        attempts=attempts,
+        repairs=repairs,
+        output_ref=output_ref,
+        failure_kind=failure_kind,
     )

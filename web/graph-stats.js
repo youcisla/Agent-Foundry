@@ -1,71 +1,67 @@
 const GRAPH_STATS = {
-  "node_count": 911,
-  "edge_count": 1860,
-  "skill_count": 39,
+  "node_count": 1163,
+  "edge_count": 2761,
+  "skill_count": 41,
   "agent_count": 3,
-  "community_count": 71,
+  "community_count": 94,
   "god_nodes": [
     {
-      "label": "Config",
-      "degree": 51
-    },
-    {
-      "label": "PolicyAction",
-      "degree": 36
-    },
-    {
-      "label": "ExecuteRequest",
-      "degree": 34
-    },
-    {
-      "label": "McpServer",
-      "degree": 31
+      "label": "create_app()",
+      "degree": 52
     },
     {
       "label": "execute()",
-      "degree": 28
+      "degree": 50
     },
     {
-      "label": "PlanRequest",
-      "degree": 28
+      "label": "Config",
+      "degree": 48
     },
     {
-      "label": "create_app()",
-      "degree": 27
+      "label": "init_db()",
+      "degree": 43
+    },
+    {
+      "label": "run_loop()",
+      "degree": 40
+    },
+    {
+      "label": "resume_loop()",
+      "degree": 34
+    },
+    {
+      "label": "ExecuteRequest",
+      "degree": 30
     },
     {
       "label": "build_index()",
-      "degree": 25
-    },
-    {
-      "label": "PlannerConfig",
-      "degree": 24
+      "degree": 27
     }
   ],
   "surprising": [
     {
-      "source": "AttestTests",
-      "target": "PlannerConfig",
-      "relation": "uses"
-    },
-    {
-      "source": "PolicyTests",
-      "target": "PlannerConfig",
-      "relation": "uses"
-    },
-    {
-      "source": "AttestTests",
+      "source": "DaemonTests",
       "target": "Config",
       "relation": "uses"
     },
     {
-      "source": "PolicyTests",
+      "source": "LoopSessionTests",
       "target": "Config",
       "relation": "uses"
     },
     {
-      "source": "AttestTests",
-      "target": "McpServer",
+      "source": "McpTests",
+      "target": "Config",
+      "relation": "uses"
+    },
+    {
+      "source": "run_once()",
+      "target": "execute()",
+      "relation": "calls"
+    },
+    {
+      "source": "InstinctV2Tests",
+      "target": "PlanRequest",
       "relation": "uses"
     }
   ]

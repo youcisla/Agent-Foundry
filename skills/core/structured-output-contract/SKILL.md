@@ -86,3 +86,11 @@ Return the parsed value and a validity flag. A caller must be able to tell
 - [ ] One repair attempt is enforced
 - [ ] Validity is reported to the caller
 - [ ] Tests cover missing field, wrong type, and fenced JSON
+
+## Constraint Precedence
+
+- Allow exactly one output constraint per request. Precedence: tool-call block, then JSON Schema, then regex.
+- Record whether the backend enforced the constraint or only the prompt did. `prompt_only` is weaker and must be visible in request metadata.
+- On parse failure, keep the raw output and report `failure_kind="schema"`. Never discard the text or return a silent default.
+- Parse balanced braces, not a `\{[^{}]*\}` regex; nested objects and arrays are normal.
+- When a response contains several sections, wrap the machine-readable block in explicit sentinels and parse only that block.

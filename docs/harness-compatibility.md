@@ -83,10 +83,10 @@ natively.
 
 | Status | Meaning |
 | --- | --- |
-| `tested` | Installer and indexer smoke test pass; 39 skills land at the documented root |
+| `tested` | Installer and indexer smoke test pass; 41 skills land at the documented root |
 | `coming-soon` | No working adapter; target does not expose a stable discovery path |
 
 All 14 adapters are `tested` by `scripts/test-install.js`, which installs every
-target into a throwaway home and asserts 39 managed skills plus an indexable
+target into a throwaway home and asserts 41 managed skills plus an indexable
 manifest. Claude Code (`/skills`), Hermes (`hermes skills list`), and OpenClaw
 (`openclaw skills`) additionally loaded the skills in a live session.

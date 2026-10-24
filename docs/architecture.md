@@ -6,24 +6,24 @@ This is the single page that explains **what Agent Foundry is and how the pieces
 
 Agent Foundry is a **runtime orchestrator** for AI coding assistants. It has three layers:
 
-1. **Skills** — disciplines the model applies to its own work (how to think).
-2. **Agents** — roles the orchestrator can dispatch to or the model can delegate to (who acts).
-3. **Orchestrator** — the local daemon that ranks, dispatches, executes, logs, and judges.
+1. **Skills** â€” disciplines the model applies to its own work (how to think).
+2. **Agents** â€” roles the orchestrator can dispatch to or the model can delegate to (who acts).
+3. **Orchestrator** â€” the local daemon that ranks, dispatches, executes, logs, and judges.
 
 ```text
-YOUR SHELL / IDE   claude-code · codex · gemini · opencode · hermes
-        │  /af <prompt>   /plan <prompt>
-        ▼
-Agent Foundry daemon (localhost)   FastAPI · planner · budget guard · judge
-        │
-        ▼
-Repo layers   Skill catalog · Agent catalog · references/
-              SQLite log · scripts/ · hooks/
+YOUR SHELL / IDE   claude-code Â· codex Â· gemini Â· opencode Â· hermes
+        â”‚  /af <prompt>   /plan <prompt>
+        â–¼
+Agent Foundry daemon (localhost)   FastAPI Â· planner Â· budget guard Â· judge
+        â”‚
+        â–¼
+Repo layers   Skill catalog Â· Agent catalog Â· references/
+              SQLite log Â· scripts/ Â· hooks/
 ```
 
 > Rendered interactively at **[youcisla-agents.vercel.app/graph](https://youcisla-agents.vercel.app/graph)**.
 
-## Skill vs Agent — the load-bearing distinction
+## Skill vs Agent â€” the load-bearing distinction
 
 This is the single most important concept in the project. **They are different things.**
 
@@ -31,11 +31,11 @@ This is the single most important concept in the project. **They are different t
 
 A skill is a **discipline**. Things like "verify before committing", "anti-slop", "context optimization". It is:
 
-- **Stateless** — calling it twice with the same inputs is fine.
-- **Always-on** when active — described in prose; the model reads it and applies it.
-- **No tools, no own model, no lifecycle** — it's an instruction, not an actor.
-- **Stored as a Markdown file** in `skills/core/<name>/SKILL.md` (≤150 lines / ≤8 KB).
-- **Triggered by description match** — when the user's prompt matches the description, the harness loads the skill body.
+- **Stateless** â€” calling it twice with the same inputs is fine.
+- **Always-on** when active â€” described in prose; the model reads it and applies it.
+- **No tools, no own model, no lifecycle** â€” it's an instruction, not an actor.
+- **Stored as a Markdown file** in `skills/core/<name>/SKILL.md` (â‰¤150 lines / â‰¤8 KB).
+- **Triggered by description match** â€” when the user's prompt matches the description, the harness loads the skill body.
 
 Concretely: a skill is what makes the model think differently about the next token. It has zero side effects on its own.
 
@@ -43,7 +43,7 @@ Concretely: a skill is what makes the model think differently about the next tok
 
 An agent is a **role**. Things like "critic", "refactorer", "researcher". It is:
 
-- **Stateful per invocation** — has a task, runs steps, may own a workflow.
+- **Stateful per invocation** â€” has a task, runs steps, may own a workflow.
 - **Dispatched by the orchestrator** when the daemon decides it should run.
 - **Has a model tier** (`opus`/`sonnet`/`haiku`/`inherit`), a tool/MCP allowlist, and an optional prompt template.
 - **Stored as Markdown + manifest** under `agents/<name>/` with a YAML frontmatter block.
@@ -55,31 +55,31 @@ Concretely: an agent is what makes the model act differently on a task. It might
 
 Ask:
 
-- **"Is this about how to think vs. what to do?"** If "how to think" — skill. If "what to do" — agent.
-- **"Does it have its own tools, its own goal, its own output type?"** If yes — agent.
-- **"Could I write this in 150 lines?"** If yes — skill. If you'd need 400+ lines of instructions and triggers — agent.
+- **"Is this about how to think vs. what to do?"** If "how to think" â€” skill. If "what to do" â€” agent.
+- **"Does it have its own tools, its own goal, its own output type?"** If yes â€” agent.
+- **"Could I write this in 150 lines?"** If yes â€” skill. If you'd need 400+ lines of instructions and triggers â€” agent.
 
 ## Orchestrator anatomy
 
-The v0.1 daemon does the minimum: **plan → execute → return**. v0.2 layers in:
+The v0.1 daemon does the minimum: **plan â†’ execute â†’ return**. v0.2 layers in:
 
 ```text
 prompt
-   └─▶ Planner · rank skills        (pattern match → cost check)
-         └─▶ Budget guard           (OK | requires_confirmation)
-               └─▶ Executor · LiteLLM   (LLM call → output)
-                     └─▶ Judge enabled?
-                           ├─ yes ─▶ Judge · scores 0–1 ─┐
-                           └─ no ──────────────────────▶ response
-                                                          └─▶ SQLite log
+   â””â”€â–¶ Planner Â· rank skills        (pattern match â†’ cost check)
+         â””â”€â–¶ Budget guard           (OK | requires_confirmation)
+               â””â”€â–¶ Executor Â· LiteLLM   (LLM call â†’ output)
+                     â””â”€â–¶ Judge enabled?
+                           â”œâ”€ yes â”€â–¶ Judge Â· scores 0â€“1 â”€â”
+                           â””â”€ no â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¶ response
+                                                          â””â”€â–¶ SQLite log
 ```
 Each layer is **independently testable**. Each layer's inputs/outputs are Pydantic models. The orchestrator has no implicit state outside of SQLite.
 
 ## Skill catalog
 
-39 skills ship today — 29 in `skills/core/` and 10 in `skills/optional/`. Each is a single Markdown file with YAML frontmatter (`name`, `description`, `version`, `license`, `author`). The catalog lives in `skills/index.json`, regenerated by `scripts/foundry-eval.py` (quality gate), `scripts/validate.sh` (lint), and the runtime indexer.
+41 skills ship today â€” 31 in `skills/core/` and 10 in `skills/optional/`. Each is a single Markdown file with YAML frontmatter (`name`, `description`, `version`, `license`, `author`). The catalog lives in `skills/index.json`, regenerated by `scripts/foundry-eval.py` (quality gate), `scripts/validate.sh` (lint), and the runtime indexer.
 
-Skills are intentionally **non-domain**: they teach the model *how to think*, not *what to do*. There are no "JavaScript skill" or "Postgres skill" — those are domain references that should be loaded as a one-off, not installed.
+Skills are intentionally **non-domain**: they teach the model *how to think*, not *what to do*. There are no "JavaScript skill" or "Postgres skill" â€” those are domain references that should be loaded as a one-off, not installed.
 
 ## Agent catalog
 
@@ -117,8 +117,8 @@ Three configuration surfaces, each with a different lifetime:
 
 ## Where to read more
 
-- `docs/launch-plan.md` — the v0.1 design (now historical; this doc is its successor).
-- `docs/philosophy.md` — curation doctrine, why we say no.
-- `docs/authoring.md` — how to write portable skills and agents.
-- `docs/launch-plan.md` — the design specification.
-- `README.md` — install + usage.
+- `docs/launch-plan.md` â€” the v0.1 design (now historical; this doc is its successor).
+- `docs/philosophy.md` â€” curation doctrine, why we say no.
+- `docs/authoring.md` â€” how to write portable skills and agents.
+- `docs/launch-plan.md` â€” the design specification.
+- `README.md` â€” install + usage.

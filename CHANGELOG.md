@@ -2,6 +2,40 @@
 
 All notable changes to Agent Foundry. Everything here is original work by the Agent Foundry contributors, released under MIT.
 
+## 0.6.0 — 2026-10-24
+
+Evidence and cache-integrity release. All changes are additive; both new
+feature flags default off.
+
+- Deterministic trace identity: `trace_digest` over canonical messages, model
+  chain, seed, temperature, schema, skill hash, runtime version, and output.
+  Request metadata and run config are stored beside it.
+- Prompt snapshots: byte-exact fixtures for a real skill, the fallback, and a
+  schema-augmented request.
+- Judge integrity: `judge_status` distinguishes `ok`, `unparseable`,
+  `call_failed`, and `timeout`; judge timeout and transport retry; balanced
+  JSON extraction; re-score stored output with `agent-foundry rejudge`.
+- Schema versioning: `schema_meta` records a monotonic version; migrations are
+  numbered; a future version refuses to open; only duplicate-column errors are
+  ignored on replay.
+- Full-output spill: the inline preview stays bounded, the full text is stored
+  in a private artifact and referenced by `output_ref`.
+- Context compaction: resume keeps the newest turns under
+  `max_history_tokens` and reports `compacted_turns`.
+- Engram routing: Unicode normalization, ordered trigrams, three hash heads
+  matched two-of-three, a sample floor for project rows, and a gate score.
+- Skill weights: per-axis sums over real denominators; feedback is weighted by
+  feedback rows only.
+- Model capabilities: context window, system-prompt support, temperature, and
+  stop tokens; preflight rejects over-context requests.
+- Perf stats in SQLite: success/failure latency split, load buckets, prompt and
+  cached token means; `scripts/foundry-bench.py` gates regressions on ratio
+  and absolute delta.
+- Retention: `agent-foundry prune` with dry run and confirmation; stale
+  `running` sessions repaired at daemon start.
+- Two new core skills: `cache-identity` and `judge-integrity` (catalog 39 → 41).
+- Capability boundary published in the README.
+
 ## Unreleased
 
 Portable governance release.

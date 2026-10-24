@@ -17,7 +17,7 @@ Engram-style routing for skill selection. Inverted from
 ## When to use
 
 - A prompt pattern repeats across sessions (same user, similar tasks)
-- Linear scan over 39 skills is wasteful for hot patterns
+- Linear scan over 41 skills is wasteful for hot patterns
 - You want O(1) routing for the top 5% of prompts that drive 80% of usage
 
 ## Procedure
@@ -62,3 +62,13 @@ After implementing, run the smoke test:
 python scripts/smoke-test.py
 # Should report: Engram table size, hit rate, fallback rate
 ```
+
+## Hash and Gate Contract
+
+- Normalize before hashing: NFKC, casefold, strip accents, collapse whitespace.
+- Tokenize with a Unicode-aware pattern. ASCII-only regexes silently break non-Latin prompts.
+- Hash ordered trigrams under three independent salts. A set-sorted single hash loses order and repetition.
+- Match when at least two heads agree. Legacy single-head rows match on head 0 until relearned.
+- Route only approved instincts whose sample count clears the project floor.
+- A hash hit returns a gate score from keyword overlap. Blend it with the planner score; never hard-route on hash equality alone.
+- Persist head 0, head 2, and head 3 in `instincts` and test a French or Arabic prompt plus a word-order pair.

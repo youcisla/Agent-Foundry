@@ -1,6 +1,6 @@
-# Agent Foundry — JoyCode Adapter
+# Agent Foundry â€” JoyCode Adapter
 
-**Status:** Beta — adapter structure defined.
+**Status:** Beta â€” adapter structure defined.
 
 JoyCode uses skills + commands + agents under `.joycode/` (project) or
 `~/.joycode/` (user).
@@ -14,7 +14,7 @@ JoyCode uses skills + commands + agents under `.joycode/` (project) or
   skills/
     api-design/SKILL.md
     plan-before-code/SKILL.md
-    ... (39 total)
+    ... (41 total)
   commands/
     af.md
 ```

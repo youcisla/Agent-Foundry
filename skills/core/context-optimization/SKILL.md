@@ -53,3 +53,13 @@ If the user asks for a literal paste of a file, do it. Context is a default, not
 - [ ] The claim or action has been verified against a live source
 - [ ] The output matches the request's scope (no scope creep)
 - [ ] Slop markers are absent (filler, hedging, emoji headers)
+
+## Compaction and Spill
+
+- Cap history by estimated tokens and keep the newest N turns. Record `compacted_turns` and dropped tokens; silent loss is a correctness bug.
+- Compaction is destructive. State the approximation: dropped turns are gone, not summarized, unless a summary backend exists.
+- Spill the full output to a private artifact and keep a bounded inline preview. Never truncate the only copy.
+- Return an opaque locator plus retrieval guidance. Treat the locator as a handle, not a path to parse.
+- A spill failure keeps the inline result; it must not fail the model call.
+- Create artifact directories private (0700) and files exclusively (0600). Never derive a filename from user text.
+- Publish artifacts by temp file, fsync, rename. A half-written artifact is worse than a missing one.

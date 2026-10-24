@@ -1,4 +1,4 @@
-# Agent Foundry — agent instructions
+# Agent Foundry â€” agent instructions
 
 Canonical instructions for agents working in this repository. Harness-specific
 files (`.codex/AGENTS.md`, `.gemini/AGENTS.md`, `.cursor/rules/`) are thin
@@ -6,7 +6,7 @@ adapters and must not diverge from this file.
 
 ## What this repo is
 
-A Python package + FastAPI daemon, a stdio MCP server, 39 agent skills, 3
+A Python package + FastAPI daemon, a stdio MCP server, 41 agent skills, 3
 agents, and a static web catalog. MIT-licensed, original work.
 
 ## Commands

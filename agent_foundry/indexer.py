@@ -197,11 +197,13 @@ def build_index(skills_dir: Path) -> SkillIndex:
     """Walk skills_dir for SKILL.md files, build SkillIndex with the virtual fallback injected."""
     skills: list = []
     skill_paths: dict[str, str] = {}
+    skill_stats: dict[str, list[int]] = {}
 
     if skills_dir.exists():
         for path in sorted(skills_dir.rglob("SKILL.md")):
             try:
                 text = path.read_text(encoding="utf-8")
+                stat = path.stat()
             except OSError:
                 continue
             fm = parse_frontmatter(text)
@@ -214,6 +216,7 @@ def build_index(skills_dir: Path) -> SkillIndex:
                 continue
             skills.append(manifest)
             skill_paths[manifest.id] = str(path)
+            skill_stats[str(path)] = [int(stat.st_size), int(stat.st_mtime_ns)]
 
     fallback = SkillManifest(**GENERIC_REASONING_MANIFEST)
     skill_paths[fallback.id] = "__virtual__:" + GENERIC_REASONING_ID
@@ -224,6 +227,7 @@ def build_index(skills_dir: Path) -> SkillIndex:
         generated_at=datetime.now(timezone.utc),
         skills=skills,
         skill_paths=skill_paths,
+        skill_stats=skill_stats,
     )
 
 
@@ -250,19 +254,39 @@ def read_index(path: Path) -> SkillIndex | None:
 _CACHE: dict[str, tuple] = {}
 
 
+def _stats_match(idx: SkillIndex) -> bool:
+    """A cached index is stale when any indexed skill changed on disk.
+
+    Older indexes have no stats; treat them as stale once so the next
+    `agent-foundry index` records them.
+    """
+    if not idx.skill_stats:
+        return False
+    for path, expected in idx.skill_stats.items():
+        try:
+            stat = Path(path).stat()
+        except OSError:
+            return False
+        if [int(stat.st_size), int(stat.st_mtime_ns)] != list(expected):
+            return False
+    return True
+
+
 def get_index_cached(index_path: Path, ttl_seconds: int = 60) -> SkillIndex | None:
-    """Return cached index if still fresh; else rebuild from disk if present."""
+    """Return cached index if fresh; else reload and validate file stats."""
     key = str(index_path.resolve())
     now = time.time()
     if key in _CACHE:
         ts, idx = _CACHE[key]
-        if now - ts < ttl_seconds:
+        if now - ts < ttl_seconds and _stats_match(idx):
             return idx
+        _CACHE.pop(key, None)
 
     idx = read_index(index_path)
-    if idx is not None:
+    if idx is not None and _stats_match(idx):
         _CACHE[key] = (now, idx)
-    return idx
+        return idx
+    return None
 
 
 def invalidate_cache(index_path: Path | None = None) -> None:

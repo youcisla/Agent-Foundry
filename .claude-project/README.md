@@ -1,6 +1,6 @@
-# Agent Foundry — Claude Code Project Adapter
+# Agent Foundry â€” Claude Code Project Adapter
 
-**Status:** Beta — installs every skill as a direct child of the project's
+**Status:** Beta â€” installs every skill as a direct child of the project's
 `.claude/skills/` directory.
 
 Claude Code scans `<project>/.claude/skills/<skill>/SKILL.md`. Nesting skills
@@ -14,7 +14,7 @@ under a shared parent folder is not supported.
     api-design/SKILL.md
     plan-before-code/SKILL.md
     verify-first/SKILL.md
-    ... (39 total)
+    ... (41 total)
     .agent-foundry-installed.json
 ```
 

@@ -50,6 +50,7 @@ class SkillIndex(BaseModel):
     generated_at: datetime
     skills: list[SkillManifest]
     skill_paths: dict[str, str] = Field(default_factory=dict)
+    skill_stats: dict[str, list[int]] = Field(default_factory=dict)  # path -> [size, mtime_ns]
 
 
 # ===== Planner =====
@@ -87,6 +88,9 @@ class ExecuteRequest(BaseModel):
     model: str | None = None
     fallback_models: list[str] | None = None
     output_schema: dict | None = None
+    verifier: dict | None = None
+    seed: int | None = None
+    temperature: float | None = None
 
 
 class ExecuteResponse(BaseModel):
@@ -104,6 +108,15 @@ class ExecuteResponse(BaseModel):
     model: str = ""
     structured_output: Any | None = None
     schema_valid: bool | None = None
+    verifier_verdict: Literal["pass", "fail", "unknown"] | None = None
+    trace_digest: str = ""
+    phases: dict[str, float] | None = None
+    attempts: int = 1
+    repairs: int = 0
+    output_ref: str | None = None
+    failure_kind: Literal[
+        "provider", "schema", "policy", "attest", "budget", "internal"
+    ] | None = None
 
 
 # ===== Loop =====
@@ -114,6 +127,8 @@ class LoopRequest(BaseModel):
     model: str | None = None
     budget: int | None = None
     judge: bool = False  # if true, score output via af-critic
+    seed: int | None = None
+    temperature: float | None = None
 
 
 class LoopResponse(BaseModel):
@@ -130,14 +145,26 @@ class LoopResponse(BaseModel):
     was_fallback: bool = False
     judge_score: dict | None = None   # correctness/slop/scope/verdict if --judge
     judged: bool = False
+    judge_status: str | None = None
     cost_usd: float = 0.0
     session_id: int | None = None
+    trace_digest: str = ""
+    phases: dict[str, float] | None = None
+    attempts: int = 1
+    repairs: int = 0
+    output_ref: str | None = None
+    compacted_turns: int = 0
+    failure_kind: Literal[
+        "provider", "schema", "policy", "attest", "budget", "internal"
+    ] | None = None
 
 
 class LoopResumeRequest(BaseModel):
     session_id: int
     prompt: str
     model: str | None = None
+    seed: int | None = None
+    temperature: float | None = None
 
 
 # ===== Index =====

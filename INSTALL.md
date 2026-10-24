@@ -139,7 +139,7 @@ agent-foundry --help
 ```bash
 agent-foundry doctor            # config / index / daemon / API key
 python3 scripts/foundry-eval.py # quality gate: 34 passed, 0 failed
-./scripts/validate.sh           # skill lint: 39 skills, 0 failed
+./scripts/validate.sh           # skill lint: 41 skills, 0 failed
 ```
 
 ## Uninstall

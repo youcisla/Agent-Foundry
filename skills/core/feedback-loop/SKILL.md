@@ -72,3 +72,11 @@ Don't skip weeks. Skipping = loop is dead.
 
 - Skipping verification when the change 'feels small'
 - Reasoning by analogy without a real example
+
+## Aggregation Rules
+
+- A ratio is `sum(numerator) / sum(denominator)`. Never average per-row means.
+- Combine only axes whose denominator is greater than zero. One missing axis must not null the others.
+- Weight feedback by feedback rows, not by all rows in the group.
+- Calibrate judge scores against human feedback per skill; report the bins and sample counts.
+- Never pool scores across model revisions, runtime versions, or config fingerprints.

@@ -1,4 +1,4 @@
-# Agent Foundry — Codex CLI Guide
+# Agent Foundry â€” Codex CLI Guide
 
 This supplements the root `AGENTS.md` with Codex-specific guidance. After
 `bash scripts/install.sh --harness=codex`, this file lives at
@@ -18,14 +18,14 @@ shipped defaults.
 ## Skills Discovery
 
 Codex scans `.agents/skills/` from the working directory up to the repository
-root, plus `$HOME/.agents/skills/`. The installer links each of the 39 skills
+root, plus `$HOME/.agents/skills/`. The installer links each of the 41 skills
 as a direct child of `$HOME/.agents/skills/`.
 
 `~/.codex/skills/` is a legacy location and is not used by the installer.
 Each skill contains:
 
-- `SKILL.md` — Detailed instructions and workflow
-- `agents/openai.yaml` — optional Codex interface metadata
+- `SKILL.md` â€” Detailed instructions and workflow
+- `agents/openai.yaml` â€” optional Codex interface metadata
 
 Skills must be direct children of the skills root; Codex does not recurse into
 a shared parent folder.
@@ -42,7 +42,7 @@ args = ["serve", "--port", "8765"]
 startup_timeout_sec = 10
 ```
 
-This lets Codex route LLM calls through the Foundry's plan → execute → log
+This lets Codex route LLM calls through the Foundry's plan â†’ execute â†’ log
 pipeline. Without it, Codex runs skills in isolation (no budget guard, no
 judge, no execution log).
 
@@ -62,8 +62,8 @@ the user specifically asks for a scoped change.
 Codex supports multi-agent workflows behind `features.multi_agent`. Agent
 Foundry ships two native roles:
 
-- `af-planner` — decomposes a request into a skill/agent plan
-- `af-critic` — judges a completed output on correctness/slop/scope
+- `af-planner` â€” decomposes a request into a skill/agent plan
+- `af-critic` â€” judges a completed output on correctness/slop/scope
 
 To dispatch via Codex CLI, point the role at the agent's directory:
 
@@ -91,7 +91,7 @@ config_file = "agents/af-planner/agents/openai.yaml"
 Since Codex lacks hooks, security enforcement is instruction-based:
 
 1. Always validate inputs at system boundaries.
-2. Never hardcode secrets — use environment variables.
+2. Never hardcode secrets â€” use environment variables.
 3. Run `pip audit` before committing (the project ships a Python daemon).
 4. Review `git diff` before every push.
 5. Use `sandbox_mode = "workspace-write"` in `.codex/config.toml`.
@@ -107,13 +107,13 @@ agent-foundry serve --port 8765 &  # or rely on lazy-start
 
 The daemon serves on `http://127.0.0.1:8765` with endpoints:
 
-- `/health` — GET, returns daemon status
-- `/index` — POST, rebuilds the skill index
-- `/plan` — POST, returns ranked skills for a prompt
-- `/execute` — POST, runs a specific skill
-- `/loop` — POST, full plan → execute → return
-- `/loop/resume` — POST, continue a stored loop session
-- `/loop/{id}` — GET, inspect a loop session
+- `/health` â€” GET, returns daemon status
+- `/index` â€” POST, rebuilds the skill index
+- `/plan` â€” POST, returns ranked skills for a prompt
+- `/execute` â€” POST, runs a specific skill
+- `/loop` â€” POST, full plan â†’ execute â†’ return
+- `/loop/resume` â€” POST, continue a stored loop session
+- `/loop/{id}` â€” GET, inspect a loop session
 
 ## Compatibility Notes
 

@@ -46,16 +46,16 @@ If `npm whoami` returns `ENEEDAAUTH`:
 ### 2 - Quality gates
 
 `scripts/publish.sh` runs all three before publishing:
-- `bash scripts/validate.sh` — 39 skills, no syntax errors
-- `python scripts/foundry-eval.py` — 33+ checks pass
-- `bash scripts/nox.sh` — 0 external references in tracked files
+- `bash scripts/validate.sh` â€” 41 skills, no syntax errors
+- `python scripts/foundry-eval.py` â€” 33+ checks pass
+- `bash scripts/nox.sh` â€” 0 external references in tracked files
 
 ### 3 - Bump version
 
 | Change | Bump |
 |---|---|
-| Bug fixes, copy edits, new skill/agent | patch (0.3.0 → 0.3.1) |
-| New harness adapters, breaking install | minor (0.3.0 → 0.4.0) |
+| Bug fixes, copy edits, new skill/agent | patch (0.3.0 â†’ 0.3.1) |
+| New harness adapters, breaking install | minor (0.3.0 â†’ 0.4.0) |
 | Complete rewrite | major (rare) |
 
 The script uses `npm version <bump> --no-git-tag-version` then commits
@@ -65,7 +65,7 @@ the bump so the publish picks up the new version.
 
 `scripts/publish.sh` always runs `npm publish --dry-run` first. Expected
 output: about 114 files, ~111 KB tarball, no `__pycache__/`, no `plans/`, no
-`web/demo/*/renders/`. All 39 skills and 3 agents present, plus the four
+`web/demo/*/renders/`. All 41 skills and 3 agents present, plus the four
 install scripts (`install.{js,sh,bat,ps1}`).
 
 ### 5 - Publish
@@ -90,17 +90,17 @@ agent-foundry --list    # shows 14 harnesses
 
 ## Anti-patterns
 
-- Do NOT publish from a dirty working tree — always commit first
+- Do NOT publish from a dirty working tree â€” always commit first
 - Do NOT skip the 2FA prompt or hardcode OTP in shell history
-- Do NOT reuse a published version — npm rejects re-publishing same version
+- Do NOT reuse a published version â€” npm rejects re-publishing same version
 - Do NOT publish without running all three quality gates
 - Do NOT ship `__pycache__/`, `node_modules/`, `plans/`, or `catalog/`
-  in the tarball — `package.json#files` + `.npmignore` handle this
+  in the tarball â€” `package.json#files` + `.npmignore` handle this
 
 ## See also
 
-- `references/2fa-setup.md` — How to enable 2FA on npmjs.com (mandatory
+- `references/2fa-setup.md` â€” How to enable 2FA on npmjs.com (mandatory
   for publishing public packages since npm 2024 security update)
-- `references/troubleshooting.md` — Common publish errors (E403, ENEEDAUTH,
+- `references/troubleshooting.md` â€” Common publish errors (E403, ENEEDAUTH,
   EOTP, version conflicts)
-- `scripts/publish.sh` — The full automated script (source of truth)
+- `scripts/publish.sh` â€” The full automated script (source of truth)

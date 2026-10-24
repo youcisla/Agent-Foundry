@@ -86,3 +86,11 @@ Return: limit, spent, remaining, calls made, and items skipped. A run that says
 - `fallback-model-routing` — bounded chains, counted against the same budget
 - `measure-first` — replaces estimates with observed usage
 - `execution-observability` — persists cost per execution
+
+## Two Caps and Measured Input
+
+- Enforce a per-call cap and a per-session aggregate cap. A single global ceiling lets one call consume the whole budget.
+- Prefer provider-reported prompt tokens for the same model when available; fall back to a character estimate only on a miss.
+- Count every model attempt, including repair rounds and judge escalations. A retry that is not counted is a budget leak.
+- Report `max_attempts`, `max_concurrency`, and `checkpoint_every` beside the token budget; tokens alone cannot bound wall-clock or fan-out.
+- Compaction and spill change the effective prompt size. Re-estimate after either runs, not before.

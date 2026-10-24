@@ -1,6 +1,6 @@
-# Agent Foundry — Zed Adapter
+# Agent Foundry â€” Zed Adapter
 
-**Status:** Beta — skills install into Zed's supported global root.
+**Status:** Beta â€” skills install into Zed's supported global root.
 
 Zed loads skills from:
 
@@ -17,7 +17,7 @@ Each skill must be a direct child. Zed does not support nested skill folders.
 node scripts/install.js --harness=zed
 ```
 
-The installer links 39 skills into `~/.agents/skills`. It also prints the
+The installer links 41 skills into `~/.agents/skills`. It also prints the
 platform-specific personal instructions path:
 
 - macOS / Linux: `~/.config/zed/AGENTS.md`

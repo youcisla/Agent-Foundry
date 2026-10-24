@@ -168,7 +168,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   </style>
   <style>
     /* ==========================================================
-       THEME VARIABLES — switch by toggling [data-theme] on <html>
+       THEME VARIABLES â€” switch by toggling [data-theme] on <html>
        ========================================================== */
     :root,
     [data-theme="dark"] {
@@ -257,7 +257,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     }
 
     /* ==========================================================
-       SIGNAL FLOW — an opt-in, motion-forward visual preset.
+       SIGNAL FLOW â€” an opt-in, motion-forward visual preset.
        The variables also target a standalone exported SVG, whose
        root carries data-preset and data-theme directly.
        ========================================================== */
@@ -325,7 +325,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     }
 
     /* ==========================================================
-       BLUEPRINT — a review-first drafting preset for deployment,
+       BLUEPRINT â€” a review-first drafting preset for deployment,
        infrastructure, and technical design documentation. It keeps
        the same semantic palette and geometry while trading glow for
        precise grid contrast, squared materials, and drafting marks.
@@ -401,7 +401,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     }
 
     /* ==========================================================
-       EDITORIAL — a warm, publication-minded preset for design
+       EDITORIAL â€” a warm, publication-minded preset for design
        reviews, launch notes, and documentation. The diagram keeps
        the same semantic palette and exact geometry, but trades
        software chrome for paper, ink, ruled structure, and one
@@ -2476,7 +2476,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
     /* Preserve the one-screen guarantee on ordinary laptop displays. The
        high-screen expansion above must not trade a fuller canvas for page
-       scrolling at 900–1080px heights. */
+       scrolling at 900â€“1080px heights. */
     @media (min-width: 768px) and (max-height: 1100px) {
       .header { margin-bottom: 1rem; }
       .diagram-container {
@@ -2937,7 +2937,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     .card-dot { box-shadow: 0 0 0 3px color-mix(in srgb, var(--card-tone, transparent) 16%, transparent); }
 
     /* ==========================================================
-       Print stylesheet — hide interactive controls, force light,
+       Print stylesheet â€” hide interactive controls, force light,
        drop the grid so the diagram doesn't waste ink, use landscape
        so wide diagrams fit, pack summary cards into 2 columns to
        avoid an orphan card on a trailing page.
@@ -2945,8 +2945,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     @page { size: landscape; margin: 1.5cm; }
 
     @media print {
-      /* Force the FULL light palette — including component fills/strokes and
-         lane/arrow colors — so printing from dark theme doesn't put neon
+      /* Force the FULL light palette â€” including component fills/strokes and
+         lane/arrow colors â€” so printing from dark theme doesn't put neon
          strokes and translucent dark fills on white paper. */
       :root, [data-theme="dark"], [data-theme="light"] {
         --bg: #ffffff;
@@ -3677,7 +3677,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       font-size: 0.6875rem;
     }
 
-    /* Toast — brief feedback for actions like "copied" */
+    /* Toast â€” brief feedback for actions like "copied" */
     .archify-toast {
       position: fixed;
       top: 1rem;
@@ -3992,7 +3992,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     }
 
     /* ==========================================================
-       SVG SEMANTIC CLASSES — use these instead of inline fill/stroke
+       SVG SEMANTIC CLASSES â€” use these instead of inline fill/stroke
        ========================================================== */
     .c-grid       { stroke: var(--grid); fill: none; }
     .c-mask       { fill: var(--mask); stroke: none; }
@@ -4961,9 +4961,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </div>
         <div class="export-menu-section" role="group" aria-label="Vector and motion">
           <span class="export-menu-heading" aria-hidden="true">Vector &amp; motion</span>
-          <button data-format="svg" type="button" role="menuitem" tabindex="-1"><span class="export-item-copy"><strong>SVG · Auto</strong><small class="hint">Matches host theme</small></span></button>
-          <button data-format="svg-light" type="button" role="menuitem" tabindex="-1"><span class="export-item-copy"><strong>SVG · Light</strong><small class="hint">Always light</small></span></button>
-          <button data-format="svg-dark" type="button" role="menuitem" tabindex="-1"><span class="export-item-copy"><strong>SVG · Dark</strong><small class="hint">Always dark</small></span></button>
+          <button data-format="svg" type="button" role="menuitem" tabindex="-1"><span class="export-item-copy"><strong>SVG Â· Auto</strong><small class="hint">Matches host theme</small></span></button>
+          <button data-format="svg-light" type="button" role="menuitem" tabindex="-1"><span class="export-item-copy"><strong>SVG Â· Light</strong><small class="hint">Always light</small></span></button>
+          <button data-format="svg-dark" type="button" role="menuitem" tabindex="-1"><span class="export-item-copy"><strong>SVG Â· Dark</strong><small class="hint">Always dark</small></span></button>
           <button data-format="webm" type="button" role="menuitem" tabindex="-1"><span class="export-item-copy"><strong>WebM</strong><small class="hint">6s motion</small></span></button>
         </div>
       </div>
@@ -4983,7 +4983,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     </div>
 
 
-    <script id="archify-i18n-data" type="application/json">{"locale":"en","messages":{"viewer.kind.frontend":"Frontend","viewer.kind.backend":"Backend","viewer.kind.database":"Database","viewer.kind.cloud":"Cloud","viewer.kind.security":"Security","viewer.kind.messagebus":"Message bus","viewer.kind.external":"External","viewer.kind.neutral":"Neutral","viewer.kind.node":"Node","viewer.kind.start":"Start","viewer.kind.active":"Active","viewer.kind.waiting":"Waiting","viewer.kind.decision":"Decision","viewer.kind.success":"Success","viewer.kind.failure":"Failure","viewer.toolbar.actions":"Diagram actions","viewer.theme.toggle.title":"Toggle theme (T)","viewer.theme.toggle":"Toggle color theme","viewer.theme.dark":"Dark","viewer.theme.light":"Light","viewer.preset.choose.title":"Choose visual style (S cycles)","viewer.preset.choose":"Choose visual style","viewer.preset.style":"Style","viewer.preset.menu":"Visual style","viewer.preset.identity":"Visual identity","viewer.preset.cycles":"to cycle","viewer.preset.classic":"Classic","viewer.preset.classic.short":"Classic","viewer.preset.classic.hint":"Stable technical default","viewer.preset.flow":"Signal Flow","viewer.preset.flow.short":"Flow","viewer.preset.flow.hint":"Motion-forward presentation","viewer.preset.blueprint":"Blueprint","viewer.preset.blueprint.hint":"Engineering review","viewer.preset.editorial":"Editorial","viewer.preset.editorial.hint":"Publication and launch notes","viewer.preset.badge.signalFlow":"SIGNAL FLOW","viewer.preset.badge.blueprint":"BLUEPRINT / REV 01","viewer.preset.badge.editorial":"EDITORIAL / FIELD NOTE","viewer.preset.badge.editorialPlate":"ARCHIFY / PLATE 04","viewer.preset.current":"Visual style: {style}. Choose visual style","viewer.motion.live":"Live","viewer.motion.still":"Still","viewer.motion.pause":"Pause motion","viewer.motion.resume":"Resume motion","viewer.motion.reduced":"Motion paused by reduced-motion preference","viewer.motion.hidden":"Motion paused while this page is hidden","viewer.motion.yielding":"Pause motion; currently yielding to {owner}","viewer.motion.yielding.title":"Live preview enabled · yielding to {owner}","viewer.owner.route":"Route Probe","viewer.owner.lens":"Semantic Lens","viewer.owner.relationship":"Relationship Preview","viewer.owner.intent":"Intent Trace","viewer.owner.focus":"semantic focus","viewer.owner.legend":"legend preview","viewer.owner.reader":"reader interaction","viewer.present.enter":"Enter presentation stage","viewer.present.enter.title":"Presentation stage (F)","viewer.present.exit":"Exit presentation stage","viewer.present.exit.title":"Exit presentation stage (F or Escape)","viewer.present.present":"Present","viewer.present.exit.label":"Exit","viewer.export.button":"Export","viewer.export.button.title":"Export diagram (E)","viewer.export.diagram":"Export diagram","viewer.export.menu":"Export","viewer.export.subtitle":"Portable, clean outputs","viewer.export.share":"Share","viewer.export.shareCard":"Share Card","viewer.export.routeShareCard":"Route Share Card","viewer.export.reachShareCard":"Reach Share Card","viewer.export.copyDiagram":"Copy diagram","viewer.export.clipboardPng":"PNG to clipboard","viewer.export.raster":"Raster images","viewer.export.image":"Image","viewer.export.lossless":"Lossless image","viewer.export.compact":"Compact image","viewer.export.modern":"Modern image","viewer.export.vectorMotion":"Vector and motion","viewer.export.vectorMotion.heading":"Vector \u0026 motion","viewer.export.editable":"Editable vector","viewer.export.svg.auto":"SVG · Auto","viewer.export.svg.auto.hint":"Matches host theme","viewer.export.svg.light":"SVG · Light","viewer.export.svg.light.hint":"Always light","viewer.export.svg.dark":"SVG · Dark","viewer.export.svg.dark.hint":"Always dark","viewer.export.motion6s":"6s motion","viewer.export.unsupported":"Not supported by this browser","viewer.export.clipboardUnsupported":"Clipboard image write not supported by this browser","viewer.export.clipboardUnsupported.short":"Clipboard image write not supported in this browser.","viewer.export.motionUnavailable":"Motion capture unavailable in this browser","viewer.export.webmUnavailable":"WebM unavailable in this browser","viewer.export.failed":"Export failed: {message}","viewer.export.unknownVariant":"Unknown Share Card variant: {variant}","viewer.export.routeRequired":"Trace a route before exporting a Route Share Card","viewer.export.reachRequired":"Trace authored reach before exporting a Reach Share Card","viewer.export.unknown":"unknown","viewer.export.routeFailed":"Route Share Card export failed: {message}","viewer.export.reachFailed":"Reach Share Card export failed: {message}","viewer.export.copyFailed":"Copy failed: {message}","viewer.export.copiedPng":"Copied PNG to clipboard","viewer.export.downloadedRoute":"Downloaded Route Share Card","viewer.export.downloadedReach":"Downloaded Reach Share Card","viewer.export.downloadedWebm":"Downloaded WebM","viewer.export.recording":"Recording 6 seconds of motion…","viewer.export.card.routeSummary.one":"Path: {source} → {target} · {count} step","viewer.export.card.routeSummary.other":"Path: {source} → {target} · {count} steps","viewer.export.card.reachSummary":"Authored {direction} from {origin} · {nodes} · {links} · max {hops}","viewer.export.card.node.one":"{count} node","viewer.export.card.node.other":"{count} nodes","viewer.export.card.link.one":"{count} link","viewer.export.card.link.other":"{count} links","viewer.export.card.hop.one":"{count} hop","viewer.export.card.hop.other":"{count} hops","viewer.export.card.routeBadge":"ARCHIFY · ROUTE · {hops}","viewer.export.card.reachBadge":"ARCHIFY · {direction} REACH","viewer.export.direction.upstream":"Upstream","viewer.export.direction.downstream":"Downstream","viewer.export.error.canvasUnavailable":"Canvas unavailable for {label}","viewer.export.error.contextUnavailable":"2D canvas context unavailable for {label}","viewer.export.error.toBlobUnavailable":"canvas.toBlob unavailable for {label}","viewer.export.error.toBlobNull":"canvas.toBlob returned no data for {label}","viewer.export.error.variantsCombined":"Share Card variants cannot be combined","viewer.export.error.viewerState":"Share Card export could not remove temporary viewer state","viewer.export.error.routeState":"Route Card export could not preserve the resolved route safely","viewer.export.error.reachState":"Reach Card export could not preserve authored reach safely","viewer.export.error.webmRequirements":"WebM motion export requires a trace animation and browser MediaRecorder support","viewer.export.error.mediaRecorder":"MediaRecorder failed","viewer.export.error.emptyWebm":"MediaRecorder produced an empty WebM","viewer.export.error.webmBackground":"SVG background could not be loaded for WebM export","viewer.guide.title":"Explore this system","viewer.focus.selectedNodes":"{count} selected nodes","viewer.guide.eyebrow":"Diagram guide","viewer.guide.close":"Close diagram guide","viewer.guide.inspecting":"Inspecting compiled semantics","viewer.guide.actions":"Diagram exploration actions","viewer.guide.find":"Find any node","viewer.guide.find.hint":"Search labels, responsibilities, kinds, and stable IDs.","viewer.guide.route":"Trace a route","viewer.guide.route.aria":"Trace a directed route","viewer.guide.route.hint":"Ask how two semantic nodes connect in authored direction.","viewer.guide.map":"See the whole system","viewer.guide.map.hint":"Open Semantic Radar with a live viewport and stable nodes.","viewer.guide.lens":"Compare semantic kinds","viewer.guide.lens.hint":"Count roles, reveal their traffic, and compare direct authored links.","viewer.guide.present":"Enter Presentation Stage","viewer.guide.present.hint":"Give the live diagram the viewport without changing export.","viewer.guide.shortcuts":"Additional keyboard shortcuts","viewer.guide.shortcut.export":"Export","viewer.guide.shortcut.theme":"Theme","viewer.guide.shortcut.style":"Style","viewer.guide.shortcut.reset":"Reset","viewer.guide.shortcut.zoomIn":"Zoom in","viewer.guide.shortcut.zoomOut":"Zoom out","viewer.guide.shortcut.close":"Close","viewer.guide.facts":"{nodes} · {relationships}","viewer.guide.fact.node.one":"{count} semantic node","viewer.guide.fact.node.other":"{count} semantic nodes","viewer.guide.fact.relationship.one":"{count} relationship","viewer.guide.fact.relationship.other":"{count} relationships","viewer.guide.open":"Open diagram guide","viewer.finder.title":"Find a node","viewer.finder.close":"Close node finder","viewer.finder.placeholder":"Search labels or IDs","viewer.finder.search":"Search diagram nodes","viewer.finder.results":"Diagram nodes","viewer.finder.empty":"No matching nodes","viewer.finder.result.focus":"Focus {label}","viewer.finder.result.routeStart":"Choose {label} as route start","viewer.finder.result.routeTarget":"Choose {label} as route destination, {links}","viewer.finder.status.empty":"No matching nodes","viewer.finder.status.count.one":"{count} matching node","viewer.finder.status.count.other":"{count} matching nodes","viewer.finder.noun.nodes":"nodes","viewer.finder.link.one":"{count} link","viewer.finder.link.other":"{count} links","viewer.finder.result.focus.one":"Focus {label}, {count} related connection","viewer.finder.result.focus.other":"Focus {label}, {count} related connections","viewer.finder.status.filtered":"{visible} of {available} {noun}","viewer.finder.status.all":"{available} {noun}","viewer.passport.eyebrow":"Semantic passport","viewer.passport.metadata":"Node metadata","viewer.passport.evidence":"Verified source evidence","viewer.passport.verified":"Verified source","viewer.passport.verificationScope":"Verified against local Git at the pinned revision. Remote access has not been checked.","viewer.passport.reach":"Authored reach","viewer.passport.reach.trace":"Trace authored reachability","viewer.passport.upstream":"Upstream","viewer.passport.downstream":"Downstream","viewer.passport.upstream.trace":"Trace upstream authored reachability","viewer.passport.downstream.trace":"Trace downstream authored reachability","viewer.passport.close":"Close semantic passport","viewer.passport.move":"Move semantic passport. Drag, use arrow keys, or press Home to reset.","viewer.passport.copy":"Copy link","viewer.passport.copy.focus":"Copy link to focused node","viewer.passport.relations":"Relations","viewer.passport.relations.show":"Show connected relationships","viewer.passport.relations.hide":"Hide connected relationships","viewer.passport.relations.list":"Connected relationships","viewer.passport.copyRelation":"Copy relation","viewer.passport.copyNode":"Copy node","viewer.passport.copyPinned":"Copy link to pinned relationship","viewer.passport.copySource":"Copy link to source node","viewer.passport.copy.focused.success":"Focused node link copied","viewer.passport.copy.pinned.success":"Pinned relationship link copied","viewer.passport.copy.focused.failed":"Could not copy focused node link","viewer.passport.copy.pinned.failed":"Could not copy pinned relationship link","viewer.passport.relationship.none":"No connected relationships","viewer.passport.relationship.count.one":"{count} relation","viewer.passport.relationship.count.other":"{count} relations","viewer.passport.relationship.show.one":"Show {count} connected relationship","viewer.passport.relationship.show.other":"Show {count} connected relationships","viewer.passport.relationship.summary":"{out} outgoing · {in} incoming{loops}","viewer.passport.relationship.loops":" · {count} loop","viewer.passport.relationship.explorer":"Direct relationship explorer","viewer.passport.relationship.help":"Use arrow keys to explore relationships. Press Enter or Space to pin details; Escape clears.","viewer.passport.relationship.loopsBack":"loops back","viewer.passport.relationship.connectsTo":"connects to","viewer.passport.relationship.connectsFrom":"connects from","viewer.passport.relationship.pinned":"Pinned relationship · {from} → {to} · {label}","viewer.passport.relationship.inspect":"Inspect relationship {index} of {total}: {from} to {to}, {label}. Press Enter for details.","viewer.passport.relationship.group.out":"Outgoing","viewer.passport.relationship.group.in":"Incoming","viewer.passport.relationship.group.loop":"Self loops","viewer.passport.relationship.row":"{group}: {relationship}, {neighbor}","viewer.passport.relationship.direction.out":"OUT →","viewer.passport.relationship.direction.in":"← IN","viewer.passport.relationship.direction.loop":"LOOP","viewer.passport.sourceCount.one":"{count} verified source reference","viewer.passport.sourceCount.other":"{count} verified source references","viewer.passport.sourceMarker":"SRC","viewer.passport.beacon.one":"{count} verified source; focus this node to inspect","viewer.passport.beacon.other":"{count} verified sources; focus this node to inspect","viewer.passport.repository.open":"Open verified repository revision {revision}","viewer.passport.source.open":"Open verified source {path} at revision {revision}","viewer.passport.source.openLink":"Open ↗","viewer.passport.reach.upstream.one":"Trace {count} upstream authored node","viewer.passport.reach.upstream.other":"Trace {count} upstream authored nodes","viewer.passport.reach.downstream.one":"Trace {count} downstream authored node","viewer.passport.reach.downstream.other":"Trace {count} downstream authored nodes","viewer.passport.reach.noUpstream":"No upstream authored nodes","viewer.passport.reach.noDownstream":"No downstream authored nodes","viewer.passport.reach.status":"{direction} · {nodes} nodes · {links} links · max {hops} hops","viewer.route.eyebrow":"Path","viewer.route.start":"Click where the path starts","viewer.route.start.find":"Find start","viewer.route.start.find.aria":"Find a route start","viewer.route.copy":"Copy link","viewer.route.copy.aria":"Copy link to traced route","viewer.route.clear":"Clear","viewer.route.clear.aria":"Clear route probe","viewer.route.traced":"Path","viewer.route.pickTwo":"Click two nodes on the diagram","viewer.route.pickOne":"Click a node on the diagram","viewer.route.controls":"Route journey controls","viewer.route.previous":"Previous route position","viewer.route.play":"Play route journey","viewer.route.pause":"Pause route journey","viewer.route.replay":"Replay route journey","viewer.route.next":"Next route position","viewer.route.journey":"Journey","viewer.route.pause.label":"Pause","viewer.route.replay.label":"Replay","viewer.route.overview":"Overview","viewer.route.overview.aria":"Show complete route overview","viewer.route.instructions":"Click a start, then an end. Paths follow the arrows.","viewer.route.destination":"Where does the path from {label} end?","viewer.route.destination.find":"Find target","viewer.route.destination.find.aria":"Find a reachable route destination","viewer.route.differentDestination":"Choose a different destination","viewer.route.distinct":"Pick two different nodes.","viewer.route.unreachable":"Cannot reach {label} from here","viewer.route.unreachable.detail":"{target} cannot be reached from {source} along the arrows. Pick a highlighted node.","viewer.route.start.instructions":"Next, pick the end. Only nodes you can reach will light up.","viewer.route.copy.success":"Traced route link copied","viewer.route.copy.failed":"Could not copy traced route link","viewer.route.position":"Route position {index} of {total}: {label}","viewer.route.step":"Step {index} of {total} · {phase} · {label}","viewer.route.motionRequired":"Automatic journey requires Live motion","viewer.route.trigger.clear":"Clear traced route","viewer.route.overview.status":"{nodes} · {hops} · shortest path","viewer.route.overview.node.one":"{count} node","viewer.route.overview.node.other":"{count} nodes","viewer.route.overview.hop.one":"{count} step","viewer.route.overview.hop.other":"{count} steps","viewer.route.phase.playing":"Playing","viewer.route.phase.complete":"Complete","viewer.route.phase.inspecting":"Inspecting","viewer.route.destination.count.one":"{count} reachable node is highlighted. Click it.","viewer.route.destination.count.other":"{count} reachable nodes are highlighted. Click one.","viewer.route.noOutgoing":"No arrows lead out of this node. Clear it and pick another start.","viewer.route.result.title":"{source} to {target}","viewer.route.finder.source.title":"Choose route start","viewer.route.finder.source.placeholder":"Search route sources","viewer.route.finder.source.empty":"No matching route sources","viewer.route.finder.source.results":"Nodes that can start a route","viewer.route.finder.source.noun":"route sources","viewer.route.finder.source.badge":"start","viewer.route.finder.target.title":"Destination from {label}","viewer.route.finder.target.placeholder":"Search reachable destinations","viewer.route.finder.target.empty":"No matching reachable destinations","viewer.route.finder.target.results":"Reachable route destinations","viewer.route.finder.target.noun":"reachable destinations","viewer.route.hop.one":"{count} hop","viewer.route.hop.other":"{count} hops","viewer.lens.eyebrow":"Semantic lens","viewer.lens.title":"Compare system roles","viewer.lens.close":"Close semantic lens","viewer.lens.instruction":"Choose up to two semantic kinds. One reveals its real traffic; two compare only direct authored relationships.","viewer.lens.kinds":"Semantic kinds","viewer.lens.choose":"Choose a kind to inspect its nodes and touching relationships.","viewer.lens.copy":"Copy link to semantic lens","viewer.lens.clear":"Clear semantic lens","viewer.lens.open":"Open semantic lens","viewer.lens.openActive":"Open active semantic lens","viewer.lens.legend":"Semantic legend","viewer.lens.legend.inspect.one":"Inspect {label}, {count} node","viewer.lens.legend.inspect.other":"Inspect {label}, {count} nodes","viewer.lens.kind.count.one":"{label}, {count} node","viewer.lens.kind.count.other":"{label}, {count} nodes","viewer.lens.compare.one":"{first} → {second}: {forward} · {second} → {first}: {reverse} · {count} direct relationship","viewer.lens.compare.other":"{first} → {second}: {forward} · {second} → {first}: {reverse} · {count} direct relationships","viewer.lens.single":"{nodes} · {relationships} · connected peers remain visible","viewer.lens.node.one":"{count} {label} node","viewer.lens.node.other":"{count} {label} nodes","viewer.lens.relationship.one":"{count} touching relationship","viewer.lens.relationship.other":"{count} touching relationships","viewer.radar.title":"Semantic radar","viewer.radar.building":"Building overview","viewer.radar.openFull":"Open full semantic radar","viewer.radar.open":"Open radar","viewer.radar.close":"Close semantic radar","viewer.radar.surface":"Diagram overview. Click a node to focus it, or use arrow keys to pan.","viewer.radar.click":"Click node","viewer.radar.drag":"Drag to pan","viewer.radar.space":"Semantic radar needs more MAP space.","viewer.radar.nodes":"Semantic diagram radar nodes","viewer.radar.focus":"Focus {label} from Semantic Radar","viewer.radar.status":"{count} nodes · {viewport}","viewer.radar.fullMap":"{count} nodes · full map","viewer.radar.compacted":"Radar compacted to avoid covering the Semantic Passport or MAP controls.","viewer.radar.cancelWaiting":"Cancel semantic radar waiting for more MAP space","viewer.radar.needsSpace":"Semantic radar needs more visible MAP space","viewer.radar.viewport.full":"full map","viewer.radar.viewport.width":"{percent}% width","viewer.radar.viewport.scale":"{percent}% viewport","viewer.nav.controls":"Diagram view controls","viewer.nav.route":"Trace a directed route","viewer.nav.route.title":"Trace route (R)","viewer.nav.route.short":"PATH","viewer.nav.radar":"Open semantic radar","viewer.nav.radar.title":"Semantic radar (M)","viewer.nav.radar.short":"MAP","viewer.nav.lens":"Open semantic lens","viewer.nav.lens.title":"Semantic lens (L)","viewer.nav.lens.short":"LENS","viewer.nav.find":"Find a node","viewer.nav.find.title":"Find a node (/)","viewer.outline.title":"Node index","viewer.rail.show":"Notes \u0026 index","viewer.rail.controls":"Side panel","viewer.rail.collapse":"Collapse side panel","viewer.rail.bottom":"Move panel below the diagram","viewer.rail.right":"Move panel beside the diagram","viewer.nav.guide":"Open diagram guide","viewer.nav.guide.title":"Diagram guide (?)","viewer.nav.zoomOut":"Zoom out","viewer.nav.zoomOut.title":"Zoom out (-)","viewer.nav.reset":"Reset diagram view","viewer.nav.reset.title":"Reset view (0)","viewer.nav.read":"READ","viewer.nav.zoomIn":"Zoom in","viewer.nav.zoomIn.title":"Zoom in (+)","viewer.nav.camera":"{hint}. Reset diagram view","viewer.nav.camera.title":"{semantic}{hint} · reset view (0)","viewer.nav.camera.semantic":"Semantic camera active · ","viewer.nav.level.map":"MAP","viewer.nav.level.read":"READ","viewer.nav.level.full":"FULL","viewer.nav.level.auto":"AUTO","viewer.nav.detail.map":"Zoom in to reveal relationship labels and node context","viewer.nav.detail.read":"Zoom in again to reveal tags and annotations","viewer.nav.detail.full":"Full diagram detail","viewer.intent.summary":"{label}. {out} outgoing, {in} incoming{loops}. {total} connections. Press Enter for details.","viewer.intent.loops":", {count} self loop","viewer.common.copied":"Copied","viewer.common.copyFailed":"Copy failed","viewer.common.copyLink":"Copy link","viewer.common.clear":"Clear","viewer.common.close":"Close"}}</script>
+    <script id="archify-i18n-data" type="application/json">{"locale":"en","messages":{"viewer.kind.frontend":"Frontend","viewer.kind.backend":"Backend","viewer.kind.database":"Database","viewer.kind.cloud":"Cloud","viewer.kind.security":"Security","viewer.kind.messagebus":"Message bus","viewer.kind.external":"External","viewer.kind.neutral":"Neutral","viewer.kind.node":"Node","viewer.kind.start":"Start","viewer.kind.active":"Active","viewer.kind.waiting":"Waiting","viewer.kind.decision":"Decision","viewer.kind.success":"Success","viewer.kind.failure":"Failure","viewer.toolbar.actions":"Diagram actions","viewer.theme.toggle.title":"Toggle theme (T)","viewer.theme.toggle":"Toggle color theme","viewer.theme.dark":"Dark","viewer.theme.light":"Light","viewer.preset.choose.title":"Choose visual style (S cycles)","viewer.preset.choose":"Choose visual style","viewer.preset.style":"Style","viewer.preset.menu":"Visual style","viewer.preset.identity":"Visual identity","viewer.preset.cycles":"to cycle","viewer.preset.classic":"Classic","viewer.preset.classic.short":"Classic","viewer.preset.classic.hint":"Stable technical default","viewer.preset.flow":"Signal Flow","viewer.preset.flow.short":"Flow","viewer.preset.flow.hint":"Motion-forward presentation","viewer.preset.blueprint":"Blueprint","viewer.preset.blueprint.hint":"Engineering review","viewer.preset.editorial":"Editorial","viewer.preset.editorial.hint":"Publication and launch notes","viewer.preset.badge.signalFlow":"SIGNAL FLOW","viewer.preset.badge.blueprint":"BLUEPRINT / REV 01","viewer.preset.badge.editorial":"EDITORIAL / FIELD NOTE","viewer.preset.badge.editorialPlate":"ARCHIFY / PLATE 04","viewer.preset.current":"Visual style: {style}. Choose visual style","viewer.motion.live":"Live","viewer.motion.still":"Still","viewer.motion.pause":"Pause motion","viewer.motion.resume":"Resume motion","viewer.motion.reduced":"Motion paused by reduced-motion preference","viewer.motion.hidden":"Motion paused while this page is hidden","viewer.motion.yielding":"Pause motion; currently yielding to {owner}","viewer.motion.yielding.title":"Live preview enabled Â· yielding to {owner}","viewer.owner.route":"Route Probe","viewer.owner.lens":"Semantic Lens","viewer.owner.relationship":"Relationship Preview","viewer.owner.intent":"Intent Trace","viewer.owner.focus":"semantic focus","viewer.owner.legend":"legend preview","viewer.owner.reader":"reader interaction","viewer.present.enter":"Enter presentation stage","viewer.present.enter.title":"Presentation stage (F)","viewer.present.exit":"Exit presentation stage","viewer.present.exit.title":"Exit presentation stage (F or Escape)","viewer.present.present":"Present","viewer.present.exit.label":"Exit","viewer.export.button":"Export","viewer.export.button.title":"Export diagram (E)","viewer.export.diagram":"Export diagram","viewer.export.menu":"Export","viewer.export.subtitle":"Portable, clean outputs","viewer.export.share":"Share","viewer.export.shareCard":"Share Card","viewer.export.routeShareCard":"Route Share Card","viewer.export.reachShareCard":"Reach Share Card","viewer.export.copyDiagram":"Copy diagram","viewer.export.clipboardPng":"PNG to clipboard","viewer.export.raster":"Raster images","viewer.export.image":"Image","viewer.export.lossless":"Lossless image","viewer.export.compact":"Compact image","viewer.export.modern":"Modern image","viewer.export.vectorMotion":"Vector and motion","viewer.export.vectorMotion.heading":"Vector \u0026 motion","viewer.export.editable":"Editable vector","viewer.export.svg.auto":"SVG Â· Auto","viewer.export.svg.auto.hint":"Matches host theme","viewer.export.svg.light":"SVG Â· Light","viewer.export.svg.light.hint":"Always light","viewer.export.svg.dark":"SVG Â· Dark","viewer.export.svg.dark.hint":"Always dark","viewer.export.motion6s":"6s motion","viewer.export.unsupported":"Not supported by this browser","viewer.export.clipboardUnsupported":"Clipboard image write not supported by this browser","viewer.export.clipboardUnsupported.short":"Clipboard image write not supported in this browser.","viewer.export.motionUnavailable":"Motion capture unavailable in this browser","viewer.export.webmUnavailable":"WebM unavailable in this browser","viewer.export.failed":"Export failed: {message}","viewer.export.unknownVariant":"Unknown Share Card variant: {variant}","viewer.export.routeRequired":"Trace a route before exporting a Route Share Card","viewer.export.reachRequired":"Trace authored reach before exporting a Reach Share Card","viewer.export.unknown":"unknown","viewer.export.routeFailed":"Route Share Card export failed: {message}","viewer.export.reachFailed":"Reach Share Card export failed: {message}","viewer.export.copyFailed":"Copy failed: {message}","viewer.export.copiedPng":"Copied PNG to clipboard","viewer.export.downloadedRoute":"Downloaded Route Share Card","viewer.export.downloadedReach":"Downloaded Reach Share Card","viewer.export.downloadedWebm":"Downloaded WebM","viewer.export.recording":"Recording 6 seconds of motionâ€¦","viewer.export.card.routeSummary.one":"Path: {source} â†’ {target} Â· {count} step","viewer.export.card.routeSummary.other":"Path: {source} â†’ {target} Â· {count} steps","viewer.export.card.reachSummary":"Authored {direction} from {origin} Â· {nodes} Â· {links} Â· max {hops}","viewer.export.card.node.one":"{count} node","viewer.export.card.node.other":"{count} nodes","viewer.export.card.link.one":"{count} link","viewer.export.card.link.other":"{count} links","viewer.export.card.hop.one":"{count} hop","viewer.export.card.hop.other":"{count} hops","viewer.export.card.routeBadge":"ARCHIFY Â· ROUTE Â· {hops}","viewer.export.card.reachBadge":"ARCHIFY Â· {direction} REACH","viewer.export.direction.upstream":"Upstream","viewer.export.direction.downstream":"Downstream","viewer.export.error.canvasUnavailable":"Canvas unavailable for {label}","viewer.export.error.contextUnavailable":"2D canvas context unavailable for {label}","viewer.export.error.toBlobUnavailable":"canvas.toBlob unavailable for {label}","viewer.export.error.toBlobNull":"canvas.toBlob returned no data for {label}","viewer.export.error.variantsCombined":"Share Card variants cannot be combined","viewer.export.error.viewerState":"Share Card export could not remove temporary viewer state","viewer.export.error.routeState":"Route Card export could not preserve the resolved route safely","viewer.export.error.reachState":"Reach Card export could not preserve authored reach safely","viewer.export.error.webmRequirements":"WebM motion export requires a trace animation and browser MediaRecorder support","viewer.export.error.mediaRecorder":"MediaRecorder failed","viewer.export.error.emptyWebm":"MediaRecorder produced an empty WebM","viewer.export.error.webmBackground":"SVG background could not be loaded for WebM export","viewer.guide.title":"Explore this system","viewer.focus.selectedNodes":"{count} selected nodes","viewer.guide.eyebrow":"Diagram guide","viewer.guide.close":"Close diagram guide","viewer.guide.inspecting":"Inspecting compiled semantics","viewer.guide.actions":"Diagram exploration actions","viewer.guide.find":"Find any node","viewer.guide.find.hint":"Search labels, responsibilities, kinds, and stable IDs.","viewer.guide.route":"Trace a route","viewer.guide.route.aria":"Trace a directed route","viewer.guide.route.hint":"Ask how two semantic nodes connect in authored direction.","viewer.guide.map":"See the whole system","viewer.guide.map.hint":"Open Semantic Radar with a live viewport and stable nodes.","viewer.guide.lens":"Compare semantic kinds","viewer.guide.lens.hint":"Count roles, reveal their traffic, and compare direct authored links.","viewer.guide.present":"Enter Presentation Stage","viewer.guide.present.hint":"Give the live diagram the viewport without changing export.","viewer.guide.shortcuts":"Additional keyboard shortcuts","viewer.guide.shortcut.export":"Export","viewer.guide.shortcut.theme":"Theme","viewer.guide.shortcut.style":"Style","viewer.guide.shortcut.reset":"Reset","viewer.guide.shortcut.zoomIn":"Zoom in","viewer.guide.shortcut.zoomOut":"Zoom out","viewer.guide.shortcut.close":"Close","viewer.guide.facts":"{nodes} Â· {relationships}","viewer.guide.fact.node.one":"{count} semantic node","viewer.guide.fact.node.other":"{count} semantic nodes","viewer.guide.fact.relationship.one":"{count} relationship","viewer.guide.fact.relationship.other":"{count} relationships","viewer.guide.open":"Open diagram guide","viewer.finder.title":"Find a node","viewer.finder.close":"Close node finder","viewer.finder.placeholder":"Search labels or IDs","viewer.finder.search":"Search diagram nodes","viewer.finder.results":"Diagram nodes","viewer.finder.empty":"No matching nodes","viewer.finder.result.focus":"Focus {label}","viewer.finder.result.routeStart":"Choose {label} as route start","viewer.finder.result.routeTarget":"Choose {label} as route destination, {links}","viewer.finder.status.empty":"No matching nodes","viewer.finder.status.count.one":"{count} matching node","viewer.finder.status.count.other":"{count} matching nodes","viewer.finder.noun.nodes":"nodes","viewer.finder.link.one":"{count} link","viewer.finder.link.other":"{count} links","viewer.finder.result.focus.one":"Focus {label}, {count} related connection","viewer.finder.result.focus.other":"Focus {label}, {count} related connections","viewer.finder.status.filtered":"{visible} of {available} {noun}","viewer.finder.status.all":"{available} {noun}","viewer.passport.eyebrow":"Semantic passport","viewer.passport.metadata":"Node metadata","viewer.passport.evidence":"Verified source evidence","viewer.passport.verified":"Verified source","viewer.passport.verificationScope":"Verified against local Git at the pinned revision. Remote access has not been checked.","viewer.passport.reach":"Authored reach","viewer.passport.reach.trace":"Trace authored reachability","viewer.passport.upstream":"Upstream","viewer.passport.downstream":"Downstream","viewer.passport.upstream.trace":"Trace upstream authored reachability","viewer.passport.downstream.trace":"Trace downstream authored reachability","viewer.passport.close":"Close semantic passport","viewer.passport.move":"Move semantic passport. Drag, use arrow keys, or press Home to reset.","viewer.passport.copy":"Copy link","viewer.passport.copy.focus":"Copy link to focused node","viewer.passport.relations":"Relations","viewer.passport.relations.show":"Show connected relationships","viewer.passport.relations.hide":"Hide connected relationships","viewer.passport.relations.list":"Connected relationships","viewer.passport.copyRelation":"Copy relation","viewer.passport.copyNode":"Copy node","viewer.passport.copyPinned":"Copy link to pinned relationship","viewer.passport.copySource":"Copy link to source node","viewer.passport.copy.focused.success":"Focused node link copied","viewer.passport.copy.pinned.success":"Pinned relationship link copied","viewer.passport.copy.focused.failed":"Could not copy focused node link","viewer.passport.copy.pinned.failed":"Could not copy pinned relationship link","viewer.passport.relationship.none":"No connected relationships","viewer.passport.relationship.count.one":"{count} relation","viewer.passport.relationship.count.other":"{count} relations","viewer.passport.relationship.show.one":"Show {count} connected relationship","viewer.passport.relationship.show.other":"Show {count} connected relationships","viewer.passport.relationship.summary":"{out} outgoing Â· {in} incoming{loops}","viewer.passport.relationship.loops":" Â· {count} loop","viewer.passport.relationship.explorer":"Direct relationship explorer","viewer.passport.relationship.help":"Use arrow keys to explore relationships. Press Enter or Space to pin details; Escape clears.","viewer.passport.relationship.loopsBack":"loops back","viewer.passport.relationship.connectsTo":"connects to","viewer.passport.relationship.connectsFrom":"connects from","viewer.passport.relationship.pinned":"Pinned relationship Â· {from} â†’ {to} Â· {label}","viewer.passport.relationship.inspect":"Inspect relationship {index} of {total}: {from} to {to}, {label}. Press Enter for details.","viewer.passport.relationship.group.out":"Outgoing","viewer.passport.relationship.group.in":"Incoming","viewer.passport.relationship.group.loop":"Self loops","viewer.passport.relationship.row":"{group}: {relationship}, {neighbor}","viewer.passport.relationship.direction.out":"OUT â†’","viewer.passport.relationship.direction.in":"â† IN","viewer.passport.relationship.direction.loop":"LOOP","viewer.passport.sourceCount.one":"{count} verified source reference","viewer.passport.sourceCount.other":"{count} verified source references","viewer.passport.sourceMarker":"SRC","viewer.passport.beacon.one":"{count} verified source; focus this node to inspect","viewer.passport.beacon.other":"{count} verified sources; focus this node to inspect","viewer.passport.repository.open":"Open verified repository revision {revision}","viewer.passport.source.open":"Open verified source {path} at revision {revision}","viewer.passport.source.openLink":"Open â†—","viewer.passport.reach.upstream.one":"Trace {count} upstream authored node","viewer.passport.reach.upstream.other":"Trace {count} upstream authored nodes","viewer.passport.reach.downstream.one":"Trace {count} downstream authored node","viewer.passport.reach.downstream.other":"Trace {count} downstream authored nodes","viewer.passport.reach.noUpstream":"No upstream authored nodes","viewer.passport.reach.noDownstream":"No downstream authored nodes","viewer.passport.reach.status":"{direction} Â· {nodes} nodes Â· {links} links Â· max {hops} hops","viewer.route.eyebrow":"Path","viewer.route.start":"Click where the path starts","viewer.route.start.find":"Find start","viewer.route.start.find.aria":"Find a route start","viewer.route.copy":"Copy link","viewer.route.copy.aria":"Copy link to traced route","viewer.route.clear":"Clear","viewer.route.clear.aria":"Clear route probe","viewer.route.traced":"Path","viewer.route.pickTwo":"Click two nodes on the diagram","viewer.route.pickOne":"Click a node on the diagram","viewer.route.controls":"Route journey controls","viewer.route.previous":"Previous route position","viewer.route.play":"Play route journey","viewer.route.pause":"Pause route journey","viewer.route.replay":"Replay route journey","viewer.route.next":"Next route position","viewer.route.journey":"Journey","viewer.route.pause.label":"Pause","viewer.route.replay.label":"Replay","viewer.route.overview":"Overview","viewer.route.overview.aria":"Show complete route overview","viewer.route.instructions":"Click a start, then an end. Paths follow the arrows.","viewer.route.destination":"Where does the path from {label} end?","viewer.route.destination.find":"Find target","viewer.route.destination.find.aria":"Find a reachable route destination","viewer.route.differentDestination":"Choose a different destination","viewer.route.distinct":"Pick two different nodes.","viewer.route.unreachable":"Cannot reach {label} from here","viewer.route.unreachable.detail":"{target} cannot be reached from {source} along the arrows. Pick a highlighted node.","viewer.route.start.instructions":"Next, pick the end. Only nodes you can reach will light up.","viewer.route.copy.success":"Traced route link copied","viewer.route.copy.failed":"Could not copy traced route link","viewer.route.position":"Route position {index} of {total}: {label}","viewer.route.step":"Step {index} of {total} Â· {phase} Â· {label}","viewer.route.motionRequired":"Automatic journey requires Live motion","viewer.route.trigger.clear":"Clear traced route","viewer.route.overview.status":"{nodes} Â· {hops} Â· shortest path","viewer.route.overview.node.one":"{count} node","viewer.route.overview.node.other":"{count} nodes","viewer.route.overview.hop.one":"{count} step","viewer.route.overview.hop.other":"{count} steps","viewer.route.phase.playing":"Playing","viewer.route.phase.complete":"Complete","viewer.route.phase.inspecting":"Inspecting","viewer.route.destination.count.one":"{count} reachable node is highlighted. Click it.","viewer.route.destination.count.other":"{count} reachable nodes are highlighted. Click one.","viewer.route.noOutgoing":"No arrows lead out of this node. Clear it and pick another start.","viewer.route.result.title":"{source} to {target}","viewer.route.finder.source.title":"Choose route start","viewer.route.finder.source.placeholder":"Search route sources","viewer.route.finder.source.empty":"No matching route sources","viewer.route.finder.source.results":"Nodes that can start a route","viewer.route.finder.source.noun":"route sources","viewer.route.finder.source.badge":"start","viewer.route.finder.target.title":"Destination from {label}","viewer.route.finder.target.placeholder":"Search reachable destinations","viewer.route.finder.target.empty":"No matching reachable destinations","viewer.route.finder.target.results":"Reachable route destinations","viewer.route.finder.target.noun":"reachable destinations","viewer.route.hop.one":"{count} hop","viewer.route.hop.other":"{count} hops","viewer.lens.eyebrow":"Semantic lens","viewer.lens.title":"Compare system roles","viewer.lens.close":"Close semantic lens","viewer.lens.instruction":"Choose up to two semantic kinds. One reveals its real traffic; two compare only direct authored relationships.","viewer.lens.kinds":"Semantic kinds","viewer.lens.choose":"Choose a kind to inspect its nodes and touching relationships.","viewer.lens.copy":"Copy link to semantic lens","viewer.lens.clear":"Clear semantic lens","viewer.lens.open":"Open semantic lens","viewer.lens.openActive":"Open active semantic lens","viewer.lens.legend":"Semantic legend","viewer.lens.legend.inspect.one":"Inspect {label}, {count} node","viewer.lens.legend.inspect.other":"Inspect {label}, {count} nodes","viewer.lens.kind.count.one":"{label}, {count} node","viewer.lens.kind.count.other":"{label}, {count} nodes","viewer.lens.compare.one":"{first} â†’ {second}: {forward} Â· {second} â†’ {first}: {reverse} Â· {count} direct relationship","viewer.lens.compare.other":"{first} â†’ {second}: {forward} Â· {second} â†’ {first}: {reverse} Â· {count} direct relationships","viewer.lens.single":"{nodes} Â· {relationships} Â· connected peers remain visible","viewer.lens.node.one":"{count} {label} node","viewer.lens.node.other":"{count} {label} nodes","viewer.lens.relationship.one":"{count} touching relationship","viewer.lens.relationship.other":"{count} touching relationships","viewer.radar.title":"Semantic radar","viewer.radar.building":"Building overview","viewer.radar.openFull":"Open full semantic radar","viewer.radar.open":"Open radar","viewer.radar.close":"Close semantic radar","viewer.radar.surface":"Diagram overview. Click a node to focus it, or use arrow keys to pan.","viewer.radar.click":"Click node","viewer.radar.drag":"Drag to pan","viewer.radar.space":"Semantic radar needs more MAP space.","viewer.radar.nodes":"Semantic diagram radar nodes","viewer.radar.focus":"Focus {label} from Semantic Radar","viewer.radar.status":"{count} nodes Â· {viewport}","viewer.radar.fullMap":"{count} nodes Â· full map","viewer.radar.compacted":"Radar compacted to avoid covering the Semantic Passport or MAP controls.","viewer.radar.cancelWaiting":"Cancel semantic radar waiting for more MAP space","viewer.radar.needsSpace":"Semantic radar needs more visible MAP space","viewer.radar.viewport.full":"full map","viewer.radar.viewport.width":"{percent}% width","viewer.radar.viewport.scale":"{percent}% viewport","viewer.nav.controls":"Diagram view controls","viewer.nav.route":"Trace a directed route","viewer.nav.route.title":"Trace route (R)","viewer.nav.route.short":"PATH","viewer.nav.radar":"Open semantic radar","viewer.nav.radar.title":"Semantic radar (M)","viewer.nav.radar.short":"MAP","viewer.nav.lens":"Open semantic lens","viewer.nav.lens.title":"Semantic lens (L)","viewer.nav.lens.short":"LENS","viewer.nav.find":"Find a node","viewer.nav.find.title":"Find a node (/)","viewer.outline.title":"Node index","viewer.rail.show":"Notes \u0026 index","viewer.rail.controls":"Side panel","viewer.rail.collapse":"Collapse side panel","viewer.rail.bottom":"Move panel below the diagram","viewer.rail.right":"Move panel beside the diagram","viewer.nav.guide":"Open diagram guide","viewer.nav.guide.title":"Diagram guide (?)","viewer.nav.zoomOut":"Zoom out","viewer.nav.zoomOut.title":"Zoom out (-)","viewer.nav.reset":"Reset diagram view","viewer.nav.reset.title":"Reset view (0)","viewer.nav.read":"READ","viewer.nav.zoomIn":"Zoom in","viewer.nav.zoomIn.title":"Zoom in (+)","viewer.nav.camera":"{hint}. Reset diagram view","viewer.nav.camera.title":"{semantic}{hint} Â· reset view (0)","viewer.nav.camera.semantic":"Semantic camera active Â· ","viewer.nav.level.map":"MAP","viewer.nav.level.read":"READ","viewer.nav.level.full":"FULL","viewer.nav.level.auto":"AUTO","viewer.nav.detail.map":"Zoom in to reveal relationship labels and node context","viewer.nav.detail.read":"Zoom in again to reveal tags and annotations","viewer.nav.detail.full":"Full diagram detail","viewer.intent.summary":"{label}. {out} outgoing, {in} incoming{loops}. {total} connections. Press Enter for details.","viewer.intent.loops":", {count} self loop","viewer.common.copied":"Copied","viewer.common.copyFailed":"Copy failed","viewer.common.copyLink":"Copy link","viewer.common.clear":"Clear","viewer.common.close":"Close"}}</script>
     <!-- Main Diagram -->
     <div class="diagram-container" data-detail-level="read"
          data-preset-badge-editorial-plate="ARCHIFY / PLATE 04">
@@ -5035,7 +5035,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <path data-edge-from="npm" data-edge-to="installer" data-edge-label="npx" data-edge-key="4" data-edge-id="npm-installer" data-composition-points="440,30;20,30;20,192;40,192" d="M 440 30 L 28 30 Q 20 30 20 38 L 20 184 Q 20 192 28 192 L 40 192" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
         <g data-graph-role="automatic-crossover" style="--step:5">
           <path data-graph-role="automatic-crossover-underlay" d="M 125 224 L 125 240 Q 125 248 133 248 L 133 248 Q 141 248 141 256 L 141 278 Q 141 286 133 286 L 128 286 Q 120 286 120 294 L 120 310" fill="none" stroke="var(--mask)" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>
-          <path data-edge-from="installer" data-edge-to="harness" data-edge-label="39 skills" data-edge-key="5" data-edge-id="installer-harness" data-composition-points="125,224;125,248;141,248;141,286;120,286;120,310" data-composition-crossover="halo" data-composition-independent="true" d="M 125 224 L 125 240 Q 125 248 133 248 L 133 248 Q 141 248 141 256 L 141 278 Q 141 286 133 286 L 128 286 Q 120 286 120 294 L 120 310" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+          <path data-edge-from="installer" data-edge-to="harness" data-edge-label="41 skills" data-edge-key="5" data-edge-id="installer-harness" data-composition-points="125,224;125,248;141,248;141,286;120,286;120,310" data-composition-crossover="halo" data-composition-independent="true" d="M 125 224 L 125 240 Q 125 248 133 248 L 133 248 Q 141 248 141 256 L 141 278 Q 141 286 133 286 L 128 286 Q 120 286 120 294 L 120 310" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         </g>
         <g data-graph-role="automatic-crossover" style="--step:6">
           <path data-graph-role="automatic-crossover-underlay" d="M 200 346 L 300 346" fill="none" stroke="var(--mask)" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>
@@ -5088,7 +5088,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
         <!-- Components -->
         <g id="node-repo" data-node-id="repo" data-node-label="GitHub repo" tabindex="0" role="button" aria-label="Focus GitHub repo, source of truth, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="source of truth" data-node-context="Architecture component">
-          <title>GitHub repo · source of truth · Architecture component</title>
+          <title>GitHub repo Â· source of truth Â· Architecture component</title>
           <rect x="40" y="40" width="150" height="64" rx="6" class="c-mask"/>
           <rect x="40" y="40" width="150" height="64" rx="6" class="c-external" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(46 46) scale(0.6875)">
@@ -5100,7 +5100,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-ci" data-node-id="ci" data-node-label="GitHub Actions" tabindex="0" role="button" aria-label="Focus GitHub Actions, tests + publish, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="tests + publish" data-node-context="Architecture component">
-          <title>GitHub Actions · tests + publish · Architecture component</title>
+          <title>GitHub Actions Â· tests + publish Â· Architecture component</title>
           <rect x="230" y="40" width="160" height="64" rx="6" class="c-mask"/>
           <rect x="230" y="40" width="160" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(236 46) scale(0.6875)">
@@ -5111,7 +5111,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-npm" data-node-id="npm" data-node-label="npm" tabindex="0" role="button" aria-label="Focus npm, @youcisla/agent-foundry, Architecture component" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="@youcisla/agent-foundry" data-node-context="Architecture component">
-          <title>npm · @youcisla/agent-foundry · Architecture component</title>
+          <title>npm Â· @youcisla/agent-foundry Â· Architecture component</title>
           <rect x="440" y="0" width="180" height="60" rx="6" class="c-mask"/>
           <rect x="440" y="0" width="180" height="60" rx="6" class="c-cloud" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(446 6) scale(0.6875)">
@@ -5122,7 +5122,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-pypi" data-node-id="pypi" data-node-label="PyPI" tabindex="0" role="button" aria-label="Focus PyPI, agent-foundry-runtime, Architecture component" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="agent-foundry-runtime" data-node-context="Architecture component">
-          <title>PyPI · agent-foundry-runtime · Architecture component</title>
+          <title>PyPI Â· agent-foundry-runtime Â· Architecture component</title>
           <rect x="440" y="75" width="180" height="60" rx="6" class="c-mask"/>
           <rect x="440" y="75" width="180" height="60" rx="6" class="c-cloud" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(446 81) scale(0.6875)">
@@ -5133,7 +5133,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-mcpreg" data-node-id="mcpreg" data-node-label="MCP registry" tabindex="0" role="button" aria-label="Focus MCP registry, io.github.youcisla, Architecture component" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="io.github.youcisla" data-node-context="Architecture component">
-          <title>MCP registry · io.github.youcisla · Architecture component</title>
+          <title>MCP registry Â· io.github.youcisla Â· Architecture component</title>
           <rect x="700" y="75" width="180" height="60" rx="6" class="c-mask"/>
           <rect x="700" y="75" width="180" height="60" rx="6" class="c-cloud" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(706 81) scale(0.6875)">
@@ -5144,7 +5144,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-installer" data-node-id="installer" data-node-label="install.js" tabindex="0" role="button" aria-label="Focus install.js, 14 harness adapters, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="14 harness adapters" data-node-context="Architecture component">
-          <title>install.js · 14 harness adapters · Architecture component</title>
+          <title>install.js Â· 14 harness adapters Â· Architecture component</title>
           <rect x="40" y="160" width="170" height="64" rx="6" class="c-mask"/>
           <rect x="40" y="160" width="170" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(46 166) scale(0.6875)">
@@ -5154,19 +5154,19 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="context" x="125" y="206" class="t-muted" font-size="9" text-anchor="middle">14 harness adapters</text>
         </g>
 
-        <g id="node-agents" data-node-id="agents" data-node-label="3 agents" tabindex="0" role="button" aria-label="Focus 3 agents, planner · critic · orchestrator, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="planner · critic · orchestrator" data-node-context="Architecture component">
-          <title>3 agents · planner · critic · orchestrator · Architecture component</title>
+        <g id="node-agents" data-node-id="agents" data-node-label="3 agents" tabindex="0" role="button" aria-label="Focus 3 agents, planner Â· critic Â· orchestrator, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="planner Â· critic Â· orchestrator" data-node-context="Architecture component">
+          <title>3 agents Â· planner Â· critic Â· orchestrator Â· Architecture component</title>
           <rect x="230" y="160" width="180" height="64" rx="6" class="c-mask"/>
           <rect x="230" y="160" width="180" height="64" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(236 166) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" data-detail-anchor="" x="320" y="190" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">3 agents</text>
-        <text data-detail="context" x="320" y="206" class="t-muted" font-size="9" text-anchor="middle">planner · critic · orchestrator</text>
+        <text data-detail="context" x="320" y="206" class="t-muted" font-size="9" text-anchor="middle">planner Â· critic Â· orchestrator</text>
         </g>
 
         <g id="node-harness" data-node-id="harness" data-node-label="14 harnesses" tabindex="0" role="button" aria-label="Focus 14 harnesses, direct-child skill roots, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="direct-child skill roots" data-node-context="Architecture component">
-          <title>14 harnesses · direct-child skill roots · Architecture component</title>
+          <title>14 harnesses Â· direct-child skill roots Â· Architecture component</title>
           <rect x="40" y="310" width="160" height="72" rx="6" class="c-mask"/>
           <rect x="40" y="310" width="160" height="72" rx="6" class="c-external" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(46 316) scale(0.6875)">
@@ -5178,7 +5178,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-cli" data-node-id="cli" data-node-label="CLI" tabindex="0" role="button" aria-label="Focus CLI, 22 commands, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="22 commands" data-node-context="Architecture component">
-          <title>CLI · 22 commands · Architecture component</title>
+          <title>CLI Â· 22 commands Â· Architecture component</title>
           <rect x="300" y="310" width="150" height="72" rx="6" class="c-mask"/>
           <rect x="300" y="310" width="150" height="72" rx="6" class="c-frontend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(306 316) scale(0.6875)">
@@ -5192,7 +5192,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-daemon" data-node-id="daemon" data-node-label="FastAPI daemon" tabindex="0" role="button" aria-label="Focus FastAPI daemon, 127.0.0.1:8765, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="127.0.0.1:8765" data-node-context="Architecture component">
-          <title>FastAPI daemon · 127.0.0.1:8765 · Architecture component</title>
+          <title>FastAPI daemon Â· 127.0.0.1:8765 Â· Architecture component</title>
           <rect x="510" y="310" width="160" height="72" rx="6" class="c-mask"/>
           <rect x="510" y="310" width="160" height="72" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(516 316) scale(0.6875)">
@@ -5203,7 +5203,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-planner" data-node-id="planner" data-node-label="Planner" tabindex="0" role="button" aria-label="Focus Planner, graph + weights + rerank, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="graph + weights + rerank" data-node-context="Architecture component">
-          <title>Planner · graph + weights + rerank · Architecture component</title>
+          <title>Planner Â· graph + weights + rerank Â· Architecture component</title>
           <rect x="800" y="310" width="170" height="72" rx="6" class="c-mask"/>
           <rect x="800" y="310" width="170" height="72" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(806 316) scale(0.6875)">
@@ -5214,7 +5214,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-executor" data-node-id="executor" data-node-label="Executor" tabindex="0" role="button" aria-label="Focus Executor, LiteLLM + retries, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="LiteLLM + retries" data-node-context="Architecture component">
-          <title>Executor · LiteLLM + retries · Architecture component</title>
+          <title>Executor Â· LiteLLM + retries Â· Architecture component</title>
           <rect x="1050" y="310" width="160" height="72" rx="6" class="c-mask"/>
           <rect x="1050" y="310" width="160" height="72" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1056 316) scale(0.6875)">
@@ -5225,7 +5225,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </g>
 
         <g id="node-provider" data-node-id="provider" data-node-label="LLM provider" tabindex="0" role="button" aria-label="Focus LLM provider, Claude / OpenAI / any, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="Claude / OpenAI / any" data-node-context="Architecture component">
-          <title>LLM provider · Claude / OpenAI / any · Architecture component</title>
+          <title>LLM provider Â· Claude / OpenAI / any Â· Architecture component</title>
           <rect x="1300" y="310" width="170" height="72" rx="6" class="c-mask"/>
           <rect x="1300" y="310" width="170" height="72" rx="6" class="c-external" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(1306 316) scale(0.6875)">
@@ -5236,20 +5236,20 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="context" x="1385" y="360" class="t-muted" font-size="9" text-anchor="middle">Claude / OpenAI / any</text>
         </g>
 
-        <g id="node-skills" data-node-id="skills" data-node-label="39 skills" tabindex="0" role="button" aria-label="Focus 39 skills, core + optional, Architecture component" aria-pressed="false" data-node-kind="database" data-node-sublabel="core + optional" data-node-context="Architecture component">
-          <title>39 skills · core + optional · Architecture component</title>
+        <g id="node-skills" data-node-id="skills" data-node-label="41 skills" tabindex="0" role="button" aria-label="Focus 41 skills, core + optional, Architecture component" aria-pressed="false" data-node-kind="database" data-node-sublabel="core + optional" data-node-context="Architecture component">
+          <title>41 skills Â· core + optional Â· Architecture component</title>
           <rect x="620" y="150" width="160" height="64" rx="6" class="c-mask"/>
           <rect x="620" y="150" width="160" height="64" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(626 156) scale(0.6875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="700" y="180" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">39 skills</text>
+          <text data-node-label="" data-detail-anchor="" x="700" y="180" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">41 skills</text>
         <text data-detail="context" x="700" y="196" class="t-muted" font-size="9" text-anchor="middle">core + optional</text>
         </g>
 
         <g id="node-graph" data-node-id="graph" data-node-label="Knowledge graph" tabindex="0" role="button" aria-label="Focus Knowledge graph, 911 nodes / 1860 edges, Architecture component" aria-pressed="false" data-node-kind="database" data-node-sublabel="911 nodes / 1860 edges" data-node-context="Architecture component">
-          <title>Knowledge graph · 911 nodes / 1860 edges · Architecture component</title>
+          <title>Knowledge graph Â· 911 nodes / 1860 edges Â· Architecture component</title>
           <rect x="800" y="150" width="170" height="64" rx="6" class="c-mask"/>
           <rect x="800" y="150" width="170" height="64" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(806 156) scale(0.6875)">
@@ -5260,8 +5260,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text data-detail="context" x="885" y="196" class="t-muted" font-size="9" text-anchor="middle">911 nodes / 1860 edges</text>
         </g>
 
-        <g id="node-mcp" data-node-id="mcp" data-node-label="MCP server" tabindex="0" role="button" aria-label="Focus MCP server, stdio · 10 tools, Architecture component" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="stdio · 10 tools" data-node-context="Architecture component">
-          <title>MCP server · stdio · 10 tools · Architecture component</title>
+        <g id="node-mcp" data-node-id="mcp" data-node-label="MCP server" tabindex="0" role="button" aria-label="Focus MCP server, stdio Â· 10 tools, Architecture component" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="stdio Â· 10 tools" data-node-context="Architecture component">
+          <title>MCP server Â· stdio Â· 10 tools Â· Architecture component</title>
           <rect x="510" y="470" width="160" height="64" rx="6" class="c-mask"/>
           <rect x="510" y="470" width="160" height="64" rx="6" class="c-messagebus" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(516 476) scale(0.6875)">
@@ -5271,11 +5271,11 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
             <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
           </g>
           <text data-node-label="" data-detail-anchor="" x="590" y="500" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">MCP server</text>
-        <text data-detail="context" x="590" y="516" class="t-muted" font-size="9" text-anchor="middle">stdio · 10 tools</text>
+        <text data-detail="context" x="590" y="516" class="t-muted" font-size="9" text-anchor="middle">stdio Â· 10 tools</text>
         </g>
 
-        <g id="node-sqlite" data-node-id="sqlite" data-node-label="SQLite" tabindex="0" role="button" aria-label="Focus SQLite, executions · loops · weights, Architecture component" aria-pressed="false" data-node-kind="database" data-node-sublabel="executions · loops · weights" data-node-context="Architecture component">
-          <title>SQLite · executions · loops · weights · Architecture component</title>
+        <g id="node-sqlite" data-node-id="sqlite" data-node-label="SQLite" tabindex="0" role="button" aria-label="Focus SQLite, executions Â· loops Â· weights, Architecture component" aria-pressed="false" data-node-kind="database" data-node-sublabel="executions Â· loops Â· weights" data-node-context="Architecture component">
+          <title>SQLite Â· executions Â· loops Â· weights Â· Architecture component</title>
           <rect x="910" y="470" width="190" height="64" rx="6" class="c-mask"/>
           <rect x="910" y="470" width="190" height="64" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(916 476) scale(0.6875)">
@@ -5283,7 +5283,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
           <text data-node-label="" data-detail-anchor="" x="1005" y="500" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">SQLite</text>
-        <text data-detail="context" x="1005" y="516" class="t-muted" font-size="9" text-anchor="middle">executions · loops · weights</text>
+        <text data-detail="context" x="1005" y="516" class="t-muted" font-size="9" text-anchor="middle">executions Â· loops Â· weights</text>
         </g>
 
         <!-- Connection labels -->
@@ -5307,9 +5307,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           <rect x="5" y="91" width="30" height="14" rx="3" class="c-mask"/>
           <text x="20" y="101" class="t-edge-default" font-size="8" text-anchor="middle">npx</text>
         </g>
-        <g data-detail="context" data-edge-from="installer" data-edge-to="harness" data-edge-label="39 skills" data-edge-key="5" data-edge-id="installer-harness">
+        <g data-detail="context" data-edge-from="installer" data-edge-to="harness" data-edge-label="41 skills" data-edge-key="5" data-edge-id="installer-harness">
           <rect x="106.4" y="228" width="53.199999999999996" height="14" rx="3" class="c-mask"/>
-          <text x="133" y="238" class="t-edge-emphasis" font-size="8" text-anchor="middle">39 skills</text>
+          <text x="133" y="238" class="t-edge-emphasis" font-size="8" text-anchor="middle">41 skills</text>
         </g>
         <g data-detail="context" data-edge-from="harness" data-edge-to="cli" data-edge-label="prompt / /af" data-edge-key="6" data-edge-id="harness-cli">
           <rect x="216.2" y="326" width="67.6" height="14" rx="3" class="c-mask"/>
@@ -5575,7 +5575,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <ul>
           <li>One skill catalog, three channels</li>
           <li>npm, PyPI, and the official MCP registry</li>
-          <li>install.js writes 39 direct-child skills per harness</li>
+          <li>install.js writes 41 direct-child skills per harness</li>
         </ul>
       </div>
 
@@ -5671,7 +5671,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     }
 
     /* ============================================================
-       Visual style try-on — one topology, four bundled presets.
+       Visual style try-on â€” one topology, four bundled presets.
        The reader's choice is intentionally session-only: it updates the
        live page and canonical SVG together, but never rewrites the source,
        URL, or a later diagram's authored default.
@@ -5787,7 +5787,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Theme toggle — persists to localStorage, respects system pref
+       Theme toggle â€” persists to localStorage, respects system pref
        ============================================================ */
 
     Archify.theme = (function () {
@@ -5852,7 +5852,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Export — Share Card / PNG / JPEG / WebP / SVG / WebM and clipboard
+       Export â€” Share Card / PNG / JPEG / WebP / SVG / WebM and clipboard
 
        Raster exports are always rendered at 4x source resolution for
        maximum sharpness. The trick: we set the serialized SVG's
@@ -6052,16 +6052,16 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
        * Serialize the main SVG into a standalone document.
        *
        * Two modes:
-       * - Default (opts.autoTheme=false) — locks the serialized SVG to the
+       * - Default (opts.autoTheme=false) â€” locks the serialized SVG to the
        *   viewer's current theme. Used by the raster pipeline
        *   (PNG/JPEG/WebP/clipboard) because canvas rasterization needs
        *   deterministic colors; a raster cannot react to
        *   prefers-color-scheme after encoding.
-       * - theme=auto — emits BOTH dark and light variable sets plus a
+       * - theme=auto â€” emits BOTH dark and light variable sets plus a
        *   `@media (prefers-color-scheme)` rule so the resulting SVG
        *   self-themes when embedded in GitHub READMEs or other hosts that
        *   expose a color scheme. Used for the default "Download SVG".
-       * - theme=light|dark — locks the standalone SVG to the requested
+       * - theme=light|dark â€” locks the standalone SVG to the requested
        *   theme, independently of its source Viewer and host OS themes.
        */
       function applyRouteSnapshot(clone, snapshot) {
@@ -6252,7 +6252,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           : null;
         // Scale width/height so the browser rasterizes the vectors at target
         // resolution directly. viewBox stays unchanged so coordinates don't
-        // shift. This is the key to sharp rasters — do NOT scale later via
+        // shift. This is the key to sharp rasters â€” do NOT scale later via
         // canvas upscaling.
         clone.setAttribute('width', vb.width * scale);
         clone.setAttribute('height', vb.height * scale);
@@ -6554,7 +6554,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         // Serialize at a safe scale (RASTER_SCALE=4 by default, reduced if the
         // resulting canvas would exceed MAX_CANVAS_PIXELS). The SVG itself is
         // rasterized at target resolution natively; drawImage draws at natural
-        // size — no upsampling blur.
+        // size â€” no upsampling blur.
         var svg = document.querySelector('.diagram-container svg');
         var vb = svg.viewBox.baseVal;
         var layout = figureLayout(vb);
@@ -7381,7 +7381,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 
     /* ============================================================
-       Motion Governor — one reader switch and one motion budget. Ambient
+       Motion Governor â€” one reader switch and one motion budget. Ambient
        trace yields to the strongest semantic owner; Still also parks bounded
        viewer signals without discarding their static meaning.
        ============================================================ */
@@ -7719,7 +7719,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     Archify.sourceEvidence.installBeacons();
 
     /* ============================================================
-       Explore — stable-ID neighborhood focus + dependency-free pan/zoom.
+       Explore â€” stable-ID neighborhood focus + dependency-free pan/zoom.
        Renderer IDs become deep-linkable semantic hooks without turning the
        standalone artifact into a canvas editor.
        ============================================================ */
@@ -8083,7 +8083,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           name.textContent = source.label || source.path.split('/').pop() || source.path;
           var location = document.createElement('code');
           location.textContent = source.line
-            ? 'L' + source.line + (source.endLine && source.endLine !== source.line ? '–' + source.endLine : '') + (source.href ? ' ↗' : '')
+            ? 'L' + source.line + (source.endLine && source.endLine !== source.line ? 'â€“' + source.endLine : '') + (source.href ? ' â†—' : '')
             : source.href ? viewerText('viewer.passport.source.openLink') : '';
           var sourcePath = document.createElement('small');
           sourcePath.textContent = source.path;
@@ -8696,7 +8696,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           section.className = 'relationship-lens-group';
           var heading = document.createElement('span');
           heading.className = 'relationship-lens-group-title';
-          heading.textContent = group.label + ' · ' + items.length;
+          heading.textContent = group.label + ' Â· ' + items.length;
           section.appendChild(heading);
           items.forEach(function (relationship) {
             var button = document.createElement('button');
@@ -9332,7 +9332,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 
     /* ============================================================
-       Intent Trace — temporary one-hop topology before durable focus.
+       Intent Trace â€” temporary one-hop topology before durable focus.
        Fine-pointer hover and keyboard focus share the same stable-ID preview;
        touch continues directly to the existing click-to-focus contract.
        ============================================================ */
@@ -9545,7 +9545,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Adaptive Reader Shell — one diagram across laptop and monitor.
+       Adaptive Reader Shell â€” one diagram across laptop and monitor.
        The canonical SVG and viewBox never change. On ordinary desktop pages,
        wide diagrams and measured intrinsic tall workflows receive enough outer width to use the available
        height without pushing summary cards below the viewport. Mobile,
@@ -9983,7 +9983,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Viewer Chrome Layout — keep HTML controls clear of the canonical SVG
+       Viewer Chrome Layout â€” keep HTML controls clear of the canonical SVG
        stage without changing authored geometry. The dock keeps its floating
        appearance while a small bottom stage rail becomes part of the reader
        budget whenever its zero-reserve position would enter the stage.
@@ -10892,7 +10892,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Semantic Radar — simplified semantic bounds + live viewport.
+       Semantic Radar â€” simplified semantic bounds + live viewport.
        The radar is built at runtime so the checked artifact still contains
        one canonical SVG block, and export serialization remains untouched.
        ============================================================ */
@@ -11519,7 +11519,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Presentation Stage — a shareable, viewport-filling live view.
+       Presentation Stage â€” a shareable, viewport-filling live view.
        It changes only HTML layout and URL state; SVG semantics and export
        serialization remain untouched. Escape first clears an active
        focus, then exits the stage.
@@ -11593,7 +11593,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Node Finder — stable-ID search over the existing semantic SVG.
+       Node Finder â€” stable-ID search over the existing semantic SVG.
        Search never changes the IR or SVG geometry: selecting a result resets
        the viewport and delegates to semantic focus.
        ============================================================ */
@@ -11856,7 +11856,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Node Outline — a rail index of the semantic nodes, grouped by their
+       Node Outline â€” a rail index of the semantic nodes, grouped by their
        authored context. Hover previews neighbors through Intent Trace;
        selection delegates to the Finder's focus-and-reveal path. It reads
        the canonical SVG and never changes geometry or export state.
@@ -11995,7 +11995,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 
     /* ============================================================
-       Route Probe — shortest directed path over compiled semantics.
+       Route Probe â€” shortest directed path over compiled semantics.
        The graph is read from renderer-owned stable IDs and relationship
        endpoints. BFS order follows authored DOM edge order, so equal-length
        choices are deterministic without adding weights or a graph runtime.
@@ -12217,7 +12217,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           }
           item.className = 'route-probe-node';
           item.textContent = nodeLabel(byId[id], id);
-          item.title = nodeLabel(byId[id], id) + ' · ' + id;
+          item.title = nodeLabel(byId[id], id) + ' Â· ' + id;
           if (index === 0) item.setAttribute('data-endpoint', 'start');
           if (index === ids.length - 1 && ids.length > 1) item.setAttribute('data-endpoint', 'end');
           path.appendChild(item);
@@ -13027,7 +13027,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Semantic Lens — a counted, viewer-only legend over data-node-kind.
+       Semantic Lens â€” a counted, viewer-only legend over data-node-kind.
        One selected kind reveals every authored relationship touching it.
        Two selected kinds compare only direct cross-kind relationships while
        preserving the full diagram as a dimmed spatial reference.
@@ -13700,7 +13700,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     })();
 
     /* ============================================================
-       Diagram Guide — a factual command deck over existing interactions.
+       Diagram Guide â€” a factual command deck over existing interactions.
        Counts come from compiled semantics; actions delegate to Finder, Route
        Probe, Semantic Radar, Semantic Lens, Presentation, theme, export, and
        camera without adding a second command implementation or SVG state.

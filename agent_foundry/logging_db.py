@@ -9,10 +9,12 @@ import os
 import sqlite3
 import re
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 import hashlib
+import math
+import unicodedata
 
 # Engram-style N-gram constants
 ENGRAM_STOPWORDS = frozenset({
@@ -21,67 +23,141 @@ ENGRAM_STOPWORDS = frozenset({
     "will", "can", "are", "not", "but", "all", "was", "out", "use",
 })
 ENGRAM_N = 3  # trigrams
+ENGRAM_HEADS = 3
+
+
+def _normalize_text(prompt: str) -> str:
+    """Canonicalize before hashing: NFKC, casefold, strip accents, collapse space."""
+    text = unicodedata.normalize("NFKC", prompt or "").casefold()
+    text = "".join(
+        ch for ch in unicodedata.normalize("NFD", text)
+        if not unicodedata.combining(ch)
+    )
+    return " ".join(text.split())
+
+
+def _ngram_tokens(prompt: str) -> list[str]:
+    """Unicode-aware tokens. Non-Latin prompts must not hash to an empty string."""
+    tokens = re.findall(r"[^\W_]+", _normalize_text(prompt), flags=re.UNICODE)
+    return [t for t in tokens if len(t) >= 3 and t not in ENGRAM_STOPWORDS]
+
+
+def _ngram_hashes(prompt: str) -> tuple[str, str, str]:
+    """Ordered trigram fingerprints under three independent salts.
+
+    Ordered: repetition and sequence matter. Empty tuple when the prompt has
+    fewer than N usable tokens.
+    """
+    tokens = _ngram_tokens(prompt)
+    if len(tokens) < ENGRAM_N:
+        return ("", "", "")
+    ngrams = [
+        " ".join(tokens[i:i + ENGRAM_N])
+        for i in range(len(tokens) - ENGRAM_N + 1)
+    ]
+    canonical = "\n".join(ngrams).encode("utf-8")
+    return tuple(
+        hashlib.sha1(str(head).encode("ascii") + b"|" + canonical).hexdigest()[:16]
+        for head in range(ENGRAM_HEADS)
+    )
+
 
 def _ngram_hash(prompt: str) -> str:
-    """Engram-style N-gram fingerprint (DeepSeek Engram paper).
+    """Legacy head-0 fingerprint. Prefer `_ngram_hashes`."""
+    return _ngram_hashes(prompt)[0]
 
-    Lowercase, strip punctuation, tokenize, generate N-grams, SHA-1 the
-    joined canonical form, return the first 16 hex chars.
 
-    Returns "" if no usable tokens after stopword filtering.
-    """
-    tokens = [t for t in re.findall(r"[a-z]{3,}", prompt.lower())
-              if t not in ENGRAM_STOPWORDS]
+def _legacy_hash(prompt: str) -> str:
+    """Pre-v7 fingerprint: ASCII tokens, sorted set of trigrams."""
+    tokens = [
+        t for t in re.findall(r"[a-z]{3,}", (prompt or "").lower())
+        if t not in ENGRAM_STOPWORDS
+    ]
     if len(tokens) < ENGRAM_N:
         return ""
-    ngrams = [" ".join(tokens[i:i + ENGRAM_N]) for i in range(len(tokens) - ENGRAM_N + 1)]
+    ngrams = [
+        " ".join(tokens[i:i + ENGRAM_N])
+        for i in range(len(tokens) - ENGRAM_N + 1)
+    ]
     canonical = "\n".join(sorted(set(ngrams))).encode("utf-8")
     return hashlib.sha1(canonical).hexdigest()[:16]
 
 
+def _match_count(stored: tuple[str | None, ...], heads: tuple[str, str, str]) -> int:
+    return sum(1 for a, b in zip(stored, heads) if a and b and a == b)
+
+
+def _is_legacy_single_head(stored: tuple[str | None, ...]) -> bool:
+    return bool(stored[0]) and not stored[1] and not stored[2]
+
+
+def _gate_score(prompt: str, pattern: str) -> float:
+    """Keyword overlap gate in [0,1]; a hash hit alone is not a routing decision."""
+    prompt_tokens = set(_ngram_tokens(prompt))
+    pattern_tokens = {
+        t for t in re.findall(r"[^\W_]+", _normalize_text(pattern), flags=re.UNICODE)
+        if len(t) >= 3
+    }
+    if not pattern_tokens:
+        return 0.0
+    overlap = len(prompt_tokens & pattern_tokens) / len(pattern_tokens)
+    return round(1.0 / (1.0 + math.exp(-6.0 * (overlap - 0.3))), 4)
+
+
 def engram_lookup(db_path: Path, prompt: str, min_confidence: float = 0.25,
-                  project_id: str | None = None) -> dict | None:
-    """O(1) Engram-style routing lookup.
+                  project_id: str | None = None,
+                  min_project_samples: int = 3) -> dict | None:
+    """Multi-head Engram lookup. Returns the best approved instinct or None.
 
-    Returns the highest-confidence instinct matching this prompt's
-    N-gram fingerprint, or None if no match above min_confidence.
-
-    Default min_confidence=0.25: matches freshly-learned instincts (initial
-    confidence 0.3). Bump to 0.5+ for high-stakes routing. When project_id is
-    supplied, project-scoped rows outrank global rows for the same fingerprint.
-
-    Caller should fall back to the full plan flow when this returns None.
+    A row matches when at least two heads agree. Legacy rows with only head 0
+    match on head 0 alone until they are relearned. Project rows outrank global
+    rows only once they have `min_project_samples` evidence.
     """
     init_db(db_path)
-    h = _ngram_hash(prompt)
-    if not h:
+    heads = _ngram_hashes(prompt)
+    legacy = _legacy_hash(prompt)
+    if not heads[0]:
         return None
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
-        if project_id:
-            row = conn.execute(
-                """SELECT id, source_skill_id, trigger_pattern, confidence, samples, scope
+        rows = conn.execute(
+            """SELECT id, source_skill_id, trigger_pattern, confidence, samples,
+                      scope, project_id, ngram_hash, ngram_hash2, ngram_hash3
+               FROM instincts
+               WHERE approved = 1 AND confidence >= ?
+                 AND (ngram_hash = ? OR ngram_hash2 = ? OR ngram_hash3 = ?)""",
+            (min_confidence, heads[0], heads[1], heads[2]),
+        ).fetchall()
+        if legacy and legacy not in heads:
+            rows += conn.execute(
+                """SELECT id, source_skill_id, trigger_pattern, confidence, samples,
+                          scope, project_id, ngram_hash, ngram_hash2, ngram_hash3
                    FROM instincts
-                   WHERE ngram_hash = ? AND approved = 1 AND confidence >= ?
-                     AND (scope = 'global' OR project_id = ?)
-                   ORDER BY CASE WHEN scope = 'project' THEN 0 ELSE 1 END,
-                            confidence DESC, samples DESC
-                   LIMIT 1""",
-                (h, min_confidence, project_id),
-            ).fetchone()
-        else:
-            row = conn.execute(
-                """SELECT id, source_skill_id, trigger_pattern, confidence, samples, scope
-                   FROM instincts
-                   WHERE ngram_hash = ? AND approved = 1 AND confidence >= ?
-                   ORDER BY confidence DESC, samples DESC
-                   LIMIT 1""",
-                (h, min_confidence),
-            ).fetchone()
+                   WHERE approved = 1 AND confidence >= ?
+                     AND ngram_hash = ? AND ngram_hash2 IS NULL""",
+                (min_confidence, legacy),
+            ).fetchall()
     finally:
         conn.close()
-    if not row:
+
+    candidates = []
+    for row in rows:
+        stored = (row[7], row[8], row[9])
+        matched = _match_count(stored, heads)
+        legacy_match = bool(legacy and stored[0] == legacy and _is_legacy_single_head(stored))
+        if matched < 2 and not (matched == 1 and _is_legacy_single_head(stored)) \
+                and not legacy_match:
+            continue
+        project_ok = bool(
+            project_id and row[5] == "project" and row[6] == project_id
+            and (row[4] or 0) >= min_project_samples
+        )
+        candidates.append((project_ok, row[3], row[4], row))
+
+    if not candidates:
         return None
+    candidates.sort(key=lambda item: (item[0], item[1], item[2]), reverse=True)
+    row = candidates[0][3]
     return {
         "id": row[0],
         "skill_id": row[1],
@@ -89,10 +165,18 @@ def engram_lookup(db_path: Path, prompt: str, min_confidence: float = 0.25,
         "confidence": row[3],
         "samples": row[4],
         "scope": row[5],
+        "gate_score": _gate_score(prompt, row[2]),
         "matched_via": "engram",
     }
 
+SCHEMA_VERSION = 7
+
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS schema_meta (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS executions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp DATETIME NOT NULL,
@@ -110,7 +194,19 @@ CREATE TABLE IF NOT EXISTS executions (
     judge_scope REAL,
     judge_verdict TEXT,
     feedback INTEGER,
-    cost_usd REAL NOT NULL DEFAULT 0
+    cost_usd REAL NOT NULL DEFAULT 0,
+    model TEXT,
+    trace_digest TEXT,
+    phases_json TEXT,
+    repairs INTEGER NOT NULL DEFAULT 0,
+    output_ref TEXT,
+    judge_status TEXT,
+    failure_kind TEXT,
+    prompt_tokens INTEGER NOT NULL DEFAULT 0,
+    completion_tokens INTEGER NOT NULL DEFAULT 0,
+    cached_tokens INTEGER NOT NULL DEFAULT 0,
+    request_meta_json TEXT,
+    run_config_json TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_executions_ts ON executions(timestamp);
 CREATE INDEX IF NOT EXISTS idx_executions_skill ON executions(skill_id);
@@ -129,6 +225,7 @@ CREATE TABLE IF NOT EXISTS loop_sessions (
     status TEXT NOT NULL DEFAULT 'running',
     turns INTEGER NOT NULL DEFAULT 0,
     output TEXT,
+    history_json TEXT,
     created DATETIME NOT NULL,
     updated DATETIME NOT NULL
 );
@@ -137,12 +234,19 @@ CREATE TABLE IF NOT EXISTS instincts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     source_skill_id TEXT NOT NULL,
     trigger_pattern TEXT NOT NULL,
-    ngram_hash TEXT,                  -- Engram-style: SHA-1 hex of normalized prompt N-grams
+    ngram_hash TEXT,                  -- head 0; kept for legacy matches
+    ngram_hash2 TEXT,
+    ngram_hash3 TEXT,
     confidence REAL NOT NULL DEFAULT 0.0,
     samples INTEGER NOT NULL DEFAULT 1,
     created DATETIME NOT NULL,
     last_seen DATETIME NOT NULL,
-    approved INTEGER NOT NULL DEFAULT 0
+    approved INTEGER NOT NULL DEFAULT 0,
+    scope TEXT NOT NULL DEFAULT 'global',
+    project_id TEXT,
+    successes INTEGER NOT NULL DEFAULT 0,
+    failures INTEGER NOT NULL DEFAULT 0,
+    evidence_count INTEGER NOT NULL DEFAULT 1
 );
 CREATE INDEX IF NOT EXISTS idx_instincts_skill ON instincts(source_skill_id);
 CREATE INDEX IF NOT EXISTS idx_instincts_ngram ON instincts(ngram_hash);
@@ -173,47 +277,143 @@ CREATE TABLE IF NOT EXISTS policy_decisions (
     decision TEXT NOT NULL,
     rule_id TEXT,
     detail TEXT,
-    receipt_hash TEXT
+    receipt_hash TEXT,
+    binding_info TEXT
 );
+
+CREATE TABLE IF NOT EXISTS perf_stats (
+    model TEXT NOT NULL,
+    skill_id TEXT NOT NULL,
+    load_bucket TEXT NOT NULL,
+    format_version INTEGER NOT NULL,
+    samples INTEGER NOT NULL DEFAULT 0,
+    samples_ok INTEGER NOT NULL DEFAULT 0,
+    samples_fail INTEGER NOT NULL DEFAULT 0,
+    avg_ms_ok REAL NOT NULL DEFAULT 0,
+    avg_ms_fail REAL NOT NULL DEFAULT 0,
+    avg_prompt_tokens REAL NOT NULL DEFAULT 0,
+    avg_completion_tokens REAL NOT NULL DEFAULT 0,
+    avg_cached_tokens REAL NOT NULL DEFAULT 0,
+    avg_cost_usd REAL NOT NULL DEFAULT 0,
+    updated DATETIME NOT NULL,
+    PRIMARY KEY (model, skill_id, load_bucket, format_version)
+);
+
+CREATE TABLE IF NOT EXISTS attempts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id INTEGER,
+    skill_id TEXT NOT NULL,
+    model TEXT,
+    dedupe_hash TEXT NOT NULL,
+    parent_id INTEGER,
+    round_idx INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'pending',
+    created DATETIME NOT NULL,
+    updated DATETIME NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_attempts_dedupe ON attempts(dedupe_hash);
 """
 
-MIGRATIONS = [
-    "ALTER TABLE executions ADD COLUMN feedback INTEGER",
-    "CREATE TABLE IF NOT EXISTS instincts ("
-    "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-    "source_skill_id TEXT NOT NULL,"
-    "trigger_pattern TEXT NOT NULL,"
-    "confidence REAL NOT NULL DEFAULT 0.0,"
-    "samples INTEGER NOT NULL DEFAULT 1,"
-    "created DATETIME NOT NULL,"
-    "last_seen DATETIME NOT NULL,"
-    "approved INTEGER NOT NULL DEFAULT 0"
-    ")",
-    "CREATE INDEX IF NOT EXISTS idx_instincts_skill ON instincts(source_skill_id)",
-    # v3 -> v4: Engram-style N-gram hash column on instincts
-    "ALTER TABLE instincts ADD COLUMN ngram_hash TEXT",
-    "CREATE INDEX IF NOT EXISTS idx_instincts_ngram ON instincts(ngram_hash)",
-    # v5: cost tracking
-    "ALTER TABLE executions ADD COLUMN cost_usd REAL NOT NULL DEFAULT 0",
-    # v6: scoped instinct ledger
-    "ALTER TABLE instincts ADD COLUMN scope TEXT NOT NULL DEFAULT 'global'",
-    "ALTER TABLE instincts ADD COLUMN project_id TEXT",
-    "ALTER TABLE instincts ADD COLUMN successes INTEGER NOT NULL DEFAULT 0",
-    "ALTER TABLE instincts ADD COLUMN failures INTEGER NOT NULL DEFAULT 0",
-    "ALTER TABLE instincts ADD COLUMN evidence_count INTEGER NOT NULL DEFAULT 1",
+# Numbered, append-only. Never edit or reorder an applied entry.
+MIGRATIONS: list[tuple[int, str]] = [
+    (1, "ALTER TABLE executions ADD COLUMN feedback INTEGER"),
+    (2, "CREATE TABLE IF NOT EXISTS instincts ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "source_skill_id TEXT NOT NULL,"
+        "trigger_pattern TEXT NOT NULL,"
+        "confidence REAL NOT NULL DEFAULT 0.0,"
+        "samples INTEGER NOT NULL DEFAULT 1,"
+        "created DATETIME NOT NULL,"
+        "last_seen DATETIME NOT NULL,"
+        "approved INTEGER NOT NULL DEFAULT 0"
+        ")"),
+    (3, "ALTER TABLE instincts ADD COLUMN ngram_hash TEXT"),
+    (4, "ALTER TABLE executions ADD COLUMN cost_usd REAL NOT NULL DEFAULT 0"),
+    (5, "ALTER TABLE instincts ADD COLUMN scope TEXT NOT NULL DEFAULT 'global'"),
+    (5, "ALTER TABLE instincts ADD COLUMN project_id TEXT"),
+    (5, "ALTER TABLE instincts ADD COLUMN successes INTEGER NOT NULL DEFAULT 0"),
+    (5, "ALTER TABLE instincts ADD COLUMN failures INTEGER NOT NULL DEFAULT 0"),
+    (5, "ALTER TABLE instincts ADD COLUMN evidence_count INTEGER NOT NULL DEFAULT 1"),
+    (6, "ALTER TABLE executions ADD COLUMN model TEXT"),
+    (6, "ALTER TABLE executions ADD COLUMN trace_digest TEXT"),
+    (6, "ALTER TABLE executions ADD COLUMN phases_json TEXT"),
+    (6, "ALTER TABLE executions ADD COLUMN repairs INTEGER NOT NULL DEFAULT 0"),
+    (6, "ALTER TABLE executions ADD COLUMN output_ref TEXT"),
+    (6, "ALTER TABLE executions ADD COLUMN judge_status TEXT"),
+    (6, "ALTER TABLE executions ADD COLUMN failure_kind TEXT"),
+    (6, "ALTER TABLE executions ADD COLUMN prompt_tokens INTEGER NOT NULL DEFAULT 0"),
+    (6, "ALTER TABLE executions ADD COLUMN completion_tokens INTEGER NOT NULL DEFAULT 0"),
+    (6, "ALTER TABLE executions ADD COLUMN cached_tokens INTEGER NOT NULL DEFAULT 0"),
+    (6, "ALTER TABLE executions ADD COLUMN request_meta_json TEXT"),
+    (6, "ALTER TABLE executions ADD COLUMN run_config_json TEXT"),
+    (6, "ALTER TABLE loop_sessions ADD COLUMN history_json TEXT"),
+    (6, "ALTER TABLE policy_decisions ADD COLUMN binding_info TEXT"),
+    (6, "ALTER TABLE instincts ADD COLUMN ngram_hash2 TEXT"),
+    (6, "ALTER TABLE instincts ADD COLUMN ngram_hash3 TEXT"),
+    (6, "CREATE INDEX IF NOT EXISTS idx_executions_digest ON executions(trace_digest)"),
+    (6, "CREATE INDEX IF NOT EXISTS idx_instincts_ngram2 ON instincts(ngram_hash2)"),
+    (6, "CREATE INDEX IF NOT EXISTS idx_instincts_ngram3 ON instincts(ngram_hash3)"),
+    (7, "CREATE TABLE IF NOT EXISTS perf_stats ("
+        "model TEXT NOT NULL, skill_id TEXT NOT NULL, load_bucket TEXT NOT NULL,"
+        "format_version INTEGER NOT NULL, samples INTEGER NOT NULL DEFAULT 0,"
+        "samples_ok INTEGER NOT NULL DEFAULT 0, samples_fail INTEGER NOT NULL DEFAULT 0,"
+        "avg_ms_ok REAL NOT NULL DEFAULT 0, avg_ms_fail REAL NOT NULL DEFAULT 0,"
+        "avg_prompt_tokens REAL NOT NULL DEFAULT 0, avg_completion_tokens REAL NOT NULL DEFAULT 0,"
+        "avg_cached_tokens REAL NOT NULL DEFAULT 0, avg_cost_usd REAL NOT NULL DEFAULT 0,"
+        "updated DATETIME NOT NULL, PRIMARY KEY (model, skill_id, load_bucket, format_version))"),
+    (7, "CREATE TABLE IF NOT EXISTS attempts ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, skill_id TEXT NOT NULL,"
+        "model TEXT, dedupe_hash TEXT NOT NULL, parent_id INTEGER,"
+        "round_idx INTEGER NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'pending',"
+        "created DATETIME NOT NULL, updated DATETIME NOT NULL)"),
+    (7, "CREATE INDEX IF NOT EXISTS idx_attempts_dedupe ON attempts(dedupe_hash)"),
 ]
 
+
+def _stored_version(conn: sqlite3.Connection) -> int:
+    row = conn.execute(
+        "SELECT value FROM schema_meta WHERE key = 'schema_version'"
+    ).fetchone()
+    return int(row[0]) if row else 0
+
+
+def _set_version(conn: sqlite3.Connection, version: int) -> None:
+    conn.execute(
+        "INSERT INTO schema_meta(key, value) VALUES ('schema_version', ?) "
+        "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+        (str(version),),
+    )
+
+
 def init_db(db_path: Path) -> None:
+    """Create or migrate the database. Additive only; refuses future versions."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(db_path), isolation_level=None)  # autocommit
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
         conn.executescript(SCHEMA)
-        # Apply migrations (safe to re-run)
-        for mig in MIGRATIONS:
+        stored = _stored_version(conn)
+        if stored > SCHEMA_VERSION:
+            raise RuntimeError(
+                f"database schema version {stored} is newer than supported "
+                f"{SCHEMA_VERSION}; upgrade agent-foundry"
+            )
+        if stored == 0:
+            # No version marker: either a fresh DB (SCHEMA already complete) or
+            # an old DB. Run every migration; duplicate-column errors are the
+            # expected no-op for the fresh case.
+            pass
+        latest = stored
+        for version, sql in MIGRATIONS:
             try:
-                conn.execute(mig)
-            except sqlite3.OperationalError:
-                pass  # column already exists / table already exists
+                conn.execute(sql)
+            except sqlite3.OperationalError as exc:
+                message = str(exc).lower()
+                if "duplicate column name" not in message and "already exists" not in message:
+                    raise
+            latest = version
+            _set_version(conn, latest)
+        if latest != SCHEMA_VERSION:
+            _set_version(conn, SCHEMA_VERSION)
     finally:
         conn.close()
 
@@ -225,7 +425,19 @@ def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
                   judge_slop: float | None = None,
                   judge_scope: float | None = None,
                   judge_verdict: str | None = None,
-                  cost_usd: float = 0.0) -> int:
+                  cost_usd: float = 0.0,
+                  model: str | None = None,
+                  trace_digest: str | None = None,
+                  phases: dict | None = None,
+                  repairs: int = 0,
+                  output_ref: str | None = None,
+                  judge_status: str | None = None,
+                  failure_kind: str | None = None,
+                  prompt_tokens: int = 0,
+                  completion_tokens: int = 0,
+                  cached_tokens: int = 0,
+                  request_meta: dict | None = None,
+                  run_config: dict | None = None) -> int:
     init_db(db_path)
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
@@ -233,8 +445,11 @@ def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
             """INSERT INTO executions
             (timestamp, skill_id, prompt, output, tokens_used, duration_seconds,
              success, error, planner_score, was_fallback,
-             judge_corr, judge_slop, judge_scope, judge_verdict, cost_usd)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+             judge_corr, judge_slop, judge_scope, judge_verdict, cost_usd,
+             model, trace_digest, phases_json, repairs, output_ref, judge_status,
+             failure_kind, prompt_tokens, completion_tokens, cached_tokens,
+             request_meta_json, run_config_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 datetime.now(timezone.utc).isoformat(),
                 skill_id, prompt, output, int(tokens_used), float(duration_seconds),
@@ -242,6 +457,12 @@ def log_execution(db_path: Path, *, skill_id: str, prompt: str, output: str,
                 1 if was_fallback else 0,
                 judge_corr, judge_slop, judge_scope, judge_verdict,
                 float(cost_usd),
+                model, trace_digest,
+                json.dumps(phases, sort_keys=True) if phases is not None else None,
+                int(repairs), output_ref, judge_status, failure_kind,
+                int(prompt_tokens), int(completion_tokens), int(cached_tokens),
+                json.dumps(_jsonable(request_meta), sort_keys=True) if request_meta is not None else None,
+                json.dumps(_jsonable(run_config), sort_keys=True) if run_config is not None else None,
             ),
         )
         return int(cur.lastrowid)
@@ -257,7 +478,9 @@ def list_executions(db_path: Path, skill_id: str | None = None,
     offset = max(0, int(offset))
     sql = """SELECT id, timestamp, skill_id, tokens_used, duration_seconds,
                     success, error, was_fallback, cost_usd, feedback,
-                    judge_corr, judge_slop, judge_scope, judge_verdict
+                    judge_corr, judge_slop, judge_scope, judge_verdict,
+                    model, trace_digest, judge_status, failure_kind, output_ref,
+                    repairs, prompt_tokens, completion_tokens, cached_tokens
              FROM executions"""
     params: list[Any] = []
     if skill_id:
@@ -272,7 +495,9 @@ def list_executions(db_path: Path, skill_id: str | None = None,
         conn.close()
     keys = ("id", "timestamp", "skill_id", "tokens_used", "duration_seconds",
             "success", "error", "was_fallback", "cost_usd", "feedback",
-            "judge_corr", "judge_slop", "judge_scope", "judge_verdict")
+            "judge_corr", "judge_slop", "judge_scope", "judge_verdict",
+            "model", "trace_digest", "judge_status", "failure_kind", "output_ref",
+            "repairs", "prompt_tokens", "completion_tokens", "cached_tokens")
     return [dict(zip(keys, row)) for row in rows]
 
 
@@ -330,17 +555,19 @@ def log_observation(db_path: Path, *, project_id: str, skill_id: str,
 
 def log_policy_decision(db_path: Path, *, action_kind: str, decision: str,
                         rule_id: str | None = None, detail: str = "",
-                        receipt_hash: str = "") -> int:
+                        receipt_hash: str = "",
+                        binding_info: dict | None = None) -> int:
     """Record one policy decision for later audit."""
     init_db(db_path)
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
         cur = conn.execute(
             """INSERT INTO policy_decisions
-            (timestamp, action_kind, decision, rule_id, detail, receipt_hash)
-            VALUES (?, ?, ?, ?, ?, ?)""",
+            (timestamp, action_kind, decision, rule_id, detail, receipt_hash, binding_info)
+            VALUES (?, ?, ?, ?, ?, ?, ?)""",
             (datetime.now(timezone.utc).isoformat(), action_kind, decision,
-             rule_id, detail, receipt_hash),
+             rule_id, detail, receipt_hash,
+             json.dumps(binding_info, sort_keys=True) if binding_info is not None else None),
         )
         return int(cur.lastrowid)
     finally:
@@ -360,15 +587,19 @@ def get_skill_weights(db_path: Path) -> dict[str, float]:
     return {r[0]: float(r[1]) for r in rows}
 
 
-def create_loop_session(db_path: Path, prompt: str, skill_id: str) -> int:
+def create_loop_session(db_path: Path, prompt: str, skill_id: str,
+                        history: list | None = None) -> int:
     init_db(db_path)
     now = datetime.now(timezone.utc).isoformat()
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
         cur = conn.execute(
-            """INSERT INTO loop_sessions (prompt, skill_id, status, turns, created, updated)
-               VALUES (?, ?, 'running', 0, ?, ?)""",
-            (prompt, skill_id, now, now),
+            """INSERT INTO loop_sessions
+               (prompt, skill_id, status, turns, history_json, created, updated)
+               VALUES (?, ?, 'running', 0, ?, ?, ?)""",
+            (prompt, skill_id,
+             json.dumps(history, ensure_ascii=False) if history is not None else None,
+             now, now),
         )
         return int(cur.lastrowid)
     finally:
@@ -376,7 +607,8 @@ def create_loop_session(db_path: Path, prompt: str, skill_id: str) -> int:
 
 
 def update_loop_session(db_path: Path, session_id: int, *, status: str | None = None,
-                        output: str | None = None, increment_turn: bool = False) -> None:
+                        output: str | None = None, increment_turn: bool = False,
+                        history: list | None = None) -> None:
     init_db(db_path)
     now = datetime.now(timezone.utc).isoformat()
     conn = sqlite3.connect(str(db_path), isolation_level=None)
@@ -387,6 +619,9 @@ def update_loop_session(db_path: Path, session_id: int, *, status: str | None = 
         if output is not None:
             conn.execute("UPDATE loop_sessions SET output = ?, updated = ? WHERE id = ?",
                          (output, now, session_id))
+        if history is not None:
+            conn.execute("UPDATE loop_sessions SET history_json = ?, updated = ? WHERE id = ?",
+                         (json.dumps(history, ensure_ascii=False), now, session_id))
         if increment_turn:
             conn.execute("UPDATE loop_sessions SET turns = turns + 1, updated = ? WHERE id = ?",
                          (now, session_id))
@@ -401,7 +636,8 @@ def get_loop_session(db_path: Path, session_id: int) -> dict | None:
     conn = sqlite3.connect(str(db_path))
     try:
         row = conn.execute(
-            """SELECT id, prompt, skill_id, status, turns, output, created, updated
+            """SELECT id, prompt, skill_id, status, turns, output, history_json,
+                      created, updated
                FROM loop_sessions WHERE id = ?""",
             (session_id,),
         ).fetchone()
@@ -409,12 +645,167 @@ def get_loop_session(db_path: Path, session_id: int) -> dict | None:
         conn.close()
     if not row:
         return None
+    try:
+        history = json.loads(row[6]) if row[6] else []
+    except (TypeError, ValueError):
+        history = []
     return {"id": row[0], "prompt": row[1], "skill_id": row[2], "status": row[3],
-            "turns": row[4], "output": row[5], "created": row[6], "updated": row[7]}
+            "turns": row[4], "output": row[5], "history": history,
+            "created": row[7], "updated": row[8]}
+
+
+def get_execution(db_path: Path, execution_id: int) -> dict | None:
+    """Full execution row, including output_ref and request metadata."""
+    init_db(db_path)
+    conn = sqlite3.connect(str(db_path))
+    try:
+        conn.row_factory = sqlite3.Row
+        row = conn.execute("SELECT * FROM executions WHERE id = ?", (execution_id,)).fetchone()
+    finally:
+        conn.close()
+    return dict(row) if row else None
+
+
+def update_execution_judge(db_path: Path, execution_id: int, *,
+                           scores: dict | None, status: str,
+                           model: str = "") -> bool:
+    scores = scores or {}
+    init_db(db_path)
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        cur = conn.execute(
+            """UPDATE executions
+               SET judge_corr = ?, judge_slop = ?, judge_scope = ?,
+                   judge_verdict = ?, judge_status = ?, model = COALESCE(NULLIF(?, ''), model)
+               WHERE id = ?""",
+            (scores.get("correctness"), scores.get("slop"), scores.get("scope"),
+             scores.get("verdict"), status, model, execution_id),
+        )
+        return cur.rowcount > 0
+    finally:
+        conn.close()
+
+
+def get_model_success_counts(db_path: Path, skill_id: str | None = None) -> list[dict]:
+    init_db(db_path)
+    sql = """SELECT skill_id, COALESCE(model, ''), SUM(success), COUNT(*)
+             FROM executions
+             WHERE model IS NOT NULL"""
+    params: list[Any] = []
+    if skill_id:
+        sql += " AND skill_id = ?"
+        params.append(skill_id)
+    sql += " GROUP BY skill_id, model"
+    conn = sqlite3.connect(str(db_path))
+    try:
+        rows = conn.execute(sql, params).fetchall()
+    finally:
+        conn.close()
+    return [
+        {"skill_id": r[0], "model": r[1], "successes": int(r[2] or 0),
+         "failures": int(r[3] or 0) - int(r[2] or 0)}
+        for r in rows
+    ]
+
+
+def repair_stale_sessions(db_path: Path, older_than_hours: int = 24) -> int:
+    """Mark abandoned `running` sessions as failed. Returns rows changed."""
+    if not db_path.exists():
+        return 0
+    init_db(db_path)
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=max(1, older_than_hours))).isoformat()
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        cur = conn.execute(
+            """UPDATE loop_sessions SET status = 'failed', updated = ?
+               WHERE status = 'running' AND updated < ?""",
+            (datetime.now(timezone.utc).isoformat(), cutoff),
+        )
+        return cur.rowcount
+    finally:
+        conn.close()
+
+
+def prune_db(db_path: Path, *, older_than_days: int, dry_run: bool = False,
+             class_days: dict[str, int] | None = None) -> dict:
+    """Delete rows older than the cutoff from append-only tables.
+
+    `class_days` overrides the default cutoff per table, mirroring retention
+    classes: executions, observations, policy_decisions, perf_stats.
+    """
+    if older_than_days <= 0:
+        raise ValueError("older_than_days must be > 0")
+    if not db_path.exists():
+        return {"executions": 0, "observations": 0, "policy_decisions": 0, "perf_stats": 0}
+    init_db(db_path)
+    tables = {
+        "executions": ("timestamp", "executions"),
+        "observations": ("timestamp", "observations"),
+        "policy_decisions": ("timestamp", "policy_decisions"),
+        "perf_stats": ("updated", "perf_stats"),
+    }
+    overrides = class_days or {}
+    counts: dict[str, int] = {}
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        for name, (column, table) in tables.items():
+            days = int(overrides.get(name, older_than_days))
+            if days <= 0:
+                counts[name] = 0
+                continue
+            cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+            count = conn.execute(
+                f"SELECT COUNT(*) FROM {table} WHERE {column} < ?", (cutoff,)
+            ).fetchone()[0]
+            counts[name] = int(count or 0)
+            if not dry_run and count:
+                conn.execute(f"DELETE FROM {table} WHERE {column} < ?", (cutoff,))
+    finally:
+        conn.close()
+    return counts
+
+
+def start_attempt(db_path: Path, *, skill_id: str, model: str,
+                  dedupe_hash: str, session_id: int | None = None,
+                  parent_id: int | None = None, round_idx: int = 0) -> int:
+    init_db(db_path)
+    now = datetime.now(timezone.utc).isoformat()
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        cur = conn.execute(
+            """INSERT INTO attempts
+               (session_id, skill_id, model, dedupe_hash, parent_id, round_idx,
+                status, created, updated)
+               VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)""",
+            (session_id, skill_id, model, dedupe_hash, parent_id, round_idx, now, now),
+        )
+        return int(cur.lastrowid)
+    finally:
+        conn.close()
+
+
+def finish_attempt(db_path: Path, attempt_id: int, status: str) -> bool:
+    if status not in ("ok", "failed", "skipped"):
+        raise ValueError("status must be ok, failed, or skipped")
+    init_db(db_path)
+    conn = sqlite3.connect(str(db_path), isolation_level=None)
+    try:
+        cur = conn.execute(
+            "UPDATE attempts SET status = ?, updated = ? WHERE id = ?",
+            (status, datetime.now(timezone.utc).isoformat(), attempt_id),
+        )
+        return cur.rowcount > 0
+    finally:
+        conn.close()
 
 
 def update_skill_weights(db_path: Path) -> int:
-    """Recompute weights: judge mean plus feedback, clipped to [0.6, 1.4]."""
+    """Recompute weights from per-axis sums and denominators.
+
+    Ratios are sum(numerator)/sum(denominator), never an average of per-row
+    means. Axes with a zero denominator are excluded instead of nulling the
+    result. Feedback is weighted by feedback rows only.
+    """
     init_db(db_path)
     now = datetime.now(timezone.utc).isoformat()
     updated = 0
@@ -422,17 +813,30 @@ def update_skill_weights(db_path: Path) -> int:
     try:
         rows = conn.execute(
             """SELECT skill_id,
-                      AVG((judge_corr + judge_slop + judge_scope) / 3.0),
+                      SUM(COALESCE(judge_corr, 0)), COUNT(judge_corr),
+                      SUM(COALESCE(judge_slop, 0)), COUNT(judge_slop),
+                      SUM(COALESCE(judge_scope, 0)), COUNT(judge_scope),
                       SUM(CASE feedback WHEN 1 THEN 1 WHEN -1 THEN -1 ELSE 0 END),
-                      COUNT(*)
+                      COUNT(feedback)
                FROM executions
-               WHERE judge_corr IS NOT NULL OR feedback IS NOT NULL
-               GROUP BY skill_id"""
+               GROUP BY skill_id
+               HAVING COUNT(judge_corr) + COUNT(judge_slop) + COUNT(judge_scope)
+                    + COUNT(feedback) > 0"""
         ).fetchall()
-        for skill_id, judge_mean, feedback_sum, samples in rows:
-            base = (judge_mean / 10.0) if judge_mean is not None else 0.5
-            weight = 0.8 + 0.4 * base + 0.05 * float(feedback_sum or 0) / max(1, samples)
+        for (skill_id, corr_sum, corr_n, slop_sum, slop_n,
+             scope_sum, scope_n, feedback_sum, feedback_n) in rows:
+            axis_means = [
+                axis_sum / axis_n
+                for axis_sum, axis_n in (
+                    (corr_sum, corr_n), (slop_sum, slop_n), (scope_sum, scope_n),
+                )
+                if axis_n
+            ]
+            base = (sum(axis_means) / len(axis_means) / 10.0) if axis_means else 0.5
+            feedback_mean = (float(feedback_sum or 0) / feedback_n) if feedback_n else 0.0
+            weight = 0.8 + 0.4 * base + 0.05 * feedback_mean
             weight = max(0.6, min(1.4, weight))
+            samples = corr_n + slop_n + scope_n + feedback_n
             conn.execute(
                 """INSERT INTO skill_weights (skill_id, weight, samples, updated)
                    VALUES (?, ?, ?, ?)
@@ -534,12 +938,12 @@ def learn(db_path: Path) -> dict:
         pattern = " or ".join(tokens) if tokens else ""
         if not pattern:
             continue
-        # Engram hash from the union of positive prompts for this skill
-        ngram_hash = ""
+        # Engram hashes from the first usable positive prompt for this skill
+        hashes = ("", "", "")
         for prompt in skill_prompts[skill_id]:
-            h = _ngram_hash(prompt)
-            if h:
-                ngram_hash = h
+            candidate = _ngram_hashes(prompt)
+            if candidate[0]:
+                hashes = candidate
                 break
 
         with sqlite3.connect(str(db_path)) as conn:
@@ -549,17 +953,31 @@ def learn(db_path: Path) -> dict:
             ).fetchone()
             if existing:
                 conn.execute(
-                    "UPDATE instincts SET confidence = ?, samples = samples + 1, last_seen = ? WHERE id = ?",
-                    (min(1.0, existing[1] + 0.1), now, existing[0])
+                    """UPDATE instincts
+                       SET confidence = ?, samples = samples + 1, last_seen = ?,
+                           ngram_hash = COALESCE(?, ngram_hash),
+                           ngram_hash2 = COALESCE(?, ngram_hash2),
+                           ngram_hash3 = COALESCE(?, ngram_hash3)
+                       WHERE id = ?""",
+                    (min(1.0, existing[1] + 0.1), now,
+                     hashes[0] or None, hashes[1] or None, hashes[2] or None,
+                     existing[0])
                 )
                 results["updated_instincts"] += 1
             else:
                 conn.execute(
-                    "INSERT INTO instincts (source_skill_id, trigger_pattern, ngram_hash, confidence, samples, created, last_seen, approved) VALUES (?, ?, ?, ?, ?, ?, ?, 0)",
-                    (skill_id, pattern, ngram_hash, 0.3, 1, now, now)
+                    """INSERT INTO instincts
+                    (source_skill_id, trigger_pattern, ngram_hash, ngram_hash2,
+                     ngram_hash3, confidence, samples, created, last_seen, approved)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)""",
+                    (skill_id, pattern, hashes[0] or None, hashes[1] or None,
+                     hashes[2] or None, 0.3, 1, now, now)
                 )
                 results["new_instincts"] += 1
-                results["patterns_found"].append({"skill": skill_id, "pattern": pattern, "ngram_hash": ngram_hash})
+                results["patterns_found"].append({
+                    "skill": skill_id, "pattern": pattern,
+                    "ngram_hash": hashes[0],
+                })
         conn.commit()
 
     return results
@@ -627,11 +1045,11 @@ def learn_scoped(db_path: Path, *, scope: str = "project",
         pattern = " or ".join(tokens)
         if not pattern:
             continue
-        ngram_hash = ""
+        hashes = ("", "", "")
         for prompt in bucket["prompts"]:
-            h = _ngram_hash(prompt)
-            if h:
-                ngram_hash = h
+            candidate = _ngram_hashes(prompt)
+            if candidate[0]:
+                hashes = candidate
                 break
         successes = bucket["successes"]
         failures = bucket["failures"]
@@ -659,21 +1077,25 @@ def learn_scoped(db_path: Path, *, scope: str = "project",
                     """UPDATE instincts
                        SET confidence = ?, samples = ?, successes = ?, failures = ?,
                            evidence_count = ?, ngram_hash = COALESCE(?, ngram_hash),
+                           ngram_hash2 = COALESCE(?, ngram_hash2),
+                           ngram_hash3 = COALESCE(?, ngram_hash3),
                            last_seen = ?
                        WHERE id = ?""",
                     (confidence, evidence, successes, failures, evidence,
-                     ngram_hash or None, now, existing[0]),
+                     hashes[0] or None, hashes[1] or None, hashes[2] or None,
+                     now, existing[0]),
                 )
                 results["updated_instincts"] += 1
             else:
                 conn.execute(
                     """INSERT INTO instincts
-                    (source_skill_id, trigger_pattern, ngram_hash, confidence,
-                     samples, created, last_seen, approved, scope, project_id,
-                     successes, failures, evidence_count)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)""",
-                    (skill_id, pattern, ngram_hash or None, confidence, evidence,
-                     now, now, scope, pid, successes, failures, evidence),
+                    (source_skill_id, trigger_pattern, ngram_hash, ngram_hash2,
+                     ngram_hash3, confidence, samples, created, last_seen, approved,
+                     scope, project_id, successes, failures, evidence_count)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)""",
+                    (skill_id, pattern, hashes[0] or None, hashes[1] or None,
+                     hashes[2] or None, confidence, evidence, now, now,
+                     scope, pid, successes, failures, evidence),
                 )
                 results["new_instincts"] += 1
                 results["patterns_found"].append({

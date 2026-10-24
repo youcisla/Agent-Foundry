@@ -510,8 +510,9 @@ class InstinctV2Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             db = Path(d) / "log.db"
             prompt = "design rest api pagination cursor"
-            log_observation(db, project_id="p1", skill_id="api-design",
-                            prompt=prompt, outcome="success")
+            for _ in range(3):
+                log_observation(db, project_id="p1", skill_id="api-design",
+                                prompt=prompt, outcome="success")
             log_observation(db, project_id="p2", skill_id="api-design",
                             prompt=prompt, outcome="success")
             learn_scoped(db, scope="project", project_id="p1")

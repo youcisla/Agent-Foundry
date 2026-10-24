@@ -88,3 +88,13 @@ latency needs to know when a fallback served the request.
 - `structured-output-contract` — keeps the schema fixed across models
 - `budget-guard` — stops the chain when spend hits the ceiling
 - `execution-observability` — records which model served each run
+
+## Capability-Aware Routing
+
+- Inspect per-model capabilities before building messages: system-prompt support, context window, default temperature, stop tokens per mode.
+- When a model rejects the system role, fold the skill text into the user turn. Never send an unsupported role and hope.
+- Reject an over-context request before the call; do not silently truncate.
+- Forward `seed` and `temperature` only when the caller set them, and record them in the request digest.
+- Retry transport failures with backoff; never retry an auth error or a refusal into another model.
+- Gate adaptive attempt allocation on queue depth. The optimization is negative at low load.
+- Cache and score identity include runtime version, git SHA, model revision, and effective params.

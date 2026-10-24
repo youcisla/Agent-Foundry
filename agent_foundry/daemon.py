@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import threading
 import time
 from pathlib import Path
 
@@ -51,6 +52,7 @@ from .logging_db import (
     engram_lookup,
     get_skill_weights,
     get_loop_session,
+    repair_stale_sessions,
 )
 from .loop import resume_loop, run_loop
 from .models import (
@@ -68,6 +70,40 @@ def create_app(cfg: Config | None = None) -> FastAPI:
     cfg = cfg or Config.load()
     app = FastAPI(title="Agent Foundry", version=__version__)
     db_path = LOG_DB_PATH
+    try:
+        repair_stale_sessions(db_path, older_than_hours=24)
+    except Exception:
+        pass
+
+    _inflight = {"count": 0}
+    _inflight_lock = threading.Lock()
+
+    class _Inflight:
+        def __enter__(self):
+            with _inflight_lock:
+                _inflight["count"] += 1
+                self.depth = _inflight["count"]
+            return self.depth
+
+        def __exit__(self, *exc):
+            with _inflight_lock:
+                _inflight["count"] = max(0, _inflight["count"] - 1)
+            return False
+
+    def _executor_options(depth: int, session_id: int | None = None) -> dict:
+        return {
+            "perf_cache_enabled": cfg.core.perf_cache_enabled,
+            "perf_cache_ttl_seconds": cfg.core.perf_cache_ttl_seconds,
+            "adaptive_retries": cfg.core.adaptive_retries,
+            "adaptive_retries_min_samples": cfg.core.adaptive_retries_min_samples,
+            "adaptive_retries_min_queue_depth": cfg.core.adaptive_retries_min_queue_depth,
+            "max_attempts": cfg.core.max_attempts,
+            "spill_enabled": cfg.core.spill_enabled,
+            "spill_root": cfg.core.spill_root or None,
+            "output_preview_chars": cfg.core.output_preview_chars,
+            "queue_depth": depth,
+            "session_id": session_id,
+        }
 
     # Dev-only: allow the statically served site (different origin) to reach the
     # SSE + site-data endpoints for instant live updates.
@@ -140,7 +176,7 @@ def create_app(cfg: Config | None = None) -> FastAPI:
         # otherwise.
         rerank = cfg.core.default_llm if cfg.planner.rerank_enabled else None
         eg = engram_lookup(db_path, req.prompt, min_confidence=0.6)
-        if eg:
+        if eg and eg.get("gate_score", 1.0) >= 0.5:
             from .planner import plan as planner_run
             full = planner_run(req, idx, cfg.planner, weights=get_skill_weights(db_path),
                                rerank_model=rerank)
@@ -162,26 +198,32 @@ def create_app(cfg: Config | None = None) -> FastAPI:
         if idx is None:
             raise HTTPException(status_code=409,
                                 detail="No index. POST /index first.")
-        return executor_run(req, model=req.model or cfg.core.default_llm,
-                            skill_paths=idx.skill_paths,
-                            db_path=db_path,
-                            skill_hashes={s.id: s.sha256 for s in idx.skills},
-                            timeout_seconds=cfg.core.executor_timeout_seconds,
-                            max_tokens=cfg.core.executor_max_tokens,
-                            retries=cfg.core.executor_retries,
-                            policy_mode=cfg.core.policy_mode,
-                            fallback_models=cfg.core.fallback_llms,
-                            attest_manifest=Path(cfg.core.skills_dir).expanduser()
-                            / MANIFEST_NAME,
-                            attest_key_path=Path(cfg.core.attest_key_path).expanduser(),
-                            attest_strict=cfg.core.attest_strict)
+        with _Inflight() as depth:
+            return executor_run(
+                req, model=req.model or cfg.core.default_llm,
+                skill_paths=idx.skill_paths,
+                db_path=db_path,
+                skill_hashes={s.id: s.sha256 for s in idx.skills},
+                timeout_seconds=cfg.core.executor_timeout_seconds,
+                max_tokens=cfg.core.executor_max_tokens,
+                retries=cfg.core.executor_retries,
+                policy_mode=cfg.core.policy_mode,
+                fallback_models=cfg.core.fallback_llms,
+                attest_manifest=Path(cfg.core.skills_dir).expanduser()
+                / MANIFEST_NAME,
+                attest_key_path=Path(cfg.core.attest_key_path).expanduser(),
+                attest_strict=cfg.core.attest_strict,
+                options=_executor_options(depth),
+            )
 
     @app.post("/loop")
     def do_loop(req: LoopRequest):
         # Resolve model override if any
         model_override = req.model
         # run_loop uses cfg.core.default_llm unless model_override provided
-        return run_loop(req, cfg=cfg, db_path=db_path, model_override=model_override)
+        with _Inflight() as depth:
+            return run_loop(req, cfg=cfg, db_path=db_path,
+                            model_override=model_override, queue_depth=depth)
 
     @app.post("/loop/resume")
     def do_loop_resume(req: LoopResumeRequest):

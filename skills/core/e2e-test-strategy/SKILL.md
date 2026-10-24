@@ -80,3 +80,12 @@ Rules:
 
 - Skipping verification when the change 'feels small'
 - Reasoning by analogy without a real example
+
+## Test Integrity Rules
+
+- Snapshot byte-exact prompt assembly for a real skill, the fallback, and a schema-augmented request. A one-space template change must fail.
+- Probe provider capability once and mark skips explicitly; a missing provider is a skip, not a silent pass.
+- Install a raising stub in mocked-provider tests so an accidental real call fails loudly.
+- Reset module caches and env overrides before each test; a spec that passes only alone is a test defect.
+- Verify the world, not the self-report: re-read the file, row, or response. Assert untouched files are byte-identical.
+- A guard only guards if the regression fails it. Introduce the regression once, watch red, revert.

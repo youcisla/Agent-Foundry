@@ -74,3 +74,11 @@ When you discover a new type of stale claim, add it to known-patterns so future 
 - [ ] The claim or action has been verified against a live source
 - [ ] The output matches the request's scope (no scope creep)
 - [ ] Slop markers are absent (filler, hedging, emoji headers)
+
+## Verify the Artifact
+
+- Verify the world, not the self-report: re-read the stored row, artifact, or response. An agent's claim that it wrote something is not evidence.
+- Assert untouched files are byte-identical, not merely present.
+- A guard only guards if the intended regression fails it. Introduce the regression once, watch the test go red, then revert.
+- Preserve exact failure status: timeout, unparseable, call failure, and low score are four different facts.
+- When two runs are compared, prove the confounders match: same config except the tested flag, same provider stub, no retries or preemption.

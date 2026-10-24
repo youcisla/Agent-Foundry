@@ -1,4 +1,4 @@
-# Agent Foundry — Gemini CLI / Antigravity CLI Guide
+# Agent Foundry â€” Gemini CLI / Antigravity CLI Guide
 
 Agent Foundry installs as an agent-skills bundle plus a Gemini extension.
 
@@ -20,7 +20,7 @@ parent folder: the scanner reads `<root>/<skill>/SKILL.md`.
 node scripts/install.js --harness=gemini-cli
 ```
 
-This writes 39 skill links, a `gemini-extension.json`, and `GEMINI.md`.
+This writes 41 skill links, a `gemini-extension.json`, and `GEMINI.md`.
 Restart the CLI, then run `/extensions list` or `/skills` to verify.
 
 ## Antigravity

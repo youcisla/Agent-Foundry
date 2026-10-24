@@ -84,3 +84,12 @@ Planning based on the order things were requested. The user asked for feature X 
 - [ ] The claim or action has been verified against a live source
 - [ ] The output matches the request's scope (no scope creep)
 - [ ] Slop markers are absent (filler, hedging, emoji headers)
+
+## Benchmark Gate
+
+- Record samples as JSONL with the workload config beside them. A trace without its config is not reproducible.
+- Warm up first, drop the first measured sample, and separate wall time from provider-reported time.
+- A regression requires both a ratio above 1.05 and an absolute delta of at least 0.8 ms. Either alone fails on noise.
+- Keep the refresh command explicit. Never let a candidate baseline overwrite the committed one silently.
+- Store success and failure latency separately; a slow failure must not inflate the success estimate.
+- Key every measurement by model, load bucket, and format version. Pooling across any of them is meaningless.

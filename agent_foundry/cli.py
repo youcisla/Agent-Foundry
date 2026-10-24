@@ -224,12 +224,15 @@ def cmd_plan(ctx, prompt, max_results):
 @click.argument("skill_id")
 @click.argument("prompt")
 @click.option("--model", default=None)
+@click.option("--seed", type=int, default=None, help="Sampling seed forwarded to the provider")
+@click.option("--temperature", type=float, default=None)
 @click.option("--force", is_flag=True, help="Skip budget confirmation")
 @click.pass_context
-def cmd_execute(ctx, skill_id, prompt, model, force):
+def cmd_execute(ctx, skill_id, prompt, model, seed, temperature, force):
     """Run a specific skill on a prompt."""
     cfg = ctx.obj["cfg"]
-    payload = {"skill_id": skill_id, "prompt": prompt, "force": force, "model": model}
+    payload = {"skill_id": skill_id, "prompt": prompt, "force": force,
+               "model": model, "seed": seed, "temperature": temperature}
     data = _call_or_daemon(cfg, "POST", "/execute", payload)
 
     if data.get("requires_confirmation"):
@@ -262,14 +265,17 @@ def cmd_execute(ctx, skill_id, prompt, model, force):
 @click.argument("prompt")
 @click.option("--model", default=None)
 @click.option("--budget", type=int, default=None)
+@click.option("--seed", type=int, default=None)
+@click.option("--temperature", type=float, default=None)
 @click.option("--force", is_flag=True, help="Skip budget confirmation prompt")
 @click.option("--judge", is_flag=True, help="Score output via af-critic after execution")
 @click.pass_context
-def cmd_run(ctx, prompt, model, budget, force, judge):
+def cmd_run(ctx, prompt, model, budget, seed, temperature, force, judge):
     """Plan + execute the top-ranked skill."""
     cfg = ctx.obj["cfg"]
     payload = {"prompt": prompt, "force": force, "model": model,
-               "budget": budget, "judge": judge}
+               "budget": budget, "judge": judge, "seed": seed,
+               "temperature": temperature}
 
     def call(req):
         return _call_or_daemon(cfg, "POST", "/loop", req)
@@ -321,13 +327,16 @@ def cmd_run(ctx, prompt, model, budget, force, judge):
 @click.argument("session_id", type=int)
 @click.argument("prompt")
 @click.option("--model", default=None)
+@click.option("--seed", type=int, default=None)
+@click.option("--temperature", type=float, default=None)
 @click.pass_context
-def cmd_resume(ctx, session_id, prompt, model):
+def cmd_resume(ctx, session_id, prompt, model, seed, temperature):
     """Continue a loop session with a follow-up prompt."""
     cfg = ctx.obj["cfg"]
     data = _call_or_daemon(
         cfg, "POST", "/loop/resume",
-        {"session_id": session_id, "prompt": prompt, "model": model},
+        {"session_id": session_id, "prompt": prompt, "model": model,
+         "seed": seed, "temperature": temperature},
         timeout=max(60.0, float(cfg.core.executor_timeout_seconds) + 15.0),
     )
     click.echo(f"--> Session: {data.get('session_id')}  Skill: {data.get('skill_id')}")
@@ -491,6 +500,96 @@ def cmd_serve(ctx, port, host, detach):
             f"Agent Foundry daemon listening on http://{host}:{cfg.core.daemon_port}"
         )
         uvicorn.run(app, host=host, port=cfg.core.daemon_port)
+
+
+@cli.command("rejudge")
+@click.argument("execution_id", type=int)
+@click.option("--model", default=None, help="Judge model override")
+@click.pass_context
+def cmd_rejudge(ctx, execution_id, model):
+    """Re-score a stored execution without re-running the completion."""
+    cfg = ctx.obj["cfg"]
+    from .logging_db import get_execution, update_execution_judge
+    from .judge import judge_output
+    from .spill import read_output
+
+    row = get_execution(LOG_DB_PATH, execution_id)
+    if row is None:
+        raise click.ClickException(f"execution not found: {execution_id}")
+    text = read_output(row.get("output_ref")) or row.get("output") or ""
+    if not text:
+        raise click.ClickException("execution has no stored output to judge")
+    idx = read_index(Path(cfg.core.index_path).expanduser())
+    skill_paths = idx.skill_paths if idx else {}
+    result = judge_output(
+        task=row.get("prompt") or "",
+        output=text,
+        model=model or cfg.core.default_llm,
+        skill_paths=skill_paths,
+        fallback_prompt=cfg.fallback_system_prompt,
+        timeout_seconds=cfg.core.judge_timeout_seconds,
+        retries=cfg.core.judge_retries,
+    )
+    update_execution_judge(
+        LOG_DB_PATH, execution_id, scores=result.scores,
+        status=result.status, model=result.model,
+    )
+    click.echo(json.dumps({
+        "execution_id": execution_id,
+        "judge_status": result.status,
+        "scores": result.scores,
+        "error": result.error,
+    }, indent=2, ensure_ascii=False))
+    if not result.ok:
+        ctx.exit(1)
+
+
+@cli.command("prune")
+@click.option("--older-than-days", type=int, required=True,
+              help="Delete rows older than this many days")
+@click.option("--executions-days", type=int, default=None)
+@click.option("--observations-days", type=int, default=None)
+@click.option("--policy-days", type=int, default=None)
+@click.option("--perf-days", type=int, default=None)
+@click.option("--dry-run", is_flag=True, help="Report counts without deleting")
+@click.option("--yes", is_flag=True, help="Skip the confirmation prompt")
+@click.pass_context
+def cmd_prune(ctx, older_than_days, executions_days, observations_days,
+              policy_days, perf_days, dry_run, yes):
+    """Delete old executions, observations, policy decisions, and perf stats."""
+    from .logging_db import prune_db
+    if older_than_days <= 0:
+        raise click.ClickException("--older-than-days must be > 0")
+    class_days = {
+        key: value for key, value in {
+            "executions": executions_days,
+            "observations": observations_days,
+            "policy_decisions": policy_days,
+            "perf_stats": perf_days,
+        }.items() if value is not None
+    }
+    if not dry_run and not yes:
+        if not sys.stdin.isatty():
+            raise click.ClickException("non-interactive prune requires --yes")
+        if not click.confirm(
+            f"Delete rows older than {older_than_days} days from {LOG_DB_PATH}?",
+            default=False,
+        ):
+            click.echo("Aborted — nothing deleted.")
+            return
+    counts = prune_db(LOG_DB_PATH, older_than_days=older_than_days,
+                      dry_run=dry_run, class_days=class_days)
+    click.echo(json.dumps({"dry_run": dry_run, "counts": counts}, indent=2))
+
+
+@cli.command("calibrate")
+@click.option("--bins", type=int, default=5, show_default=True)
+@click.pass_context
+def cmd_calibrate(ctx, bins):
+    """Compare stored judge scores with human feedback."""
+    from .calibration import calibration_report
+    report = calibration_report(LOG_DB_PATH, bins=max(1, bins))
+    click.echo(json.dumps(report, indent=2))
 
 
 @cli.command("feedback")

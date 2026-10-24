@@ -12,6 +12,11 @@ const SKILL_DEPS = {
     "fallback-model-routing",
     "measure-first"
   ],
+  "cache-identity": [
+    "context-optimization",
+    "execution-observability",
+    "measure-first"
+  ],
   "constraint-then-solve": [],
   "context-optimization": [],
   "cron-troubleshoot": [],
@@ -24,6 +29,11 @@ const SKILL_DEPS = {
     "structured-output-contract"
   ],
   "feedback-loop": [],
+  "judge-integrity": [
+    "execution-observability",
+    "feedback-loop",
+    "structured-output-contract"
+  ],
   "knowledge-extract": [],
   "landscape-first": [
     "bottleneck-gating",

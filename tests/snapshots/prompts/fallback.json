@@ -1,0 +1,10 @@
+[
+  {
+    "role": "system",
+    "content": "You are a helpful assistant. The user's prompt didn't match any specific skill. Respond thoughtfully and thoroughly."
+  },
+  {
+    "role": "user",
+    "content": "hello"
+  }
+]

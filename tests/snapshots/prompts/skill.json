@@ -1,0 +1,10 @@
+[
+  {
+    "role": "system",
+    "content": "---\nname: api-design\ndescription: 'Design REST or GraphQL APIs: resource modeling, URL conventions, error\n  contracts, versioning, pagination, idempotency keys, rate-limit headers. Use when\n  creating a new API endpoint or reviewing API consistency.'\nversion: 0.1.0\nlicense: MIT\nauthor: Agent Foundry Contributors\n---\n\n# API Design\n\nDesign APIs that are predictable, versionable, and self-documenting.\n\n## REST Conventions\n\n- Resources are nouns, plural: `/users`, `/cases`, `/reflections`\n- Actions are sub-resources: `/users/{id}/sessions`\n- Verbs only when nothing else fits: `/users/{id}/verify-email`\n\n## HTTP Methods\n\n| Method | Action | Idempotent |\n|--------|--------|------------|\n| GET | examine | Yes |\n| POST | Create | No (without key) |\n| PUT | Replace | Yes |\n| PATCH | Partial update | No |\n| DELETE | Delete | Yes |\n\n## Status Codes\n\n| Code | When |\n|------|------|\n| 200 | Successful read/update |\n| 201 | Successful create (include `Location`) |\n| 204 | Successful delete / no body |\n| 400 | Malformed request |\n| 401 | Missing/invalid auth |\n| 403 | Not permitted |\n| 404 | Resource missing or hidden |\n| 409 | State collision |\n| 422 | Valid syntax, semantic fail |\n| 429 | Rate-limited (`Retry-After`) |\n| 500 | Unexpected server error |\n\n## Error Contract\n\nEvery error uses the same shape:\n\n```json\n{\n  \"error\": {\n    \"code\": \"user_not_found\",\n    \"message\": \"No user with id 'abc123'\",\n    \"param\": \"user_id\",\n    \"doc_url\": \"https://api.example.com/docs/errors#user_not_found\"\n  }\n}\n```\n\n- `code`: stable, snake_case, machine-readable\n- `message`: human-readable, may include the failing value\n- `param`: which field caused the issue\n- `doc_url`: always present for documented codes\n\n## Anti-patterns\n\n- Skipping verification when the change 'feels small'\n- Reasoning by analogy without a real example\n"
+  },
+  {
+    "role": "user",
+    "content": "design a payments API"
+  }
+]

@@ -83,3 +83,12 @@ If the record cannot answer these, add fields before adding dashboards.
 - [ ] Prompts are hashed, not stored
 - [ ] The model and fallback flag are present
 - [ ] History reads are bounded and exclude full output bodies
+
+## Record Contract
+
+- Record `trace_digest` over canonical messages, model chain, seed, temperature, schema, skill hash, runtime version, and output.
+- Record `request_meta_json` with model revision, git SHA, message hash, roles, and char counts. A model-visible request must be reconstructable from the log.
+- Record `phases` for plan, completion, schema, judge, and persist. A missing phase is a blind spot, not a zero.
+- Record `judge_status` (`ok`, `unparseable`, `call_failed`, `timeout`) separately from the score. Never collapse judge failure into a low score.
+- Record `failure_kind` (`provider`, `schema`, `policy`, `attest`, `budget`, `internal`) so callers do not parse error strings.
+- Store success and failure latency separately, and keep the full output behind `output_ref`, not in the row.

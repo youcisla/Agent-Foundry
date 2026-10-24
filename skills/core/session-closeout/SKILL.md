@@ -66,3 +66,11 @@ Do the closeout. The cost is 2 minutes. The cost of NOT doing it is the next ses
 - [ ] The claim or action has been verified against a live source
 - [ ] The output matches the request's scope (no scope creep)
 - [ ] Slop markers are absent (filler, hedging, emoji headers)
+
+## Terminal State
+
+- Every exit path writes a terminal status: completed, failed, or interrupted. A crash must leave `running` as an unambiguous signal, not a permanent lie.
+- Repair stale `running` rows at startup with an explicit age threshold.
+- Check that every output reference resolves before closeout; a dangling locator is a data-loss report.
+- Recompute derived aggregates only after the terminal write, and record the config fingerprint used.
+- Closeout is not deletion: keep summaries and artifact references, drop only what retention policy names.

@@ -1,6 +1,6 @@
-# Agent Foundry — Antigravity Adapter
+# Agent Foundry â€” Antigravity Adapter
 
-**Status:** Beta — paths follow current Antigravity docs; harness load not yet
+**Status:** Beta â€” paths follow current Antigravity docs; harness load not yet
 verified on a live install.
 
 Antigravity has separate roots per product:
@@ -22,14 +22,14 @@ node scripts/install.js --harness=antigravity
 
 ## Layout
 
-Each of the 39 skills is a direct child of the chosen skills root:
+Each of the 41 skills is a direct child of the chosen skills root:
 
 ```text
 ~/.gemini/config/
   skills/
     api-design/SKILL.md
     plan-before-code/SKILL.md
-    ... (39 total)
+    ... (41 total)
   rules/
     agent-foundry.md
 ```

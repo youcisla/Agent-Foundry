@@ -292,6 +292,10 @@ const FILE_TREE = {
         "path": "agent_foundry/__main__.py",
         "ext": ".py"
       },
+      "attest.py": {
+        "path": "agent_foundry/attest.py",
+        "ext": ".py"
+      },
       "cli.py": {
         "path": "agent_foundry/cli.py",
         "ext": ".py"
@@ -332,6 +336,10 @@ const FILE_TREE = {
         "path": "agent_foundry/mcp_server.py",
         "ext": ".py"
       },
+      "model_catalog.py": {
+        "path": "agent_foundry/model_catalog.py",
+        "ext": ".py"
+      },
       "models.py": {
         "path": "agent_foundry/models.py",
         "ext": ".py"
@@ -340,16 +348,36 @@ const FILE_TREE = {
         "path": "agent_foundry/planner.py",
         "ext": ".py"
       },
-      "attest.py": {
-        "path": "agent_foundry/attest.py",
-        "ext": ".py"
-      },
-      "model_catalog.py": {
-        "path": "agent_foundry/model_catalog.py",
-        "ext": ".py"
-      },
       "policy.py": {
         "path": "agent_foundry/policy.py",
+        "ext": ".py"
+      },
+      "calibration.py": {
+        "path": "agent_foundry/calibration.py",
+        "ext": ".py"
+      },
+      "perf_cache.py": {
+        "path": "agent_foundry/perf_cache.py",
+        "ext": ".py"
+      },
+      "replay.py": {
+        "path": "agent_foundry/replay.py",
+        "ext": ".py"
+      },
+      "retry_policy.py": {
+        "path": "agent_foundry/retry_policy.py",
+        "ext": ".py"
+      },
+      "spill.py": {
+        "path": "agent_foundry/spill.py",
+        "ext": ".py"
+      },
+      "timing.py": {
+        "path": "agent_foundry/timing.py",
+        "ext": ".py"
+      },
+      "verifiers.py": {
+        "path": "agent_foundry/verifiers.py",
         "ext": ".py"
       }
     }
@@ -623,6 +651,10 @@ const FILE_TREE = {
       "validate.sh": {
         "path": "scripts/validate.sh",
         "ext": ".sh"
+      },
+      "foundry-bench.py": {
+        "path": "scripts/foundry-bench.py",
+        "ext": ".py"
       }
     }
   },
@@ -682,6 +714,22 @@ const FILE_TREE = {
               }
             }
           },
+          "budget-guard": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/core/budget-guard/SKILL.md",
+                "ext": ".md"
+              },
+              "references": {
+                "__files": {
+                  "fields.md": {
+                    "path": "skills/core/budget-guard/references/fields.md",
+                    "ext": ".md"
+                  }
+                }
+              }
+            }
+          },
           "constraint-then-solve": {
             "__files": {
               "SKILL.md": {
@@ -738,6 +786,38 @@ const FILE_TREE = {
               }
             }
           },
+          "execution-observability": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/core/execution-observability/SKILL.md",
+                "ext": ".md"
+              },
+              "references": {
+                "__files": {
+                  "fields.md": {
+                    "path": "skills/core/execution-observability/references/fields.md",
+                    "ext": ".md"
+                  }
+                }
+              }
+            }
+          },
+          "fallback-model-routing": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/core/fallback-model-routing/SKILL.md",
+                "ext": ".md"
+              },
+              "references": {
+                "__files": {
+                  "capabilities.md": {
+                    "path": "skills/core/fallback-model-routing/references/capabilities.md",
+                    "ext": ".md"
+                  }
+                }
+              }
+            }
+          },
           "feedback-loop": {
             "__files": {
               "SKILL.md": {
@@ -783,6 +863,14 @@ const FILE_TREE = {
               "SKILL.md": {
                 "path": "skills/core/measure-first/SKILL.md",
                 "ext": ".md"
+              },
+              "references": {
+                "__files": {
+                  "benchmark.md": {
+                    "path": "skills/core/measure-first/references/benchmark.md",
+                    "ext": ".md"
+                  }
+                }
               }
             }
           },
@@ -882,6 +970,22 @@ const FILE_TREE = {
               }
             }
           },
+          "structured-output-contract": {
+            "__files": {
+              "SKILL.md": {
+                "path": "skills/core/structured-output-contract/SKILL.md",
+                "ext": ".md"
+              },
+              "references": {
+                "__files": {
+                  "precedence.md": {
+                    "path": "skills/core/structured-output-contract/references/precedence.md",
+                    "ext": ".md"
+                  }
+                }
+              }
+            }
+          },
           "verify-first": {
             "__files": {
               "SKILL.md": {
@@ -906,35 +1010,35 @@ const FILE_TREE = {
               }
             }
           },
-          "budget-guard": {
+          "cache-identity": {
             "__files": {
               "SKILL.md": {
-                "path": "skills/core/budget-guard/SKILL.md",
+                "path": "skills/core/cache-identity/SKILL.md",
                 "ext": ".md"
+              },
+              "references": {
+                "__files": {
+                  "key.md": {
+                    "path": "skills/core/cache-identity/references/key.md",
+                    "ext": ".md"
+                  }
+                }
               }
             }
           },
-          "execution-observability": {
+          "judge-integrity": {
             "__files": {
               "SKILL.md": {
-                "path": "skills/core/execution-observability/SKILL.md",
+                "path": "skills/core/judge-integrity/SKILL.md",
                 "ext": ".md"
-              }
-            }
-          },
-          "fallback-model-routing": {
-            "__files": {
-              "SKILL.md": {
-                "path": "skills/core/fallback-model-routing/SKILL.md",
-                "ext": ".md"
-              }
-            }
-          },
-          "structured-output-contract": {
-            "__files": {
-              "SKILL.md": {
-                "path": "skills/core/structured-output-contract/SKILL.md",
-                "ext": ".md"
+              },
+              "references": {
+                "__files": {
+                  "status.md": {
+                    "path": "skills/core/judge-integrity/references/status.md",
+                    "ext": ".md"
+                  }
+                }
               }
             }
           }
@@ -1070,6 +1174,70 @@ const FILE_TREE = {
     "__files": {
       "test_core.py": {
         "path": "tests/test_core.py",
+        "ext": ".py"
+      },
+      "conftest.py": {
+        "path": "tests/conftest.py",
+        "ext": ".py"
+      },
+      "provider_stub.py": {
+        "path": "tests/provider_stub.py",
+        "ext": ".py"
+      },
+      "snapshots": {
+        "__files": {
+          "prompts": {
+            "__files": {
+              "fallback.json": {
+                "path": "tests/snapshots/prompts/fallback.json",
+                "ext": ".json"
+              },
+              "schema.json": {
+                "path": "tests/snapshots/prompts/schema.json",
+                "ext": ".json"
+              },
+              "skill.json": {
+                "path": "tests/snapshots/prompts/skill.json",
+                "ext": ".json"
+              }
+            }
+          }
+        }
+      },
+      "test_config_contract.py": {
+        "path": "tests/test_config_contract.py",
+        "ext": ".py"
+      },
+      "test_contracts.py": {
+        "path": "tests/test_contracts.py",
+        "ext": ".py"
+      },
+      "test_db_lifecycle.py": {
+        "path": "tests/test_db_lifecycle.py",
+        "ext": ".py"
+      },
+      "test_determinism.py": {
+        "path": "tests/test_determinism.py",
+        "ext": ".py"
+      },
+      "test_migrations.py": {
+        "path": "tests/test_migrations.py",
+        "ext": ".py"
+      },
+      "test_perf_cache.py": {
+        "path": "tests/test_perf_cache.py",
+        "ext": ".py"
+      },
+      "test_prompt_snapshots.py": {
+        "path": "tests/test_prompt_snapshots.py",
+        "ext": ".py"
+      },
+      "test_retry_policy.py": {
+        "path": "tests/test_retry_policy.py",
+        "ext": ".py"
+      },
+      "test_timing_spill.py": {
+        "path": "tests/test_timing_spill.py",
         "ext": ".py"
       }
     }
@@ -1241,5 +1409,9 @@ const FILE_TREE = {
         "ext": ".md"
       }
     }
+  },
+  "LICENSES.md": {
+    "path": "LICENSES.md",
+    "ext": ".md"
   }
 };

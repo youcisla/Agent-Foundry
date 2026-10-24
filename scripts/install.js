@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * install.js — Cross-platform installer for Agent Foundry.
+ * install.js â€” Cross-platform installer for Agent Foundry.
  *
  * Node.js >=18. Zero external dependencies. Mirrors the architecture used by
  * ECC and Ruflo: one Node entry point, thin shell wrappers (.sh/.bat/.ps1)
@@ -39,8 +39,8 @@ const REPO       = resolve(__dirname, '..');
 
 // ---------- helpers (defined first) ----------
 function log(...args) { console.log(...args); }
-function vlog(...args) { if (opts.verbose) console.log('  ·', ...args); }
-function err(...args) { console.error('  ✗', ...args); }
+function vlog(...args) { if (opts.verbose) console.log('  Â·', ...args); }
+function err(...args) { console.error('  âœ—', ...args); }
 
 function home() {
   return process.env.HOME || process.env.USERPROFILE || homedir();
@@ -101,7 +101,7 @@ function detectHarness() {
 }
 
 /**
- * linkOrCopy — try symlink, then hard link, then copy.
+ * linkOrCopy â€” try symlink, then hard link, then copy.
  * Mirrors the bash version's 3-tier fallback.
  */
 function linkOrCopy(src, dst, { force = true, copy = false } = {}) {
@@ -122,7 +122,7 @@ function linkOrCopy(src, dst, { force = true, copy = false } = {}) {
   if (copy) {
     try {
       cpSync(resolve(src), dst, { recursive: true, dereference: false });
-      log(`  ✓ copied ${dst}`);
+      log(`  âœ“ copied ${dst}`);
       return true;
     } catch (e) {
       err(`copy failed for ${dst}: ${e.message}`);
@@ -136,21 +136,21 @@ function linkOrCopy(src, dst, { force = true, copy = false } = {}) {
     const isDir = statSync(src).isDirectory();
     const type = isDir ? (platform() === 'win32' ? 'junction' : 'dir') : 'file';
     symlinkSync(resolve(src), dst, type);
-    log(`  ✓ linked ${dst}`);
+    log(`  âœ“ linked ${dst}`);
     return true;
   } catch (e) { vlog(`symlink failed: ${e.code}`); }
 
   // Try 2: hard link (works for files on NTFS; not directories)
   try {
     linkSync(resolve(src), dst);
-    log(`  ✓ hard-linked ${dst}`);
+    log(`  âœ“ hard-linked ${dst}`);
     return true;
   } catch (e) { vlog(`hard link failed: ${e.code}`); }
 
   // Try 3: recursive copy
   try {
     cpSync(resolve(src), dst, { recursive: true, dereference: false });
-    log(`  ✓ copied ${dst}`);
+    log(`  âœ“ copied ${dst}`);
     return true;
   } catch (e) {
     err(`copy failed for ${dst}: ${e.message}`);
@@ -179,7 +179,7 @@ function sha256File(path) {
 
 function frontmatterSha256(path) {
   const text = readFileSync(path, 'utf8')
-    .replace(/^﻿/, '')
+    .replace(/^ï»¿/, '')
     .replace(/\r\n?/g, '\n');
   if (!text.startsWith('---\n')) {
     return createHash('sha256').update('').digest('hex');
@@ -297,7 +297,7 @@ function installSkills(root, dry, { group = '', label = '' } = {}) {
 
 function copyTree(src, dst, dry, label = '') {
   if (!existsSync(src)) {
-    vlog(`(no ${label || src} — skipping)`);
+    vlog(`(no ${label || src} â€” skipping)`);
     return true;
   }
   if (dry) {
@@ -307,7 +307,7 @@ function copyTree(src, dst, dry, label = '') {
   ensureDir(dst);
   try {
     cpSync(src, dst, { recursive: true, force: true });
-    log(`  ✓ copied ${label || dst}`);
+    log(`  âœ“ copied ${label || dst}`);
     return true;
   } catch (e) {
     err(`copy failed for ${dst}: ${e.message}`);
@@ -323,7 +323,7 @@ function copyFileIfMissing(src, dst, dry) {
   }
   ensureDir(dirname(dst));
   copyFileSync(src, dst);
-  log(`  ✓ copied ${dst}`);
+  log(`  âœ“ copied ${dst}`);
   return true;
 }
 
@@ -351,14 +351,14 @@ function copyFiles(srcDir, dstDir, dry, { ext = null, label = '' } = {}) {
   for (const f of files) {
     copyFileSync(join(srcDir, f), join(dstDir, f));
   }
-  if (files.length) log(`  ✓ copied ${files.length} ${label || 'file(s)'} -> ${dstDir}`);
+  if (files.length) log(`  âœ“ copied ${files.length} ${label || 'file(s)'} -> ${dstDir}`);
   return true;
 }
 
 // ---------- harness installers ----------
 // Status values:
-//   'tested'      — installer + indexer smoke test passes; 39 skills land at the documented root
-//   'coming-soon' — adapter not yet implemented (refuses to install, prints note)
+//   'tested'      â€” installer + indexer smoke test passes; 41 skills land at the documented root
+//   'coming-soon' â€” adapter not yet implemented (refuses to install, prints note)
 const HARNESSES = {
   'claude-code': {
     label: 'Claude Code',
@@ -435,7 +435,7 @@ const HARNESSES = {
           contextFileName: 'GEMINI.md',
         }, null, 2) + '\n');
         copyFileSync(join(REPO, '.gemini', 'AGENTS.md'), join(ext, 'GEMINI.md'));
-        log(`  ✓ wrote ${join(ext, 'gemini-extension.json')}`);
+        log(`  âœ“ wrote ${join(ext, 'gemini-extension.json')}`);
       }
       // The extension contract is extensions/<name>/skills/<skill>/SKILL.md.
       ok = installSkills(join(ext, 'skills'), dry, { label: 'Gemini extension' }) && ok;
@@ -572,7 +572,7 @@ for (const a of args) {
 
 // ---------- main ----------
 function printHelp() {
-  const STATUS_BADGE = { 'tested': '✓', 'coming-soon': '○' };
+  const STATUS_BADGE = { 'tested': 'âœ“', 'coming-soon': 'â—‹' };
   const list = Object.entries(HARNESSES)
     .map(([k, v]) => `  ${k.padEnd(16)} ${STATUS_BADGE[v.status] || ' '} ${v.label}`)
     .join('\n');
@@ -595,7 +595,7 @@ Options:
   --verbose, -v       Verbose output
   --help, -h          Show this help
 
-Targets (✓ tested):
+Targets (âœ“ tested):
 ${list}
 `);
 }
@@ -630,7 +630,7 @@ if (!installer) {
   process.exit(1);
 }
 
-log(`Agent Foundry installer — ${osKind()} ${arch()}`);
+log(`Agent Foundry installer â€” ${osKind()} ${arch()}`);
 log(`Target: ${opts.harness} (${installer.label})`);
 log(`Repo:   ${REPO}`);
 log(`Mode:   ${opts.dryRun ? 'dry-run' : 'install'}`);

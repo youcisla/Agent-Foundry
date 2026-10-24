@@ -35,6 +35,26 @@ executor_retries = 2
 attest_strict = false
 attest_key_path = "~/.config/agent-foundry/attest.key"
 policy_mode = "warn"
+strict_config = false
+output_preview_chars = 8000
+error_max_chars = 1000
+perf_cache_enabled = false
+perf_cache_ttl_seconds = 3600
+perf_cache_max_rows = 5000
+adaptive_retries = false
+adaptive_retries_min_samples = 10
+adaptive_retries_min_queue_depth = 2
+max_attempts = 3
+max_history_tokens = 4000
+history_keep_turns = 4
+spill_enabled = true
+spill_root = ""
+judge_timeout_seconds = 30
+judge_retries = 1
+judge_escalation_threshold = 0.75
+judge_escalation_model = ""
+per_call_token_budget = 0
+retention_days = 0
 
 [planner]
 # Score added per matched trigger pattern (regex).
@@ -100,6 +120,26 @@ class CoreConfig:
     attest_strict: bool = False
     attest_key_path: str = "~/.config/agent-foundry/attest.key"
     policy_mode: str = "warn"
+    strict_config: bool = False
+    output_preview_chars: int = 8000
+    error_max_chars: int = 1000
+    perf_cache_enabled: bool = False
+    perf_cache_ttl_seconds: int = 3600
+    perf_cache_max_rows: int = 5000
+    adaptive_retries: bool = False
+    adaptive_retries_min_samples: int = 10
+    adaptive_retries_min_queue_depth: int = 2
+    max_attempts: int = 3
+    max_history_tokens: int = 4000
+    history_keep_turns: int = 4
+    spill_enabled: bool = True
+    spill_root: str = ""
+    judge_timeout_seconds: int = 30
+    judge_retries: int = 1
+    judge_escalation_threshold: float = 0.75
+    judge_escalation_model: str = ""
+    per_call_token_budget: int = 0
+    retention_days: int = 0
 
 
 @dataclass(frozen=True)
@@ -159,11 +199,13 @@ class Config:
         }
         core = dataclasses.replace(cfg.core, **core_overrides)
         if core.policy_mode not in ("off", "warn", "enforce"):
-            print(
-                f"WARN: {p} has policy_mode={core.policy_mode!r}; "
-                "expected off, warn, or enforce. Falling back to warn.",
-                file=sys.stderr,
+            message = (
+                f"{p} has policy_mode={core.policy_mode!r}; "
+                "expected off, warn, or enforce."
             )
+            if core.strict_config or os.environ.get("AGENT_FOUNDRY_STRICT_CONFIG") == "1":
+                raise ValueError(message)
+            print(f"WARN: {message} Falling back to warn.", file=sys.stderr)
             core = dataclasses.replace(core, policy_mode="warn")
         return dataclasses.replace(
             cfg,

@@ -77,3 +77,12 @@ Document before deploying: run the .down.sql, PITR snapshot taken before applyin
 - Forgetting to sync schema.sql (CI linter should catch this)
 - Applying without a drift check first
 - Not testing the down file before deploying
+
+## Version Discipline
+
+- Keep one monotonic `schema_version` row in a `schema_meta` table.
+- Number every migration and never edit or reorder an applied entry.
+- Refuse to open a database whose stored version is newer than the code understands.
+- Swallow only the duplicate-column case on replay; re-raise every other `OperationalError`.
+- Migrations are additive by default. Destructive changes require an explicit backup and a separate release.
+- Test fresh, old, duplicate-run, and future-version databases in the same suite.
